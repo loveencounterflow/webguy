@@ -1,8 +1,12 @@
 {
   "name": "webguy",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Guy for the web",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loveencounterflow/guy.git"
+  },
+  "main": "lib/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
