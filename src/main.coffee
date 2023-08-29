@@ -11,7 +11,7 @@ class Guy
 
   #---------------------------------------------------------------------------------------------------------
   # constructor: ( target = null ) ->
-  constructor: ( @settings = null ) ->
+  constructor: ( @cfg = null ) ->
     #.......................................................................................................
     # props.def_oneoff @, 'watch',    { enumerable: true, }, -> require './watch'
     return undefined
