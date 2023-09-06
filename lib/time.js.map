@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/time.coffee"
+  ],
+  "names": [],
+  "mappings": "AAEA;EAAA;AAAA,MAAA,UAAA,EAAA,UAAA;;;EAIA,IAAC,CAAA,KAAD,GAAc,QAAA,CAAA,CAAA;AAAE,QAAA;WAAC,aAAA,GAAgB,WAAW,CAAC,UAAZ,GAAyB,WAAW,CAAC,GAAZ,CAAA;EAA5C;;EACd,IAAC,CAAA,UAAD,GAAc,QAAA,CAAA,CAAA;WAAG,IAAC,CAAA,KAAD,CAAA,CAAQ,CAAC,OAAT,CAAiB,CAAjB;EAAH,EALd;;;;;;EAWA,UAAA,GAAoB;;EACpB,UAAA,GAAoB;;EACpB,IAAC,CAAA,eAAD,GAAoB,QAAA,CAAE,eAAe,CAAjB,CAAA;AACpB,QAAA;IAAE,IAAG,CAAE,KAAA,GAAQ,IAAC,CAAA,UAAD,CAAA,CAAV,CAAA,KAA6B,UAAhC;MACE,UAAA,GADF;KAAA,MAAA;MAGE,UAAA,GAAc;MACd,UAAA,GAAc,EAJhB;;AAKA,WAAO,CAAE,UAAF,EAAgB,UAAU,CAAC,QAAX,CAAA,CAAqB,CAAC,QAAtB,CAA+B,CAA/B,EAAkC,GAAlC,CAAhB;EANW;AAbpB",
+  "sourcesContent": [
+    "\n\n'use strict'\n\n\n#-----------------------------------------------------------------------------------------------------------\n@stamp      = -> utc_timestamp = performance.timeOrigin + performance.now()\n@stamp_text = -> @stamp().toFixed 3\n\n#-----------------------------------------------------------------------------------------------------------\n### TAINT consider to keep these memo values as `globalThis[some_symbol].last_stamp` to ensure it being\nshared as widely as possible, in the not-so unlikely event that two scripts make use of two different\ninstances of `webguy`. ###\nlast_stamp        = null\nlast_count        = 0\n@stamp_and_count  = ( count_digits = 3 ) ->\n  if ( stamp = @stamp_text() ) is last_stamp\n    last_count++\n  else\n    last_stamp  = stamp\n    last_count  = 0\n  return [ last_stamp, ( last_count.toString().padStart 3, '0' ), ]\n"
+  ]
+}
