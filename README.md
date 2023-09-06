@@ -1,8 +1,12 @@
+
+# WebGuy is a Guy for the Web
+
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Guy for the Web](#guy-for-the-web)
+- [WebGuy is a Guy for the Web](#webguy-is-a-guy-for-the-web)
   - [`props`](#props)
   - [`time`](#time)
 
@@ -12,7 +16,7 @@
 
 
 
-# Guy for the Web
+# WebGuy is a Guy for the Web
 
 ## `props`
 
