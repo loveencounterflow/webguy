@@ -34,13 +34,14 @@ do =>
 # H.types.declare 'guy_dt_timestamp', tests:
 #   "@isa.text x":                    ( x ) -> @isa.text x
 #   "( /^\\d{8}-\\d{6}Z$/ ).test x":  ( x ) -> ( /^\d{8}-\d{6}Z$/ ).test x
+@_isa_guy_dt_timestamp = ( x ) -> ( typeof x is 'string' ) and ( /^\d{8}-\d{6}Z$/ ).test x
 
 # #-----------------------------------------------------------------------------------------------------------
 # H.types.declare 'guy_dt_now_cfg', tests:
 #   "@isa.object x":                    ( x ) -> @isa.object x
-# defaults.guy_dt_now_cfg =
-#     subtract:       null
-#     add:            null
+defaults.guy_dt_now_cfg =
+    subtract:       null
+    add:            null
 
 
 #===========================================================================================================
@@ -65,7 +66,8 @@ do =>
 @parse = ( srts ) ->
   # H.types.validate.guy_dt_timestamp srts
   R = ( @_dayjs srts, @_timestamp_input_template ).utc()
-  throw new Error "^guy.datetime.dt_parse@1^ #{rpr srts}" unless H.types.isa.guy_dt_valid_dayjs R
+  console.log '^5353^', R
+  throw new Error "^guy.datetime.dt_parse@1^ not a valid SRTS: #{srts}" unless @_isa_guy_dt_timestamp R
   return R
 
 #-----------------------------------------------------------------------------------------------------------
