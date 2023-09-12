@@ -2,8 +2,6 @@
 
 'use strict'
 
-console.log '^9833847^', require '../dependencies/levithan-date-format.js'
-
 #-----------------------------------------------------------------------------------------------------------
 @stamp      = -> utc_timestamp = performance.timeOrigin + performance.now()
 @stamp_text = -> @stamp().toFixed 3
