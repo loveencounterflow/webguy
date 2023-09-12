@@ -25,6 +25,28 @@
 
 ## `time`
 
+`WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB records.
+
+Timestamps are one of those things that seem easy (like, `+new Date()` or `Date.now()`) but get quite a bit
+harder when you bring in typical constraints. One wants one's timestamps to be:
+
+* **precise**: Computers are fast and a millisecond is sort of a long time for a CPU. Naïve JS timestamps
+  only have millisecond precision, so one can easily end up with two consecutive timestamps that are equal.
+  This leads to
+
+* **monotonous**: You don't want your timestamps to ever 'stand still' or, worse, decrement and repeat at
+  any point in time. Because `new Date()` is tied to civil time, they are not guaranteed to do that.
+
+* **relatable**: Ideally, you want your timestamps to tell you when something happened. A 13-digit number
+  can do that—in theory. In practice, only some nerds can reliably tell the difference between timestamps
+  from today and those from last week or last year.
+
+* **durable**: Time-keeping is complicated: Timezones are introduced and abolished, daylight saving dates
+  can vary within a single country and may get cancelled in some years or split into two separate durations
+  within a year; some people count years *ab urbe condita*, some days since CE&nbsp;1900, some seconds and
+  others milliseconds from CE&nbsp;1970; in some years, you get a leap second and so on. For these reasons,
+  local civil time is *not* a good choice for timestamps.
+
 * Suffixes:
   * methods ending in `f` return **f**loats,
   * methods ending in `s` return **s**trings;
