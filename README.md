@@ -10,6 +10,7 @@
   - [`props`](#props)
   - [`time`](#time)
     - [Configuration](#configuration)
+    - [Performance Considerations](#performance-considerations)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -86,3 +87,21 @@ cfg =
   * `milliseconds`: timestamps look like `1693992062544.423:000`
   * `compact`: timestamps look like `1693992062544.423:000`
 
+### Performance Considerations
+
+A quick test convinced me that I'm getting around 170 calls to `time.monostamp_s1()` into a single
+millisecond; these timestamps then look like
+
+```
+1694515874596.967:000
+1694515874596.976:000
+1694515874596.981:000
+1694515874596.990:000
+1694515874596.995:000
+```
+
+— that is, a repetition in the tens and hundredths of milliseconds is quite likely, but a repetition in the
+thhousandths of milliseconds (i.e. microseconds) is unlikely. It's a rare event (estimated to less than one
+in a million) that the counter ever goes up to even one. This tells me that on my (not up-market, not fast)
+laptop it should be more than safe to use three digits for the counter; however that may not be true for
+faster machines.
