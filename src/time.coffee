@@ -8,6 +8,7 @@ defaults =
  counter_joiner:  ':'
  ms_digits:       13
  ms_padder:       '0'
+ format:          'milliseconds' # 'compact'
 
 #-----------------------------------------------------------------------------------------------------------
 constants =
