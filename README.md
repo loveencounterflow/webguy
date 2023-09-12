@@ -9,6 +9,7 @@
 - [WebGuy is a Guy for the Web](#webguy-is-a-guy-for-the-web)
   - [`props`](#props)
   - [`time`](#time)
+    - [Configuration](#configuration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -69,3 +70,19 @@ harder when you bring in typical constraints. One wants one's timestamps to be:
   callers to this method. Sample return value: `[ '1693992062544.423', '000' ]`; should
   `time.stamp_and_count()` get called within the same microsecond, it'd return `[ '1693992062544.423', '001'
   ]` &sf.
+
+### Configuration
+
+```json
+cfg =
+ count_digits:    3
+ counter_joiner:  ':'
+ ms_digits:       13
+ ms_padder:       '0'
+ format:          'milliseconds' # 'compact'
+```
+
+* `format`:
+  * `milliseconds`: timestamps look like `1693992062544.423:000`
+  * `compact`: timestamps look like `1693992062544.423:000`
+
