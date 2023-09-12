@@ -4,11 +4,12 @@
 
 #===========================================================================================================
 defaults =
- count_digits:    3
- counter_joiner:  ':'
- ms_digits:       13
- ms_padder:       '0'
- format:          'milliseconds' # 'compact'
+  ### TAINT validate that count_digits > 0 ###
+  count_digits:    3
+  counter_joiner:  ':'
+  ms_digits:       13
+  ms_padder:       '0'
+  format:          'milliseconds' # 'compact'
 
 #-----------------------------------------------------------------------------------------------------------
 constants =
@@ -52,11 +53,24 @@ class Time
       count ?= 0
     else
       [ stamp_f, count, ] = @monostamp_f2()
-    return [ ( @stamp_s stamp_f ), ( count.toString().padStart @cfg.count_digits, '0' ), ]
+    count_s = count.toString().padStart @cfg.count_digits, '0'
+    switch @cfg.format
+      when 'milliseconds'
+        return [ ( @stamp_s stamp_f ), count_s, ]
+      when 'iso'
+        stamp_decimals  = stamp_f.toFixed constants.ms_decimals
+        stamp_decimals  = stamp_decimals.replace /^.*([0-9]{3})\.([0-9]+)/, '$1$2'
+        stamp_s         = ( new Date stamp_f ).toISOString()
+        stamp_s         = stamp_s.replace /...Z/, "#{stamp_decimals}Z"
+        return [ stamp_s, count_s, ]
+    throw new Error "unknown format #{@cfg.format}"
+
 
   #---------------------------------------------------------------------------------------------------------
   monostamp_s1: ( stamp_f = null, count = null ) -> ( @monostamp_s2 stamp_f, count ).join @cfg.counter_joiner
 
+
+#===========================================================================================================
 TIME            = new Time()
 TIME.Time       = Time
 module.exports  = TIME
