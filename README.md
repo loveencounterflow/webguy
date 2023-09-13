@@ -66,26 +66,37 @@ harder when you bring in typical constraints. One wants one's timestamps to be:
 
 * **`monostamp_f2 = ->`**: return a list containing the result of
 
-* **`monostamp_s2  = ( count_digits = 3 ) ->`**: return a list containing the result of
-  `time.stamp_s()` and a monotonic zero-based, zero-padded counter which will be shared across all
-  callers to this method. Sample return value: `[ '1693992062544.423', '000' ]`; should
-  `time.stamp_and_count()` get called within the same microsecond, it'd return `[ '1693992062544.423', '001'
-  ]` &sf.
+* **`monostamp_s2  = ( stamp_f = null, count = null ) ->`**: return a list containing the result of
+  `time.stamp_s()` and a monotonic zero-based, zero-padded counter which will be shared across all callers
+  to this method. Sample return value: `[ '1693992062544.423', '000' ]`; should `time.stamp_and_count()` get
+  called within the same microsecond, it'd return `[ '1693992062544.423', '001' ]` &sf. Especially for
+  testing purposes, one can pass in the fractional timestamp and a value for the counter.
+
+* **`monostamp_s1  = ( stamp_f = null, count = null ) ->`**: return the same as `monostamp_s2()`, but
+  concatenated using `cfg.counter_joiner`.
+
+* **`stamp()`** is a convenience equivalent to `monostamp_s1()`.
+
 
 ### Configuration
 
-```json
+```coffeescript
 cfg =
- count_digits:    3
- counter_joiner:  ':'
- ms_digits:       13
- ms_padder:       '0'
- format:          'milliseconds' # 'compact'
+ count_digits:    3     # how many digits to use for counter
+ counter_joiner:  ':'   # comes between timestamp and counter
+ ms_digits:       13    # thirteen digits should be enough for anyone (until November 2286)
+ ms_padder:       '0'   # padding for short timestamps (before 2001)
+ format:          'iso' # should be 'iso', or 'milliseconds', or custom format
 ```
 
 * `format`:
   * `milliseconds`: timestamps look like `1693992062544.423:000`
-  * `compact`: timestamps look like `1693992062544.423:000`
+  * `iso`: timestamps look like `1970-01-01T00:00:00.456789Z:000`
+  * any other string will be interpreted by [the `format()` method of
+    `dayjs`](https://day.js.org/docs/en/display/format), with the addition of `µ` U+00b5 Micro Sign, which
+    symbolizes 6 digits for the microseconds part. A minimal template that doesn't leave out any vital data
+    and still sorts correctly is `YYYYMMDDHHmmssµ`, which produces timestamps like
+    `20230913090909275140:000` (the counter being implicitly added).
 
 ### Performance Considerations
 
