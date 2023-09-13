@@ -105,3 +105,10 @@ thhousandths of milliseconds (i.e. microseconds) is unlikely. It's a rare event 
 in a million) that the counter ever goes up to even one. This tells me that on my (not up-market, not fast)
 laptop it should be more than safe to use three digits for the counter; however that may not be true for
 faster machines.
+
+
+<!--
+
+methods stop(), start() to keep current time (but not counter)
+
+ -->

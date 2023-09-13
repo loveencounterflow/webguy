@@ -3,6 +3,20 @@
 'use strict'
 
 #===========================================================================================================
+_dayjs = null
+
+#-----------------------------------------------------------------------------------------------------------
+dayjs = ( P... ) =>
+  unless _dayjs?
+    _dayjs            = require 'dayjs'
+    utc               = require 'dayjs/plugin/utc';               _dayjs.extend utc
+    # relativeTime      = require 'dayjs/plugin/relativeTime';      _dayjs.extend relativeTime
+    # toObject          = require 'dayjs/plugin/toObject';          _dayjs.extend toObject
+    # customParseFormat = require 'dayjs/plugin/customParseFormat'; _dayjs.extend customParseFormat
+    # duration          = require 'dayjs/plugin/duration';          _dayjs.extend duration
+  return _dayjs P...
+
+#===========================================================================================================
 defaults =
   ### TAINT validate that count_digits > 0 ###
   count_digits:    3
@@ -57,11 +71,16 @@ class Time
     switch @cfg.format
       when 'milliseconds'
         return [ ( @stamp_s stamp_f ), count_s, ]
-      when 'iso'
+      else
         stamp_decimals  = stamp_f.toFixed constants.ms_decimals
         stamp_decimals  = stamp_decimals.replace /^.*([0-9]{3})\.([0-9]+)/, '$1$2'
-        stamp_s         = ( new Date stamp_f ).toISOString()
-        stamp_s         = stamp_s.replace /...Z/, "#{stamp_decimals}Z"
+        switch @cfg.format
+          when 'iso'
+            stamp_s         = ( new Date stamp_f ).toISOString()
+            stamp_s         = stamp_s.replace /...Z/, "#{stamp_decimals}Z"
+          else
+            stamp_s         = ( dayjs stamp_f ).utc().format @cfg.format
+            stamp_s         = stamp_s.replace /µ/g, "#{stamp_decimals}"
         return [ stamp_s, count_s, ]
     throw new Error "unknown format #{@cfg.format}"
 
