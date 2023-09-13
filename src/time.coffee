@@ -23,7 +23,7 @@ defaults =
   counter_joiner:  ':'
   ms_digits:       13
   ms_padder:       '0'
-  format:          'milliseconds' # 'compact'
+  format:          'iso'
 
 #-----------------------------------------------------------------------------------------------------------
 constants =
@@ -86,7 +86,8 @@ class Time
 
 
   #---------------------------------------------------------------------------------------------------------
-  monostamp_s1: ( stamp_f = null, count = null ) -> ( @monostamp_s2 stamp_f, count ).join @cfg.counter_joiner
+  monostamp_s1: ( stamp_f = null, count = null  ) -> ( @monostamp_s2 stamp_f, count ).join @cfg.counter_joiner
+  stamp:        ( P...                          ) -> @monostamp_s1 P...
 
 
 #===========================================================================================================
