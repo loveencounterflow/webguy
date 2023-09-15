@@ -11,6 +11,7 @@
   - [`time`](#time)
     - [Configuration](#configuration)
     - [Performance Considerations](#performance-considerations)
+  - [`environment`](#environment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -123,3 +124,10 @@ faster machines.
 methods stop(), start() to keep current time (but not counter)
 
  -->
+
+## `environment`
+
+`( require 'webguy' ).environment` is an object like `{ browser: false, node: true, webworker: false, jsdom:
+false, deno: false, name: 'node', }` with boolean and one text properties that tell you in what kind of
+environment the code is running. Observe that there may be environments where no boolean property is `true`
+and `name` is `null`.
