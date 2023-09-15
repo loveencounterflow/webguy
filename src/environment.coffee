@@ -9,7 +9,7 @@
 const browser =
   typeof window !== "undefined" && typeof window.document !== "undefined";
 
-const node =
+const nodejs =
   typeof process !== "undefined" &&
   process.versions != null &&
   process.versions.node != null;
@@ -37,5 +37,11 @@ const deno =
 // export { isBrowser, isWebWorker, isNode, isJsDom, isDeno };
 ```
 
-module.exports = { browser, node, webworker, jsdom, deno, }
+name  = 'browser'   if browser
+name  = 'nodejs'    if nodejs
+name  = 'webworker' if webworker
+name  = 'jsdom'     if jsdom
+name  = 'deno'      if deno
+name ?= null
+module.exports = { browser, nodejs, webworker, jsdom, deno, name, }
 
