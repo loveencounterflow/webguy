@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/trm.coffee"
+  ],
+  "names": [],
+  "mappings": "AAEA;EAAA;AAAA,MAAA,KAAA,EAAA,GAAA;;;EAGA,KAAA,GAA4B,OAAA,CAAQ,0BAAR,EAH5B;;;EAMA,IAAC,CAAA,GAAD,GAAO,GAAA,GAAM,CAAE,CAAF,CAAA,GAAA;WAAS,KAAK,CAAC,OAAN,CAAc,CAAd,EAAiB;MAAE,aAAA,EAAe;IAAjB,CAAjB;EAAT;AANb",
+  "sourcesContent": [
+    "\n\n'use strict'\n\n#===========================================================================================================\nLOUPE                     = require '../dependencies/loupe.js'\n\n#-----------------------------------------------------------------------------------------------------------\n@rpr = rpr = ( x ) => LOUPE.inspect x, { customInspect: false, }\n\n"
+  ]
+}
