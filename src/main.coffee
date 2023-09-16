@@ -18,6 +18,7 @@ class Guy
   props:        require './props'
   time:         require './time'
   environment:  require './environment'
+  trm:          require './trm'
 
 
 #===========================================================================================================

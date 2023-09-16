@@ -131,3 +131,9 @@ methods stop(), start() to keep current time (but not counter)
 false, deno: false, name: 'node', }` with boolean and one text properties that tell you in what kind of
 environment the code is running. Observe that there may be environments where no boolean property is `true`
 and `name` is `null`.
+
+## `trm`
+
+* **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
+
+
