@@ -95,6 +95,7 @@ cfg =
   * `milliseconds`: timestamps look like `1693992062544.423:000`
   * `iso`: timestamps look like `1970-01-01T00:00:00.456789Z:000`
   * `compact`: timestamps look like `19700101000000456789:000`
+  * `dense`: timestamps look like `19700101@000000.456789:000` for readability
   * any other string will be interpreted by [the `format()` method of
     `dayjs`](https://day.js.org/docs/en/display/format), with the addition of `µ` U+00b5 Micro Sign, which
     symbolizes 6 digits for the microseconds part. A minimal template that doesn't leave out any vital data

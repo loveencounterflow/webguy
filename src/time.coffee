@@ -81,6 +81,9 @@ class Time
           when 'compact'
             stamp_s         = ( dayjs stamp_f ).utc().format 'YYYYMMDDHHmmssµ'
             stamp_s         = stamp_s.replace /µ/g, "#{stamp_decimals}"
+          when 'dense'
+            stamp_s         = ( dayjs stamp_f ).utc().format 'YYYYMMDD@HHmmssµ'
+            stamp_s         = stamp_s.replace /µ/g, ".#{stamp_decimals}"
           else
             stamp_s         = ( dayjs stamp_f ).utc().format @cfg.format
             stamp_s         = stamp_s.replace /µ/g, "#{stamp_decimals}"
