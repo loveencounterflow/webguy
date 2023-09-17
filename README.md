@@ -12,6 +12,7 @@
     - [Configuration](#configuration)
     - [Performance Considerations](#performance-considerations)
   - [`environment`](#environment)
+  - [`trm`](#trm)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -93,10 +94,11 @@ cfg =
 * `format`:
   * `milliseconds`: timestamps look like `1693992062544.423:000`
   * `iso`: timestamps look like `1970-01-01T00:00:00.456789Z:000`
+  * `compact`: timestamps look like `19700101000000456789:000`
   * any other string will be interpreted by [the `format()` method of
     `dayjs`](https://day.js.org/docs/en/display/format), with the addition of `µ` U+00b5 Micro Sign, which
     symbolizes 6 digits for the microseconds part. A minimal template that doesn't leave out any vital data
-    and still sorts correctly is `YYYYMMDDHHmmssµ`, which produces timestamps like
+    and still sorts correctly is `YYYYMMDDHHmmssµ`, which produces `compact` format timestamps like
     `20230913090909275140:000` (the counter being implicitly added).
 
 ### Performance Considerations
