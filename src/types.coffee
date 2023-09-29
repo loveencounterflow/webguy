@@ -49,7 +49,7 @@ class Isa
   list:          ( x ) -> Array.isArray x
   set:           ( x ) -> x instanceof Set
   map:           ( x ) -> x instanceof Map
-  sized:         ( x ) -> ( @size_of x, @_signals.nothing ) isnt @_signals.nothing
+  # sized:         ( x ) -> ( @size_of x, @_signals.nothing ) isnt @_signals.nothing
   iterable:      ( x ) -> x? and x[ Symbol.iterator ]?
   container:     ( x ) -> ( typeof x ) isnt 'string' and ( @iterable x ) and ( @sized x )
 
