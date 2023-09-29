@@ -2,6 +2,7 @@
 
 'use strict'
 
+isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Function]'
 
 #===========================================================================================================
 class Isa
@@ -29,6 +30,8 @@ class Isa
   codepoint:     ( x ) -> ( ( typeof x ) is 'string' ) and /^.$/u.test x
   codepointid:   ( x ) -> @isa.integer x and ( 0x00000 <= x <= 0x1ffff )
   regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
+  buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
+
   #---------------------------------------------------------------------------------------------------------
   ### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
   https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
@@ -77,11 +80,13 @@ class Isa
   #---------------------------------------------------------------------------------------------------------
   boolean:       ( x ) -> ( x is true ) or ( x is false )
   object:        ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
-  function:      ( x ) -> ( Object::toString.call x ) is '[object Function]'
+  function:      ( x ) -> isa_function x
+  asyncfunction: ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
+  symbol:        ( x ) -> ( typeof x ) is 'symbol'
 
   #---------------------------------------------------------------------------------------------------------
-  @class
-    isa:        ( x ) -> ( ( Object::toString.call x ) is '[object Function]' ) and \
+  class:         ( x ) ->
+    ( ( Object::toString.call x ) is '[object Function]' ) and \
       ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
     # template:   ->
 
