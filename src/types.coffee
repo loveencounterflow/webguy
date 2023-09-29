@@ -30,7 +30,7 @@ class Isa
   #---------------------------------------------------------------------------------------------------------
   text:          ( x ) -> ( typeof x ) is 'string'
   codepoint:     ( x ) -> ( ( typeof x ) is 'string' ) and /^.$/u.test x
-  codepointid:   ( x ) -> @integer x and ( 0x00000 <= x <= 0x1ffff )
+  codepointid:   ( x ) -> ( @integer x ) and ( 0x00000 <= x <= 0x1ffff )
   regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
   buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
 
