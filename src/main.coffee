@@ -19,6 +19,7 @@ class Guy
   time:         require './time'
   environment:  require './environment'
   trm:          require './trm'
+  types:        require './types'
 
 
 #===========================================================================================================
