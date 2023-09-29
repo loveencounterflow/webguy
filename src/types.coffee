@@ -101,21 +101,52 @@ do rename_isa_methods = =>
   return null
 
 
-  #---------------------------------------------------------------------------------------------------------
-  @asyncfunction
-    isa:        ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
-    template:   ->
+#===========================================================================================================
+class Validate extends Isa
 
   #---------------------------------------------------------------------------------------------------------
-  @symbol
-    isa:        ( x ) -> ( typeof x ) is 'symbol'
-    template:   Symbol ''
-    create:     ( x ) -> Symbol x
+  clasz = @
 
   #---------------------------------------------------------------------------------------------------------
-  @knowntype
-    isa:        ( x ) ->
-      return false unless ( @isa.text x ) and ( x.length > 0 )
+  @create_proxy: ( x ) -> new Proxy x,
+    get: ( target, key, receiver ) =>
+      return target[ accessor ] if Reflect.has target, accessor
+      return target[ accessor ] if ( typeof accessor ) isnt 'string'
+      return target[ accessor ] if accessor.startsWith '_'
+      if Reflect.has target, '__get_handler'
+        ast = if ( Reflect.has target, '__parser' ) then target.__parser.parse accessor else null
+        if ( R = target.__get_handler accessor, ast )?
+          R = target.__nameit '###' + accessor, R
+          GUY.props.hide target, accessor, R
+          return R
+      throw new E.Unknown_accessor '^Intervoke_proxy/proxy.get@1^', accessor
+
+  #---------------------------------------------------------------------------------------------------------
+  # constructor: -> clasz.create_proxy @
+
+#===========================================================================================================
+class Types
+
+  #---------------------------------------------------------------------------------------------------------
+  clasz = @
+
+  # #---------------------------------------------------------------------------------------------------------
+  # @create_proxy: ( x ) -> new Proxy x,
+  #   get: ( target, key, receiver ) =>
+  #     return target[ accessor ] if Reflect.has target, accessor
+  #     return target[ accessor ] if ( typeof accessor ) isnt 'string'
+  #     return target[ accessor ] if accessor.startsWith '_'
+  #     if Reflect.has target, '__get_handler'
+  #       ast = if ( Reflect.has target, '__parser' ) then target.__parser.parse accessor else null
+  #       if ( R = target.__get_handler accessor, ast )?
+  #         R = target.__nameit '###' + accessor, R
+  #         GUY.props.hide target, accessor, R
+  #         return R
+  #     throw new E.Unknown_accessor '^Intervoke_proxy/proxy.get@1^', accessor
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ->
+    @isa = new Isa()
       return GUY.props.has @registry, x
 
 
