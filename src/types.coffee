@@ -91,7 +91,15 @@ class Isa
   class:         ( x ) ->
     ( ( Object::toString.call x ) is '[object Function]' ) and \
       ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
-    # template:   ->
+
+#===========================================================================================================
+do rename_isa_methods = =>
+  for key in props.public_keys Isa::
+    continue unless isa_function ( f = Isa::[ key ] )
+    props.nameit "isa_#{key}", f
+  # console.log 26575, Isa::[ key ] for key in props.public_keys Isa::
+  return null
+
 
   #---------------------------------------------------------------------------------------------------------
   @asyncfunction
