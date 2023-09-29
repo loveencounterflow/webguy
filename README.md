@@ -139,4 +139,10 @@ and `name` is `null`.
 
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
 
+## To Do
 
+* **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
+  non-objects as well or catch exception (better)
+* **`[–]`** define what `iterable` and `container` are to mean precisely, as in, provide the defining
+  characteristic. Somehow we can e.g. iterate over a string as in `x for x in 'abc'` and `d = [ 'abc'..., ]`
+  but `Reflect.has 'abc', Symbol.iterator` still fails with an exception ('called on non-object').

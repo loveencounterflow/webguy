@@ -46,12 +46,13 @@ class Isa
   #=========================================================================================================
   # Container Types
   #---------------------------------------------------------------------------------------------------------
-  list:          ( x ) -> Array.isArray x
-  set:           ( x ) -> x instanceof Set
-  map:           ( x ) -> x instanceof Map
-  # sized:         ( x ) -> ( @size_of x, @_signals.nothing ) isnt @_signals.nothing
-  iterable:      ( x ) -> x? and x[ Symbol.iterator ]?
-  container:     ( x ) -> ( typeof x ) isnt 'string' and ( @iterable x ) and ( @sized x )
+  list:       ( x ) -> Array.isArray x
+  set:        ( x ) -> x instanceof Set
+  map:        ( x ) -> x instanceof Map
+  sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
+
+  # container:  ( x ) -> ( typeof x ) isnt 'string' and ( @iterable x ) and ( @sized x )
+  # iterable:   ( x ) -> ( ( typeof x ) is 'string' ) and try ( Reflect.has Symbol.iterator ) catch error then false
 
   #=========================================================================================================
   # Numeric Types
