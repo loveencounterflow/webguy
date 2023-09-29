@@ -147,6 +147,13 @@ class Types
   #---------------------------------------------------------------------------------------------------------
   constructor: ->
     @isa = new Isa()
-      return GUY.props.has @registry, x
 
+
+#===========================================================================================================
+do =>
+  module.exports =
+    Isa:        Isa
+    Validate:   Validate
+    isa:        new Isa()
+    validate:   new Validate()
 
