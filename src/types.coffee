@@ -96,6 +96,8 @@ do rename_isa_methods = =>
   for key in props.public_keys Isa::
     continue unless isa_function ( f = Isa::[ key ] )
     props.nameit "isa_#{key}", f
+    ### TAINT `isa` methods should be called in the context of their `types` instance ###
+    Isa::[ "optional_#{key}" ] = props.nameit "isa_optional_#{key}", ( x ) -> ( not x? ) or ( f.call @, x )
   # console.log 26575, Isa::[ key ] for key in props.public_keys Isa::
   return null
 
