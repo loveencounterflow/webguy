@@ -22,3 +22,5 @@
     break if owner is Object::
   return [ R..., ];
 
+#-----------------------------------------------------------------------------------------------------------
+@nameit = ( name, f ) -> Object.defineProperty f, 'name', { value: name, }; f
