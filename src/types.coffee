@@ -164,6 +164,14 @@ class Types
     return 'fn'     if descriptor.writable
     return 'class'
 
+  #---------------------------------------------------------------------------------------------------------
+  get_type_signature: ( x ) -> [
+    ( typeof                    x                   )
+    ( @get_miller_device_name   x                   )
+    ( @get_denicola_device_name x                   )
+    ( @get_carter_device_name   x                   )
+    ( if Number.isNaN           x then 'N' else '0' ) ].join '/'
+
 #===========================================================================================================
 do =>
   module.exports =
