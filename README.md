@@ -154,12 +154,16 @@ and `name` is `null`.
   * the shortened *Miller Device Name* (MDN) obtained by `Object::toString.call x`, but replacing the
     surrounding (and invariably constant) `[object (.*)]`
   * the value's `constructor.name` property or `0` where missing
-  * `N` if `Number.isNaN x` is `true`, `????` otherwise
+  * the value's *Denicola Device Name* (DDN), which is the `constructor` property's `name` or, if the value
+    has no prototype, the digit zero `0`.
   * the value's *Carter Device Name* (CDN), which is `class` for ES6 `class`es, `fn` for functions, and
     `other` for everything else. It works by first looking at a value's Miller Device Name; if that is not
     indicative of a function, the value's CDN is `other`. Else, the property descriptor `dsc` of the value's
     prototype is retrieved; if it is missing, the CDN is `other`, too. If `dsc.writable` is `true`, the CDN
     is `fn`; otherwise, the CDN is `class`.
+  * `N` if `Number.isNaN x` is `true`, digit zero `0` otherwise
+
+Results are joined with a slash `/`.
 
 **### TAINT test for class instances?**
 
