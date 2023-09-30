@@ -13,6 +13,8 @@
     - [Performance Considerations](#performance-considerations)
   - [`environment`](#environment)
   - [`trm`](#trm)
+  - [`types`](#types)
+    - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -140,6 +142,64 @@ and `name` is `null`.
 
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
 
+## `types`
+
+### Type Signatures
+
+* string of variable length reflecting the results of a minimal number of tests that never fail and
+  give each type of values a unique name
+
+* Tests are:
+  * the result of `typeof x`
+  * the shortened Miller Device Name obtained by `Object::toString.call x`, but replacing the surrounding
+    (and invariably constant) `[object (.*)]`
+  * the value's `constructor.name` property or `0` where missing
+  * `N` if `Number.isNaN x` is `true`, `????` otherwise
+
+**### TAINT test for class instances?**
+
+```coffeescript
+( x instanceof Object )
+( x?.constructor.name ? '-' )
+( Number.isNaN x ) ].join '/'
+
+( ( Object::toString.call x ).replace /^\[object (.+?)\]$/u, '$1' )
+( x?.constructor.name ? '-' )
+( if Number.isNaN x then 'N' else '-' ) ].join '/'
+###
+
+xxx The [Carter Device (by one Ian Carter, 2021-09-24)](https://stackoverflow.com/a/69316645/7568091) for
+those values whose Miller Device Name is `[object Function]`:
+
+Also see [this detailed answer in the same discussion](https://stackoverflow.com/a/72326559/7568091).
+
+[Link to specs](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation)
+
+###
+get_carter_device_name = ( x, miller_device_name = null ) ->
+  miller_device_name ?= Object::toString.call x
+  return '-'  unless miller_device_name is '[object Function]'
+  return 'fn' unless ( descriptor = Object.getOwnPropertyDescriptor x, 'prototype' )?
+  return 'fn' if descriptor.writable
+  return 'class'
+console.log '^4234-1^', isa_class ( class D )
+console.log '^4234-2^', isa_class ( -> )
+f = -> new Promise ( resolve , reject ) ->
+  console.log '^4234-3^', isa_class resolve
+  console.log '^4234-4^', isa_class reject
+  console.log '^4234-5^', Object.getOwnPropertyDescriptor resolve, 'prototype'
+  resolve null
+await f()
+###
+https://stackoverflow.com/a/69316645/7568091 (2021-09-24 Ian Carter)
+https://stackoverflow.com/a/72326559/7568091
+coffee> ( Object.getOwnPropertyDescriptor d, 'prototype' )?.writable ? false
+{ value: {}, writable: false, enumerable: false, configurable: false }
+coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
+{ value: {}, writable: true, enumerable: false, configurable: false }
+###
+```
+
 ## To Do
 
 * **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
@@ -147,3 +207,11 @@ and `name` is `null`.
 * **`[–]`** define what `iterable` and `container` are to mean precisely, as in, provide the defining
   characteristic. Somehow we can e.g. iterate over a string as in `x for x in 'abc'` and `d = [ 'abc'..., ]`
   but `Reflect.has 'abc', Symbol.iterator` still fails with an exception ('called on non-object').
+  * **`[–]`** In the same vein, what exactly is an `object` in JS? Maybe indeed anything that is not a
+    primitive value (i.e. not `null`, `undefined`, `true`, `false`, number including `Infinity` and `NaN`
+    (but not `BigInt`)). As such, maybe `primitive`, `nonprimitive` would be OK?
+    * Maybe any `d` for which `[ ( typeof d ), ( Object::toString.call d ), ( d instanceof Object ), ]`
+      gives `[ 'object', '[object Array]', true ]`. This would *include* instances of a plain `class O;`
+      which are implicitly (but somehow different from explicitly?) derived from `Object`. One could throw
+      the [Dominic Denicola Device](https://stackoverflow.com/users/3191/domenic) i.e. `d.constructor.name`
+      into the mix which would then *exclude* instances of `class O;`.
