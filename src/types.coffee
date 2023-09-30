@@ -62,7 +62,7 @@ class Isa
   bigint:        ( x ) -> typeof x is 'bigint'
   integer:       ( x ) -> Number.isInteger x
   cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
-  zero:          ( x ) -> x is 0 ### NOTE true for -0 as well ###
+  zero:          ( x ) -> ( x is 0 ) or ( x is 0n ) ### NOTE true for -0 as well ###
   nan:           ( x ) -> Number.isNaN x
 
   #---------------------------------------------------------------------------------------------------------
