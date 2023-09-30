@@ -17,21 +17,11 @@ class Isa
   null:          ( x ) -> x is null
   undefined:     ( x ) -> x is undefined
 
-
-  #=========================================================================================================
-  # Existential Types
-  #---------------------------------------------------------------------------------------------------------
-  anything:      ( x ) -> true
-  something:     ( x ) -> x?
-  nothing:       ( x ) -> not x?
-
-
   #=========================================================================================================
   # Textual Types
   #---------------------------------------------------------------------------------------------------------
   text:          ( x ) -> ( typeof x ) is 'string'
   codepoint:     ( x ) -> ( ( typeof x ) is 'string' ) and /^.$/u.test x
-  codepointid:   ( x ) -> ( @integer x ) and ( 0x00000 <= x <= 0x1ffff )
   regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
   buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
 
@@ -43,14 +33,13 @@ class Isa
     return ( x.match \
       /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
 
-
   #=========================================================================================================
   # Container Types
   #---------------------------------------------------------------------------------------------------------
   list:       ( x ) -> Array.isArray x
   set:        ( x ) -> x instanceof Set
   map:        ( x ) -> x instanceof Map
-  sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
+  # sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
 
   # container:  ( x ) -> ( typeof x ) isnt 'string' and ( @iterable x ) and ( @sized x )
   # iterable:   ( x ) -> ( ( typeof x ) is 'string' ) and try ( Reflect.has Symbol.iterator ) catch error then false
@@ -58,13 +47,16 @@ class Isa
   #=========================================================================================================
   # Numeric Types
   #---------------------------------------------------------------------------------------------------------
-  numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
+  infinity:      ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
   float:         ( x ) -> Number.isFinite x
+  numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
   bigint:        ( x ) -> typeof x is 'bigint'
   integer:       ( x ) -> Number.isInteger x
+  codepointid:   ( x ) -> ( @integer x ) and ( 0x00000 <= x <= 0x1ffff )
   cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
   zero:          ( x ) -> ( x is 0 ) or ( x is 0n ) ### NOTE true for -0 as well ###
   nan:           ( x ) -> Number.isNaN x
+  nonzero:       ( x ) -> ( @numeric x ) and ( not @zero x )
 
   #---------------------------------------------------------------------------------------------------------
   even:          ( x ) ->
@@ -78,20 +70,30 @@ class Isa
     else if typeof x is 'bigint'  then return ( x % 2n ) isnt 0n
     return false
 
-
   #=========================================================================================================
-  # Other Types
-  #---------------------------------------------------------------------------------------------------------
-  boolean:       ( x ) -> ( x is true ) or ( x is false )
-  object:        ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
-  function:      ( x ) -> isa_function x
-  asyncfunction: ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
-  symbol:        ( x ) -> ( typeof x ) is 'symbol'
-
+  # Classes
   #---------------------------------------------------------------------------------------------------------
   class:         ( x ) ->
     ( ( Object::toString.call x ) is '[object Function]' ) and \
       ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
+
+  #=========================================================================================================
+  # Other Types
+  #---------------------------------------------------------------------------------------------------------
+  boolean:        ( x ) -> ( x is true ) or ( x is false )
+  object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
+  buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false
+  function:       ( x ) -> isa_function x
+  asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
+  symbol:         ( x ) -> ( typeof x ) is 'symbol'
+
+  #=========================================================================================================
+  # Existential Types
+  #---------------------------------------------------------------------------------------------------------
+  nothing:        ( x ) -> not x?
+  something:      ( x ) -> x?
+  anything:       ( x ) -> true
+
 
 #===========================================================================================================
 do rename_isa_methods = =>
@@ -151,7 +153,29 @@ class Types
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ->
-    @isa = new Isa()
+    @isa                    = new Isa()
+    @_compile_isa_method_catalog()
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  _compile_isa_method_catalog: ->
+    @_isa_methods           = []
+    for type in props.public_keys @isa
+      continue unless isa_function ( isa_method = Isa::[ type ] )
+      continue if type in [ 'nothing', 'something', 'anything', ]
+      continue if type.startsWith 'optional_'
+      @_isa_methods.push [ type, isa_method, ]
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
+  type_of: ( x ) ->
+    for [ type, isa_method, ] in @_isa_methods
+      return type if isa_method.call @isa, x
+    # debug '^Types::type_of@1^', @get_denicola_device_name x
+    return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
+    ### TAINT return class name? ###
+    ### TAINT raise exception? ###
+    return 'something'
 
   #---------------------------------------------------------------------------------------------------------
   get_miller_device_name:   ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
