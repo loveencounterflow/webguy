@@ -151,21 +151,26 @@ and `name` is `null`.
 
 * Tests are:
   * the result of `typeof x`
-  * the shortened Miller Device Name obtained by `Object::toString.call x`, but replacing the surrounding
-    (and invariably constant) `[object (.*)]`
+  * the shortened *Miller Device Name* (MDN) obtained by `Object::toString.call x`, but replacing the
+    surrounding (and invariably constant) `[object (.*)]`
   * the value's `constructor.name` property or `0` where missing
   * `N` if `Number.isNaN x` is `true`, `????` otherwise
+  * the value's *Carter Device Name* (CDN), which is `class` for ES6 `class`es, `fn` for functions, and
+    `other` for everything else. It works by first looking at a value's Miller Device Name; if that is not
+    indicative of a function, the value's CDN is `other`. Else, the property descriptor `dsc` of the value's
+    prototype is retrieved; if it is missing, the CDN is `other`, too. If `dsc.writable` is `true`, the CDN
+    is `fn`; otherwise, the CDN is `class`.
 
 **### TAINT test for class instances?**
 
 ```coffeescript
-( x instanceof Object )
+( typeof x )
 ( x?.constructor.name ? '-' )
 ( Number.isNaN x ) ].join '/'
 
 ( ( Object::toString.call x ).replace /^\[object (.+?)\]$/u, '$1' )
-( x?.constructor.name ? '-' )
-( if Number.isNaN x then 'N' else '-' ) ].join '/'
+( x?.constructor.name ? '0' )
+( if Number.isNaN x then 'N' else '-' )
 ###
 
 xxx The [Carter Device (by one Ian Carter, 2021-09-24)](https://stackoverflow.com/a/69316645/7568091) for
