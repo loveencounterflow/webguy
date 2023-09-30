@@ -153,9 +153,16 @@ class Types
     @isa = new Isa()
 
   #---------------------------------------------------------------------------------------------------------
-  get_miller_device_name: ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
+  get_miller_device_name:   ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
+  get_denicola_device_name: ( x ) -> x?.constructor.name ? '0'
+
   #---------------------------------------------------------------------------------------------------------
-  get_carter_device_name: ( x ) ->
+  get_carter_device_name: ( x, miller_device_name = null ) ->
+    miller_device_name ?= Object::toString.call x
+    return 'other'  unless miller_device_name in [ '[object Function]', 'Function', ]
+    return 'fn'     unless ( descriptor = Object.getOwnPropertyDescriptor x, 'prototype' )?
+    return 'fn'     if descriptor.writable
+    return 'class'
 
 #===========================================================================================================
 do =>
