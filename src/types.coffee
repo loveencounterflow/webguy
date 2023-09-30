@@ -152,12 +152,18 @@ class Types
   constructor: ->
     @isa = new Isa()
 
+  #---------------------------------------------------------------------------------------------------------
+  get_miller_device_name: ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
+  #---------------------------------------------------------------------------------------------------------
+  get_carter_device_name: ( x ) ->
 
 #===========================================================================================================
 do =>
   module.exports =
     Isa:        Isa
     Validate:   Validate
+    Types:      Types
     isa:        new Isa()
     validate:   new Validate()
+    types:      new Types()
 
