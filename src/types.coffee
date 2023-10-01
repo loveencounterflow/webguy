@@ -20,22 +20,16 @@ isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Fun
   #=========================================================================================================
   # Textual Types
   #---------------------------------------------------------------------------------------------------------
-  text:          ( x ) ->
-    debug '^text@1^', @constructor.name
-    debug '^text@2^', @isa.constructor.name
-  codepoint:     ( x ) -> ( ( typeof x ) is 'string' ) and /^.$/u.test x
+  text:          ( x ) -> ( typeof x ) is 'string'
+  codepoint:     ( x ) -> ( @isa.text x ) and ( /^.$/u.test x )
   regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
   buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
 
   #---------------------------------------------------------------------------------------------------------
   ### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
   https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
-  jsidentifier:  ( x ) ->
-    debug '^jsidentifier@1^', @constructor.name
-    debug '^jsidentifier@2^', @isa.constructor.name
-    return false unless @isa.text x
-    return ( x.match \
-      /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
+  jsidentifier:  ( x ) -> ( @isa.text x ) and ( x.match \
+    /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
 
   #=========================================================================================================
   # Container Types
@@ -56,10 +50,7 @@ isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Fun
   numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
   bigint:        ( x ) -> typeof x is 'bigint'
   integer:       ( x ) -> Number.isInteger x
-  codepointid:   ( x ) ->
-    debug '^codepointid@1^', @constructor?.name ? '??????????????'
-    debug '^codepointid@2^', @isa?.constructor?.name ? '??????????????'
-    ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
+  codepointid:   ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
   cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
   zero:          ( x ) -> ( x is 0 ) or ( x is 0n ) ### NOTE true for -0 as well ###
   nan:           ( x ) -> Number.isNaN x
@@ -126,25 +117,21 @@ do rename_isa_methods = =>
 
   #---------------------------------------------------------------------------------------------------------
   _compile: ->
-    proto = {}
-    @isa  = Object.create proto
-    debug '^_compile@1^', @isa?.constructor?.name ? '????????????????????????????????????'
+    proto         = {}
+    @isa          = Object.create proto
     @_isa_methods = []
+    #.......................................................................................................
     for type in props.public_keys Isa::
-      method        = Isa::[ type ]
+      method          = Isa::[ type ]
       continue unless isa_function method
-      method        = method.bind @
-      # if type is 'codepointid'
-      #   debug '^_compile@2^', method 'xxx'
-      #   debug '^_compile@2^', method ''
-      #   debug '^_compile@2^', method 2
+      method          = method.bind @
       otype           = "optional_#{type}"
       proto[ type   ] = method
       proto[ otype  ] = do ( type, method ) =>
         props.nameit "isa_#{otype}", ( x ) => ( not x? ) or ( method x )
       continue if type in [ 'nothing', 'something', 'anything', ]
-      # continue if type.startsWith 'optional_'
       @_isa_methods.push [ type, method, ]
+    #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
