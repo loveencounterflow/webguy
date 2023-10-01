@@ -9,7 +9,7 @@ isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Fun
 
 
 #===========================================================================================================
-class Isa
+@Isa = class Isa
 
   #=========================================================================================================
   # Bottom Types
@@ -20,7 +20,9 @@ class Isa
   #=========================================================================================================
   # Textual Types
   #---------------------------------------------------------------------------------------------------------
-  text:          ( x ) -> ( typeof x ) is 'string'
+  text:          ( x ) ->
+    debug '^text@1^', @constructor.name
+    debug '^text@2^', @isa.constructor.name
   codepoint:     ( x ) -> ( ( typeof x ) is 'string' ) and /^.$/u.test x
   regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
   buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
@@ -29,7 +31,9 @@ class Isa
   ### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
   https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
   jsidentifier:  ( x ) ->
-    return false unless @text x
+    debug '^jsidentifier@1^', @constructor.name
+    debug '^jsidentifier@2^', @isa.constructor.name
+    return false unless @isa.text x
     return ( x.match \
       /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
 
@@ -41,7 +45,7 @@ class Isa
   map:        ( x ) -> x instanceof Map
   # sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
 
-  # container:  ( x ) -> ( typeof x ) isnt 'string' and ( @iterable x ) and ( @sized x )
+  # container:  ( x ) -> ( typeof x ) isnt 'string' and ( @isa.iterable x ) and ( @isa.sized x )
   # iterable:   ( x ) -> ( ( typeof x ) is 'string' ) and try ( Reflect.has Symbol.iterator ) catch error then false
 
   #=========================================================================================================
@@ -52,11 +56,14 @@ class Isa
   numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
   bigint:        ( x ) -> typeof x is 'bigint'
   integer:       ( x ) -> Number.isInteger x
-  codepointid:   ( x ) -> ( @integer x ) and ( 0x00000 <= x <= 0x1ffff )
+  codepointid:   ( x ) ->
+    debug '^codepointid@1^', @constructor?.name ? '??????????????'
+    debug '^codepointid@2^', @isa?.constructor?.name ? '??????????????'
+    ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
   cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
   zero:          ( x ) -> ( x is 0 ) or ( x is 0n ) ### NOTE true for -0 as well ###
   nan:           ( x ) -> Number.isNaN x
-  nonzero:       ( x ) -> ( @numeric x ) and ( not @zero x )
+  nonzero:       ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
 
   #---------------------------------------------------------------------------------------------------------
   even:          ( x ) ->
@@ -99,78 +106,51 @@ class Isa
 do rename_isa_methods = =>
   for key in props.public_keys Isa::
     continue unless isa_function ( f = Isa::[ key ] )
-    do ( f ) =>
-      props.nameit "isa_#{key}", f
-      ### TAINT `isa` methods should be called in the context of their `types` instance ###
-      Isa::[ "optional_#{key}" ] = props.nameit "isa_optional_#{key}", ( x ) -> ( not x? ) or ( f.call @, x )
-      return null
+    # do ( f ) =>
+    props.nameit "isa_#{key}", f
+      # return null
   # console.log 26575, Isa::[ key ] for key in props.public_keys Isa::
   return null
 
 
 #===========================================================================================================
-class Validate extends Isa
-
-  #---------------------------------------------------------------------------------------------------------
-  clasz = @
-
-  #---------------------------------------------------------------------------------------------------------
-  @create_proxy: ( x ) -> new Proxy x,
-    get: ( target, key, receiver ) =>
-      return target[ accessor ] if Reflect.has target, accessor
-      return target[ accessor ] if ( typeof accessor ) isnt 'string'
-      return target[ accessor ] if accessor.startsWith '_'
-      if Reflect.has target, '__get_handler'
-        ast = if ( Reflect.has target, '__parser' ) then target.__parser.parse accessor else null
-        if ( R = target.__get_handler accessor, ast )?
-          R = target.__nameit '###' + accessor, R
-          GUY.props.hide target, accessor, R
-          return R
-      throw new E.Unknown_accessor '^Intervoke_proxy/proxy.get@1^', accessor
-
-  #---------------------------------------------------------------------------------------------------------
-  # constructor: -> clasz.create_proxy @
+@Validate = class Validate
 
 #===========================================================================================================
-class Types
-
-  #---------------------------------------------------------------------------------------------------------
-  clasz = @
-
-  # #---------------------------------------------------------------------------------------------------------
-  # @create_proxy: ( x ) -> new Proxy x,
-  #   get: ( target, key, receiver ) =>
-  #     return target[ accessor ] if Reflect.has target, accessor
-  #     return target[ accessor ] if ( typeof accessor ) isnt 'string'
-  #     return target[ accessor ] if accessor.startsWith '_'
-  #     if Reflect.has target, '__get_handler'
-  #       ast = if ( Reflect.has target, '__parser' ) then target.__parser.parse accessor else null
-  #       if ( R = target.__get_handler accessor, ast )?
-  #         R = target.__nameit '###' + accessor, R
-  #         GUY.props.hide target, accessor, R
-  #         return R
-  #     throw new E.Unknown_accessor '^Intervoke_proxy/proxy.get@1^', accessor
+@Types = class Types
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ->
-    @isa                    = new Isa()
-    @_compile_isa_method_catalog()
+    @_compile()
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  _compile_isa_method_catalog: ->
-    @_isa_methods           = []
-    for type in props.public_keys @isa
-      continue unless isa_function ( isa_method = Isa::[ type ] )
+  _compile: ->
+    proto = {}
+    @isa  = Object.create proto
+    debug '^_compile@1^', @isa?.constructor?.name ? '????????????????????????????????????'
+    @_isa_methods = []
+    for type in props.public_keys Isa::
+      method        = Isa::[ type ]
+      continue unless isa_function method
+      method        = method.bind @
+      # if type is 'codepointid'
+      #   debug '^_compile@2^', method 'xxx'
+      #   debug '^_compile@2^', method ''
+      #   debug '^_compile@2^', method 2
+      otype           = "optional_#{type}"
+      proto[ type   ] = method
+      proto[ otype  ] = do ( type, method ) =>
+        props.nameit "isa_#{otype}", ( x ) => ( not x? ) or ( method x )
       continue if type in [ 'nothing', 'something', 'anything', ]
-      continue if type.startsWith 'optional_'
-      @_isa_methods.push [ type, isa_method, ]
+      # continue if type.startsWith 'optional_'
+      @_isa_methods.push [ type, method, ]
     return null
 
   #---------------------------------------------------------------------------------------------------------
   type_of: ( x ) ->
     for [ type, isa_method, ] in @_isa_methods
-      return type if isa_method.call @isa, x
+      return type if isa_method x
     # debug '^Types::type_of@1^', @get_denicola_device_name x
     return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
     ### TAINT return class name? ###
@@ -197,13 +177,10 @@ class Types
     ( @get_carter_device_name   x                   )
     ( if Number.isNaN           x then 'N' else '0' ) ].join '/'
 
+
 #===========================================================================================================
-do =>
-  module.exports =
-    Isa:        Isa
-    Validate:   Validate
-    Types:      Types
-    isa:        new Isa()
-    validate:   new Validate()
-    types:      new Types()
+module.exports          = new Types()
+module.exports.Types    = Types
+module.exports.Isa      = Isa
+module.exports.Validate = Validate
 
