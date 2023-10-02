@@ -24,3 +24,11 @@
 
 #-----------------------------------------------------------------------------------------------------------
 @nameit = ( name, f ) -> Object.defineProperty f, 'name', { value: name, }; f
+
+#-----------------------------------------------------------------------------------------------------------
+### TAINT code duplication with `GUY.props.hide()` ###
+@hide = hide  = ( object, name, value ) => Object.defineProperty object, name,
+    enumerable:   false
+    writable:     true
+    configurable: true
+    value:        value
