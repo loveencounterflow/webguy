@@ -114,13 +114,41 @@ do rename_isa_methods = =>
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
+  _create_declaration_proxy: ( declare ) ->
+    types = @
+    return new Proxy declare,
+      get: ( target, key, receiver ) =>
+        return target[ key ] if ( typeof key ) isnt 'string'
+        debug '^_create_declaration_proxy/Proxy/get@1^', { key, }, @isa[ key ]
+        # return target[ key ] if Reflect.has target, key
+        # return target[ key ] if key.startsWith '_'
+        # if Reflect.has target, '__get_handler'
+        #   ast = if ( Reflect.has target, '__parser' ) then target.__parser.parse key else null
+        #   if ( R = target.__get_handler key, ast )?
+        #     R = target.__nameit '###' + key, R
+        #     GUY.props.hide target, key, R
+        #     return R
+        # throw new E.Unknown_accessor '^Intervoke_proxy/proxy.get@1^', key
+        return ( dcl ) ->
+          debug '^proxied-getter^', { dcl, }
+          types._declare dcl
+          return null
+
+  #---------------------------------------------------------------------------------------------------------
+  _declare: ( dcl ) ->
+    debug '^Types::_declare@1^', { dcl, }
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   _compile: ->
+    ### TAINT use `_declare()` where appropriate ###
     props        ?= require './props'
     proto_isa     = {}
     proto_vld     = {}
     @isa          = Object.create proto_isa
     @validate     = Object.create proto_vld
-    @_isa_methods = []
+    @declare      = @_create_declaration_proxy {}
+    props.hide @, '_isa_methods', []
     #.......................................................................................................
     for type in props.public_keys Isa::
       method              = Isa::[ type ]
@@ -131,13 +159,16 @@ do rename_isa_methods = =>
       #.....................................................................................................
       do ( type, otype, method ) =>
         #...................................................................................................
+        # isa_optional_$type
         proto_isa[ otype  ] = props.nameit "isa_#{otype}", ( x ) =>
           return ( not x? ) or ( method x )
         #...................................................................................................
+        # validate_$type
         proto_vld[ type   ] = props.nameit "validate_#{type}", ( x ) =>
           return true if ( method x )
           throw new Error "expected a #{type} got a #{@type_of x}"
         #...................................................................................................
+        # validate_optional_$type
         proto_vld[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
           return true if ( not x? ) or ( method x )
           throw new Error "expected an #{otype} got a #{@type_of x}"
@@ -182,5 +213,4 @@ do rename_isa_methods = =>
 module.exports          = new Types()
 module.exports.Types    = Types
 module.exports.Isa      = Isa
-module.exports.Validate = Validate
 
