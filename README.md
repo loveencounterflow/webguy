@@ -224,3 +224,8 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
       which are implicitly (but somehow different from explicitly?) derived from `Object`. One could throw
       the [Dominic Denicola Device](https://stackoverflow.com/users/3191/domenic) i.e. `d.constructor.name`
       into the mix which would then *exclude* instances of `class O;`.
+* **`[–]`** `WEBGUY.types.declare`: consider to prohibit adding, removing types from the default export
+  instance as it may be considered too brittle: declaring a type can potentially change results of
+  `type_of`, too, so even consumers that do not make use of the new type could be affected. A dependent
+  module may or may not see the same instance of `WEBGUY.types`, depending on their precise dependency
+  declarations *and* depending on the package manager used.
