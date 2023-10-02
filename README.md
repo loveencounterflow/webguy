@@ -236,3 +236,4 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   `type_of`, too, so even consumers that do not make use of the new type could be affected. A dependent
   module may or may not see the same instance of `WEBGUY.types`, depending on their precise dependency
   declarations *and* depending on the package manager used.
+* **`[–]`** implement in `WEBGUY.errors` custom error classes with refs, use them in `WEBGUY.types`
