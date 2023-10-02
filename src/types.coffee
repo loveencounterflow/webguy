@@ -119,18 +119,32 @@ do rename_isa_methods = =>
   #---------------------------------------------------------------------------------------------------------
   _compile: ->
     props        ?= require './props'
-    proto         = {}
-    @isa          = Object.create proto
+    proto_isa     = {}
+    proto_vld     = {}
+    @isa          = Object.create proto_isa
+    @validate     = Object.create proto_vld
     @_isa_methods = []
     #.......................................................................................................
     for type in props.public_keys Isa::
-      method          = Isa::[ type ]
+      method              = Isa::[ type ]
       continue unless isa_function method
-      method          = method.bind @
-      otype           = "optional_#{type}"
-      proto[ type   ] = method
-      proto[ otype  ] = do ( type, method ) =>
-        props.nameit "isa_#{otype}", ( x ) => ( not x? ) or ( method x )
+      method              = method.bind @
+      otype               = "optional_#{type}"
+      proto_isa[ type   ] = method
+      #.....................................................................................................
+      do ( type, otype, method ) =>
+        #...................................................................................................
+        proto_isa[ otype  ] = props.nameit "isa_#{otype}", ( x ) =>
+          return ( not x? ) or ( method x )
+        #...................................................................................................
+        proto_vld[ type   ] = props.nameit "validate_#{type}", ( x ) =>
+          return true if ( method x )
+          throw new Error "expected a #{type} got a #{@type_of x}"
+        #...................................................................................................
+        proto_vld[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
+          return true if ( not x? ) or ( method x )
+          throw new Error "expected an #{otype} got a #{@type_of x}"
+      #.....................................................................................................
       continue if type in [ 'nothing', 'something', 'anything', ]
       @_isa_methods.push [ type, method, ]
     #.......................................................................................................
