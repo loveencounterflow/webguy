@@ -3,7 +3,7 @@
 'use strict'
 
 #===========================================================================================================
-props                     = require './props'
+props                     = null
 isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Function]'
 { debug }                 = console
 
@@ -95,6 +95,7 @@ isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Fun
 
 #===========================================================================================================
 do rename_isa_methods = =>
+  props ?= require './props'
   for key in props.public_keys Isa::
     continue unless isa_function ( f = Isa::[ key ] )
     # do ( f ) =>
@@ -117,6 +118,7 @@ do rename_isa_methods = =>
 
   #---------------------------------------------------------------------------------------------------------
   _compile: ->
+    props        ?= require './props'
     proto         = {}
     @isa          = Object.create proto
     @_isa_methods = []
