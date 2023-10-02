@@ -14,6 +14,7 @@
   - [`environment`](#environment)
   - [`trm`](#trm)
   - [`types`](#types)
+    - [API](#api)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
 
@@ -143,6 +144,12 @@ and `name` is `null`.
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
 
 ## `types`
+
+### API
+
+* `validate.t x, ...`—returns `true` on success, throws error otherwise
+* `isa.t      x, ...`—returns `true` on success, `false` otherwise
+
 
 ### Type Signatures
 
