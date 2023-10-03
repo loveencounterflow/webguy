@@ -56,21 +56,13 @@ isa_class                 = ( x ) ->
   integer:       ( x ) -> Number.isInteger x
   codepointid:   ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
   cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
-  zero:          ( x ) -> ( x is 0 ) or ( x is 0n ) ### NOTE true for -0 as well ###
+  zero:          ( x ) -> x is 0 ### NOTE true for -0 as well ###
   nan:           ( x ) -> Number.isNaN x
   nonzero:       ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
 
   #---------------------------------------------------------------------------------------------------------
-  even:          ( x ) ->
-    if ( Number.isInteger x )     then return ( x % 2  ) is   0
-    else if typeof x is 'bigint'  then return ( x % 2n ) is   0n
-    return false
-
-  #---------------------------------------------------------------------------------------------------------
-  odd:           ( x ) ->
-    if ( Number.isInteger x )     then return ( x % 2  ) isnt 0
-    else if typeof x is 'bigint'  then return ( x % 2n ) isnt 0n
-    return false
+  even:          ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )
+  odd:           ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )
 
   #=========================================================================================================
   # Classes

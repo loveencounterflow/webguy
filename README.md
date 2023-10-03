@@ -241,7 +241,10 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
-* **`[–]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or
+
+## Is Done
+
+* **`[+]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or
   to floats and `BigInt`s (`4.0` and `4n`)? Could / should that be configurable?</del> <ins>remove all
   mentions of `BigInt`s in `isa` tests with a view to establish separate types for them in the future
   (`bigint`, `zero_bigint` &c)
