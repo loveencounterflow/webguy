@@ -108,11 +108,19 @@ do rename_isa_methods = =>
 
 
 #===========================================================================================================
+defaults                  = Object.freeze
+  types_cfg:
+    declarations: Isa
+
+
+#===========================================================================================================
 @Types = class Types
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    @_compile()
+  constructor: ( cfg ) ->
+    cfg = { defaults.types_cfg..., cfg..., }
+    # debug '^constructor@1^', cfg.declarations.constructor.name, cfg.declarations
+    @_compile cfg.declarations
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -128,7 +136,7 @@ do rename_isa_methods = =>
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  _compile: ->
+  _compile: ( declarations ) ->
     props        ?= require './props'
     proto_isa     = {}
     proto_vld     = {}
@@ -136,7 +144,8 @@ do rename_isa_methods = =>
     @validate     = Object.create proto_vld
     props.hide @, '_isa_methods', []
     #.......................................................................................................
-    for [ type, method, ] from @_walk_keys_and_methods Isa
+    for [ type, method, ] from @_walk_keys_and_methods declarations
+      # debug '^_compile@1^', type, method
       method              = method.bind @
       otype               = "optional_#{type}"
       proto_isa[ type   ] = method
@@ -195,6 +204,6 @@ do rename_isa_methods = =>
 
 #===========================================================================================================
 module.exports          = new Types()
-module.exports.Types    = Types
 module.exports.Isa      = Isa
+module.exports.Types    = Types
 
