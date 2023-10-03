@@ -237,3 +237,7 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   module may or may not see the same instance of `WEBGUY.types`, depending on their precise dependency
   declarations *and* depending on the package manager used.
 * **`[–]`** implement in `WEBGUY.errors` custom error classes with refs, use them in `WEBGUY.types`
+* **`[–]`** disallow overrides by default when `extend`ing class `Isa` to avoid surprising behavior (might
+  want to implement with set of type names; every repetition is an error unless licensed)
+  * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
+    to declaration object
