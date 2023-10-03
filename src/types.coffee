@@ -4,8 +4,12 @@
 
 #===========================================================================================================
 props                     = null
-isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Function]'
 { debug }                 = console
+#-----------------------------------------------------------------------------------------------------------
+isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Function]'
+isa_class                 = ( x ) ->
+  ( ( Object::toString.call x ) is '[object Function]' ) and \
+    ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
 
 
 #===========================================================================================================
@@ -71,9 +75,7 @@ isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Fun
   #=========================================================================================================
   # Classes
   #---------------------------------------------------------------------------------------------------------
-  class:         ( x ) ->
-    ( ( Object::toString.call x ) is '[object Function]' ) and \
-      ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
+  class:          ( x ) -> isa_class x
 
   #=========================================================================================================
   # Other Types
@@ -114,6 +116,18 @@ do rename_isa_methods = =>
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
+  _walk_keys_and_methods: ( x ) ->
+    ### Iterate over enumerable `[ key, method, ]` pairs of `x` and its prototypes. The iteration will start
+    with `x.prototype` ) `x::` if `x` is a class and with `x` itself otherwise. ###
+    props  ?= require './props'
+    top     = if isa_class x then ( x:: ) else x
+    for key in props.public_keys top
+      method = top[ key ]
+      continue unless isa_function method
+      yield [ key, method, ]
+    return null
+
+  #---------------------------------------------------------------------------------------------------------
   _create_declaration_proxy: ( declare ) ->
     types = @
     return new Proxy declare,
@@ -150,9 +164,7 @@ do rename_isa_methods = =>
     @declare      = @_create_declaration_proxy {}
     props.hide @, '_isa_methods', []
     #.......................................................................................................
-    for type in props.public_keys Isa::
-      method              = Isa::[ type ]
-      continue unless isa_function method
+    for [ type, method, ] from @_walk_keys_and_methods Isa
       method              = method.bind @
       otype               = "optional_#{type}"
       proto_isa[ type   ] = method
