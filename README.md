@@ -17,6 +17,7 @@
     - [API](#api)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
+  - [Is Done](#is-done)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
