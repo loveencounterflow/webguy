@@ -32,3 +32,13 @@
     writable:     true
     configurable: true
     value:        value
+
+#-----------------------------------------------------------------------------------------------------------
+### TAINT code duplication with `GUY.props.get_prototype_chain()` ###
+@get_prototype_chain = ( x ) ->
+  return [] unless x?
+  R = [ x, ]
+  loop
+    break unless ( x = Object.getPrototypeOf x )?
+    R.push x
+  return R
