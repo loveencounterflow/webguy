@@ -2,8 +2,16 @@
 
 'use strict'
 
+#===========================================================================================================
+templates =
+  acquire_depth_first:
+    source:     null
+    target:     null
+    filter:     null
+    decorator:  null
 
-#-----------------------------------------------------------------------------------------------------------
+
+#===========================================================================================================
 @_excluded_public_keys = Object.freeze [ 'constructor', ]
 
 #-----------------------------------------------------------------------------------------------------------
@@ -35,10 +43,30 @@
 
 #-----------------------------------------------------------------------------------------------------------
 ### TAINT code duplication with `GUY.props.get_prototype_chain()` ###
-@get_prototype_chain = ( x ) ->
+obj_proto = Object.getPrototypeOf Object
+@get_prototype_chain = get_prototype_chain = ( x ) ->
   return [] unless x?
   R = [ x, ]
   loop
     break unless ( x = Object.getPrototypeOf x )?
+    break if x in [ Object, Object::, obj_proto, ]
     R.push x
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_depth_first_property_descriptors = ( x ) ->
+  for proto in protos = ( @get_prototype_chain x ).reverse()
+    for key, dsc of Object.getOwnPropertyDescriptors proto
+      continue if key is 'constructor'
+      yield [ key, dsc, ]
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@acquire_depth_first = ( cfg ) ->
+  cfg = { templates..., cfg..., }
+  R   = cfg.target ? {}
+  for [ key, dsc, ] from @walk_depth_first_property_descriptors cfg.source
+    if cfg.filter? then continue unless cfg.filter key
+    dsc.value = cfg.decorator dsc.value if cfg.decorator?
+    Object.defineProperty R, key, dsc
   return R
