@@ -3,7 +3,9 @@
 'use strict'
 
 #===========================================================================================================
-{ debug } = console
+{ rpr   }                 = require './trm'
+{ debug }                 = console
+
 
 #===========================================================================================================
 templates =
@@ -12,6 +14,7 @@ templates =
     filter:     null
     decorator:  null
     descriptor: null
+    overwrite:  false
 
 
 #===========================================================================================================
@@ -60,18 +63,30 @@ obj_proto = Object.getPrototypeOf Object
 @walk_depth_first_property_descriptors = ( x ) ->
   return null unless x?
   for owner in ( @get_prototype_chain x ).reverse()
-    for key, dsc of Object.getOwnPropertyDescriptors owner
+    for key, descriptor of Object.getOwnPropertyDescriptors owner
       continue if key is 'constructor'
-      yield [ key, dsc, ]
+      yield { owner, key, descriptor, }
   return null
 
 #-----------------------------------------------------------------------------------------------------------
 @acquire_depth_first = ( source, cfg ) ->
-  cfg = { templates..., cfg..., }
-  R   = cfg.target ? {}
-  for [ key, dsc, ] from @walk_depth_first_property_descriptors source
+  cfg   = { templates.acquire_depth_first..., cfg..., }
+  R     = cfg.target ? {}
+  seen  = new Set()
+  for { owner, key, descriptor, } from @walk_depth_first_property_descriptors source
     if cfg.filter? then continue unless cfg.filter key
-    Object.assign dsc, cfg.descriptor   if cfg.descriptor?
-    dsc.value = cfg.decorator dsc.value if cfg.decorator?
-    Object.defineProperty R, key, dsc
+    if seen.has key
+      switch cfg.overwrite
+        when 'ignore' then continue
+        when true then null
+        when false
+          throw new Error "^props.acquire_depth_first@1^ duplicate key #{rpr key} disallowed " + \
+            "because `overwrite` set to `false`"
+        else
+          throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
+            "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
+    seen.add key
+    Object.assign descriptor, cfg.descriptor          if cfg.descriptor?
+    descriptor.value = cfg.decorator descriptor.value if cfg.decorator?
+    Object.defineProperty R, key, descriptor
   return R
