@@ -48,7 +48,7 @@ templates =
 #-----------------------------------------------------------------------------------------------------------
 ### TAINT code duplication with `GUY.props.get_prototype_chain()` ###
 obj_proto = Object.getPrototypeOf Object
-@get_prototype_chain = get_prototype_chain = ( x ) ->
+@get_prototype_chain = ( x ) ->
   return [] unless x?
   R = [ x, ]
   loop
