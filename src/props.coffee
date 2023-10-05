@@ -59,6 +59,7 @@ obj_proto = Object.getPrototypeOf Object
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_depth_first_property_descriptors = ( x ) ->
+  return null unless x?
   for proto in protos = ( @get_prototype_chain x ).reverse()
     for key, dsc of Object.getOwnPropertyDescriptors proto
       continue if key is 'constructor'
