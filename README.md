@@ -32,6 +32,21 @@
 * **`public_keys = ( owner ) ->`**: return a list of property names, including inherited ones, but excluding
   non-enumerables, symbols, and non-userland ones like `constructor`.
 
+* **`get_prototype_chain = ( x ) ->`**: return a list containing object `x` and all the objects encountered
+  when walking down `x`'s' prototype chain (using `Object.getPrototypeOf()` repeatedly). If `x` is `null` or
+  `undefined`, return an empty list because in that case there are zero objects where property lookup could
+  happen. The `reverse()`d prototype chain is used by the two `*depth_first*()` method, below.
+
+* **`walk_depth_first_property_descriptors = ( x ) ->`**: Given a value `x`, return an iterator
+
+* **`acquire_depth_first = ( cfg ) ->`**
+
+  * `overwrite`:
+    * `'true'`
+    * `'error'`
+    * `'ignore'`
+    <!-- * a function: will be called with `{ owner, key, descriptor, }`,  -->
+
 ## `time`
 
 `WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB records.
@@ -242,6 +257,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
+* **`[–]`** in `props.acquire_depth_first()`, do not silently overwrite earlier properties with later ones;
+  instead, use `cfg.overwrite` to determine what should happen (`true` overwrites, function calls back,
+  `false` throw an error).
 
 ## Is Done
 
