@@ -261,6 +261,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
 * **`[–]`** in `props.acquire_depth_first()`, do not silently overwrite earlier properties with later ones;
   instead, use `cfg.overwrite` to determine what should happen (`true` overwrites, function calls back,
   `false` throw an error).
+* **`[–]`** in `props.acquire_depth_first()`, add `cfg.generate()` (?) option to allow generation of any
+  number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
+  called. Should probably require `cfg.generate()` to be a generator function.
 
 ## Is Done
 
