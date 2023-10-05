@@ -42,8 +42,8 @@
 * **`acquire_depth_first = ( cfg ) ->`**
 
   * `overwrite`:
-    * `'true'`
-    * `'error'`
+    * `true`
+    * `false`
     * `'ignore'`
     <!-- * a function: will be called with `{ owner, key, descriptor, }`,  -->
 
