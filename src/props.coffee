@@ -8,7 +8,6 @@
 #===========================================================================================================
 templates =
   acquire_depth_first:
-    source:     null
     target:     null
     filter:     null
     decorator:  null
@@ -67,10 +66,10 @@ obj_proto = Object.getPrototypeOf Object
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@acquire_depth_first = ( cfg ) ->
+@acquire_depth_first = ( source, cfg ) ->
   cfg = { templates..., cfg..., }
   R   = cfg.target ? {}
-  for [ key, dsc, ] from @walk_depth_first_property_descriptors cfg.source
+  for [ key, dsc, ] from @walk_depth_first_property_descriptors source
     if cfg.filter? then continue unless cfg.filter key
     dsc.value = cfg.decorator dsc.value if cfg.decorator?
     Object.defineProperty R, key, dsc
