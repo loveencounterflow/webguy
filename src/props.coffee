@@ -71,6 +71,7 @@ obj_proto = Object.getPrototypeOf Object
   R   = cfg.target ? {}
   for [ key, dsc, ] from @walk_depth_first_property_descriptors source
     if cfg.filter? then continue unless cfg.filter key
+    Object.assign dsc, cfg.descriptor   if cfg.descriptor?
     dsc.value = cfg.decorator dsc.value if cfg.decorator?
     Object.defineProperty R, key, dsc
   return R
