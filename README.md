@@ -39,13 +39,14 @@
 
 * **`walk_depth_first_property_descriptors = ( x ) ->`**: Given a value `x`, return an iterator
 
-* **`acquire_depth_first = ( cfg ) ->`**
+* **`acquire_depth_first = ( source, cfg ) ->`**
 
   * `overwrite`:
-    * `true`
-    * `false`
-    * `'ignore'`
-    <!-- * a function: will be called with `{ owner, key, descriptor, }`,  -->
+    * **`false`** (default): Throws an error when an overriding key is detected
+    * `true`: Later key / value pairs (that are closer to the source value) override earlier ones, resulting
+      in a key resolution that is like inheritance (but without the possibility to access a shadowed value).
+    * `'ignore'`: Silently ignore later keys that are already set; only the first mention of a key / value
+      pair is retained.
 
 ## `time`
 
