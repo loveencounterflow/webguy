@@ -41,20 +41,22 @@
 
 * **`acquire_depth_first = ( source, cfg ) ->`**
 
-  * `overwrite`:
+  * **`overwrite`**:
     * **`false`** (default): Throws an error when an overriding key is detected
-    * `true`: Later key / value pairs (that are closer to the source value) override earlier ones, resulting
-      in a key resolution that is like inheritance (but without the possibility to access a shadowed value).
-    * `'ignore'`: Silently ignore later keys that are already set; only the first mention of a key / value
-      pair is retained.
+    * **`true`**: Later key / value pairs (that are closer to the source value) override earlier ones,
+      resulting in a key resolution that is like inheritance (but without the possibility to access a
+      shadowed value).
+    * **`'ignore'`**: Silently ignore later keys that are already set; only the first mention of a key /
+      value pair is retained.
 
-  * `generate`: if given, must be a generator function (a function using the `yield` keyword). The generator
-    function will be called with an object `{ owner, key, descriptor, }` for each property found and is
-    expected to `yield` any number of values of the same format.
+  * **`generate`**: if given, must be a generator function (a function using the `yield` keyword). The
+    generator function will be called with an object `{ owner, key, descriptor, }` for each property found
+    and is expected to `yield` any number of values of the same format.
 
 ## `time`
 
-`WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB records.
+`WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB
+records.
 
 Timestamps are one of those things that seem easy (like, `+new Date()` or `Date.now()`) but get quite a bit
 harder when you bring in typical constraints. One wants one's timestamps to be:
