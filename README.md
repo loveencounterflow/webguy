@@ -27,6 +27,8 @@
 
 # WebGuy is a Guy for the Web
 
+------------------------------------------------------------------------------------------------------------
+
 ## `props`
 
 * **`public_keys = ( owner ) ->`**: return a list of property names, including inherited ones, but excluding
@@ -47,6 +49,12 @@
       in a key resolution that is like inheritance (but without the possibility to access a shadowed value).
     * `'ignore'`: Silently ignore later keys that are already set; only the first mention of a key / value
       pair is retained.
+
+  * `generate`: if given, must be a generator function (a function using the `yield` keyword). The generator
+    function will be called with an object `{ owner, key, descriptor, }` for each property found and is
+    expected to `yield` any number of values of the same format.
+
+    ------------------------------------------------------------------------------------------------------------
 
 ## `time`
 
@@ -149,6 +157,8 @@ methods stop(), start() to keep current time (but not counter)
 
  -->
 
+ ------------------------------------------------------------------------------------------------------------
+
 ## `environment`
 
 `( require 'webguy' ).environment` is an object like `{ browser: false, node: true, webworker: false, jsdom:
@@ -156,9 +166,13 @@ false, deno: false, name: 'node', }` with boolean and one text properties that t
 environment the code is running. Observe that there may be environments where no boolean property is `true`
 and `name` is `null`.
 
+------------------------------------------------------------------------------------------------------------
+
 ## `trm`
 
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
+
+------------------------------------------------------------------------------------------------------------
 
 ## `types`
 
@@ -233,6 +247,8 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
 ###
 ```
 
+------------------------------------------------------------------------------------------------------------
+
 ## To Do
 
 * **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
@@ -264,6 +280,8 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
 * **`[–]`** in `props.acquire_depth_first()`, add `cfg.generate()` (?) option to allow generation of any
   number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
   called. Should probably require `cfg.generate()` to be a generator function.
+
+  ------------------------------------------------------------------------------------------------------------
 
 ## Is Done
 
