@@ -42,16 +42,28 @@
 * **`acquire_depth_first = ( source, cfg ) ->`**
 
   * **`overwrite`**:
-    * **`false`** (default): Throws an error when an overriding key is detected
+    * **`false`** (default): Throw an error when an overriding key is detected
     * **`true`**: Later key / value pairs (that are closer to the source value) override earlier ones,
       resulting in a key resolution that is like inheritance (but without the possibility to access a
       shadowed value).
     * **`'ignore'`**: Silently ignore later keys that are already set; only the first mention of a key /
       value pair is retained.
 
-  * **`generate`**: if given, must be a generator function (a function using the `yield` keyword). The
-    generator function will be called with an object `{ owner, key, descriptor, }` for each property found
-    and is expected to `yield` any number of values of the same format.
+  * **`generate`**: if given, must be a generator function `gf()` (a function using the `yield` keyword).
+    The generator function will be called with an object `{ owner, key, descriptor, }` for each property
+    found and is expected to yield any number of values of the format `{ key, descriptor, }`. `gf()` will
+    only be called if the property has not been not `filter`ed out. Yielded keys and descriptors will be
+    used to call `decorator` if that is set.
+
+    *Points to keep in mind*:
+
+    * In the most trivial case, `generate: ( d ) -> yield return null` (JS: `function*( d ) { return null;
+      }`), does not yield anything, ever, and has the effect of preventing any property to be set on the
+      target. The passed-in key / value pair is not treated specially in any way, so the user can (and must)
+      decide whether and where they want the passed-in property to appear in the target.
+    * Take care not to re-use the `descriptor` that was passed in without copying it. Instead, always use
+      syntax like yield `{ key: 'foo', descriptor: { descriptor..., value: foo, } }` to prevent leakage of
+      (most importantly) the `value` from one property to another.
 
 ## `time`
 
