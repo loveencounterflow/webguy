@@ -55,7 +55,7 @@
     only be called if the property has not been not `filter`ed out. Yielded keys and descriptors will be
     used to call `decorator` if that is set.
 
-    *Points to keep in mind*:
+    **Points to keep in mind**:
 
     * The most trivial setting for `generate`, a generator that doesn't yield anything—`( d ) -> yield
       return null`; JS: `function*( d ) { return null; }`—has the effect of preventing any property to be
