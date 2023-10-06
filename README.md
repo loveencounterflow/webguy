@@ -27,9 +27,9 @@
 
 # WebGuy is a Guy for the Web
 
-------------------------------------------------------------------------------------------------------------
-
 ## `props`
+
+------------------------------------------------------------------------------------------------------------
 
 * **`public_keys = ( owner ) ->`**: return a list of property names, including inherited ones, but excluding
   non-enumerables, symbols, and non-userland ones like `constructor`.
@@ -54,9 +54,9 @@
     function will be called with an object `{ owner, key, descriptor, }` for each property found and is
     expected to `yield` any number of values of the same format.
 
-    ------------------------------------------------------------------------------------------------------------
-
 ## `time`
+
+    ------------------------------------------------------------------------------------------------------------
 
 `WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB records.
 
@@ -157,24 +157,24 @@ methods stop(), start() to keep current time (but not counter)
 
  -->
 
- ------------------------------------------------------------------------------------------------------------
-
 ## `environment`
+
+ ------------------------------------------------------------------------------------------------------------
 
 `( require 'webguy' ).environment` is an object like `{ browser: false, node: true, webworker: false, jsdom:
 false, deno: false, name: 'node', }` with boolean and one text properties that tell you in what kind of
 environment the code is running. Observe that there may be environments where no boolean property is `true`
 and `name` is `null`.
 
-------------------------------------------------------------------------------------------------------------
-
 ## `trm`
+
+------------------------------------------------------------------------------------------------------------
 
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
 
-------------------------------------------------------------------------------------------------------------
-
 ## `types`
+
+------------------------------------------------------------------------------------------------------------
 
 ### API
 
@@ -247,9 +247,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
 ###
 ```
 
-------------------------------------------------------------------------------------------------------------
-
 ## To Do
+
+------------------------------------------------------------------------------------------------------------
 
 * **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
   non-objects as well or catch exception (better)
@@ -281,9 +281,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
   called. Should probably require `cfg.generate()` to be a generator function.
 
-  ------------------------------------------------------------------------------------------------------------
-
 ## Is Done
+
+  ------------------------------------------------------------------------------------------------------------
 
 * **`[+]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or
   to floats and `BigInt`s (`4.0` and `4n`)? Could / should that be configurable?</del> <ins>remove all
