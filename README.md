@@ -57,10 +57,11 @@
 
     *Points to keep in mind*:
 
-    * In the most trivial case, `generate: ( d ) -> yield return null` (JS: `function*( d ) { return null;
-      }`), does not yield anything, ever, and has the effect of preventing any property to be set on the
-      target. The passed-in key / value pair is not treated specially in any way, so the user can (and must)
-      decide whether and where they want the passed-in property to appear in the target.
+    * The most trivial setting for `generate`, a generator that doesn't yield anything—`( d ) -> yield
+      return null`; JS: `function*( d ) { return null; }`—has the effect of preventing any property to be
+      set on the target. This is because the original key / value pair is not treated specially in any way,
+      so the user can (and must) freely decide whether and where they want the original property to appear
+      in the target.
     * Take care not to re-use the `descriptor` that was passed in without copying it. Instead, always use
       syntax like yield `{ key: 'foo', descriptor: { descriptor..., value: foo, } }` to prevent leakage of
       (most importantly) the `value` from one property to another.
