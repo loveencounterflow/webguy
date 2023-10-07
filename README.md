@@ -317,6 +317,7 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
+* **`[–]`** in `props.acquire_depth_first()`, fix handling of descriptors
 
 ## Is Done
 
