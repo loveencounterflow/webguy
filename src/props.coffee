@@ -12,10 +12,10 @@ templates =
   acquire_depth_first:
     target:     null
     filter:     null
-    generate:   ( x ) -> yield from [ x, ] ### 'generative identity element' ###
-    decorator:  null
     descriptor: null
     overwrite:  false
+    generator:  ( x ) -> yield from [ x, ]  ### 'generative identity element' ###
+    decorator:  ( x ) -> x                  ###     'direct identity element' ###
 
 
 #===========================================================================================================
@@ -74,22 +74,23 @@ obj_proto = Object.getPrototypeOf Object
   cfg     = { templates.acquire_depth_first..., cfg..., }
   target  = cfg.target ? {}
   seen    = new Set()
-  for { owner, key, descriptor, } from @walk_depth_first_property_descriptors source
+  for src from @walk_depth_first_property_descriptors source
+    src.target = target
     ### `validate.boolean cfg.filter ...` ###
-    if cfg.filter? then continue unless cfg.filter { target, owner, key, descriptor, }
-    if seen.has key
+    if cfg.filter? then continue unless cfg.filter src
+    if seen.has src.key
       switch cfg.overwrite
         when 'ignore' then continue
         when true then null
         when false
-          throw new Error "^props.acquire_depth_first@1^ duplicate key #{rpr key} disallowed " + \
+          throw new Error "^props.acquire_depth_first@1^ duplicate key #{rpr src.key} disallowed " + \
             "because `overwrite` set to `false`"
         else
           throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
             "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
-    seen.add key
-    for g from cfg.generate { target, owner, key, descriptor, }
-      Object.assign g.descriptor, cfg.descriptor                                           if cfg.descriptor?
-      g.descriptor.value = cfg.decorator { target, owner, key, descriptor: g.descriptor, } if cfg.decorator?
-      Object.defineProperty target, g.key, g.descriptor
+    seen.add src.key
+    for { key, descriptor, } from cfg.generator src
+      Object.assign descriptor, cfg.descriptor
+      Object.assign descriptor, cfg.decorator { target, owner: src.owner, key, descriptor, }
+      Object.defineProperty target, key, descriptor
   return target
