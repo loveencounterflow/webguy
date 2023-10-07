@@ -136,29 +136,35 @@ defaults                  = Object.freeze
     declarations  = if isa_class then ( declarations:: ) else ( declarations )
     me            = @
     #.......................................................................................................
-    do =>
-      cfg =
-        target:     @isa
-        descriptor: { enumerable: false, }
-        overwrite:  false
-        generator:  ({ target, owner, key: type, descriptor, }) ->
-          yield { key: type, descriptor, }
-          otype       = "optional_#{type}"
-          value       = ( x ) => ( not x? ) or ( target[ type ] x )
-          descriptor  = { descriptor..., value, }
-          yield { key: otype, descriptor, }
-          return null
-        decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
-          # debug '^_compile@1^', { type, value, }
-          value = props.nameit "isa_#{type}", value.bind me
-          unless ( type.startsWith 'optional_' ) or ( type in [ 'nothing', 'something', 'anything', ] )
-            me._isa_methods.push [ type, method, ]
-          return { value, }
-      props.acquire_depth_first declarations, cfg
-      # debug '^_compile@2^', ( k for k of @isa )
-      return null
+    cfg =
+      target:     @isa
+      descriptor: { enumerable: false, }
+      overwrite:  false
+      #.....................................................................................................
+      generator:  ({ target, owner, key: type, descriptor, }) ->
+        yield { key: type, descriptor, }
+        #...................................................................................................
+        value       = ( x ) => ( not x? ) or ( target[ type ] x )
+        descriptor  = { descriptor..., value, }
+        yield { key: "optional_#{type}", descriptor, }
+        #...................................................................................................
+        return null
+      #.....................................................................................................
+      decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
+        # debug '^_compile@1^', { type, value, }
+        value = props.nameit "isa_#{type}", value.bind me
+        #...................................................................................................
+        unless ( type.startsWith 'optional_' ) or ( type in [ 'nothing', 'something', 'anything', ] )
+          me._isa_methods.push [ type, value, ]
+        return { value, }
+    #.......................................................................................................
+    props.acquire_depth_first declarations, cfg
+    # debug '^_compile@2^', ( k for k of @isa )
     return null
 
+    #.......................................................................................................
+    #.......................................................................................................
+    #.......................................................................................................
     for [ type, method, ] from @_walk_keys_and_methods declarations
       # debug '^_compile@1^', type, method
       method              = method.bind @
