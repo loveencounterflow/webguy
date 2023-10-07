@@ -130,31 +130,29 @@ defaults                  = Object.freeze
   #---------------------------------------------------------------------------------------------------------
   _compile: ( declarations ) ->
     props        ?= require './props'
-    proto_isa     = {}
-    proto_vld     = {}
-    @isa          = Object.create proto_isa
-    @validate     = Object.create proto_vld
+    @isa          = {}
+    @validate     = {}
     props.hide @, '_isa_methods', []
     #.......................................................................................................
     for [ type, method, ] from @_walk_keys_and_methods declarations
       # debug '^_compile@1^', type, method
       method              = method.bind @
       otype               = "optional_#{type}"
-      proto_isa[ type   ] = method
+      @isa[ type   ] = method
       #.....................................................................................................
       do ( type, otype, method ) =>
         #...................................................................................................
         # isa_optional_$type
-        proto_isa[ otype  ] = props.nameit "isa_#{otype}", ( x ) =>
+        @isa[ otype  ] = props.nameit "isa_#{otype}", ( x ) =>
           return ( not x? ) or ( method x )
         #...................................................................................................
         # validate_$type
-        proto_vld[ type   ] = props.nameit "validate_#{type}", ( x ) =>
+        @validate[ type   ] = props.nameit "validate_#{type}", ( x ) =>
           return x if ( method x )
           throw new Error "expected a #{type} got a #{@type_of x}"
         #...................................................................................................
         # validate_optional_$type
-        proto_vld[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
+        @validate[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
           return x if ( not x? ) or ( method x )
           throw new Error "expected an #{otype} got a #{@type_of x}"
       #.....................................................................................................
