@@ -56,9 +56,6 @@
     }` for **(1)** each found property; it should return either `true` (to keep the property) or `false` (to
     skip the property); non-Boolean return values will cause an error.
 
-  * **`decorator`**: An optional function that will be called with an object `{ target, owner, key,
-    descriptor, }` for **(1)** each found property and **(2)** each generated property, too.
-
   * **`descriptor`**: An optional object containing updates to each property's descriptor. Use e.g.
     `descriptor: { enumerate: true, }` in the call to `acquire_depth_first()` to ensure that all acquired
     properties on the `target` object will be enumerable.
@@ -76,7 +73,7 @@
     * **`'ignore'`**: Silently ignore later keys that are already set; only the first mention of a key /
       value pair is retained.
 
-  * **`generate`**: if given, must be a generator function `gf()` (a function using the `yield` keyword).
+  * **`generator`**: if given, must be a generator function `gf()` (a function using the `yield` keyword).
     The generator function will be called with an object `{ target, owner, key, descriptor, }` for each
     property found and is expected to yield any number of values of the format `{ key, descriptor, }`.
     `gf()` will only be called if the property has not been not `filter`ed out. Yielded keys and descriptors
@@ -84,7 +81,7 @@
 
     **Points to keep in mind**:
 
-    * The most trivial setting for `generate`, a generator that doesn't yield anything—`( d ) -> yield
+    * The most trivial setting for `generator`, a generator that doesn't yield anything—`( d ) -> yield
       return null`; JS: `function*( d ) { return null; }`—has the effect of preventing any property to be
       set on the target. This is because the original key / value pair is not treated specially in any way,
       so the user can (and must) freely decide whether and where they want the original property to appear
@@ -92,6 +89,16 @@
     * Take care not to re-use the `descriptor` that was passed in without copying it. Instead, always use
       syntax like yield `{ key: 'foo', descriptor: { descriptor..., value: foo, } }` to prevent leakage of
       (most importantly) the `value` from one property to another.
+
+  * **`decorator`**: An optional function that will be called with an object `{ target, owner, key,
+    descriptor, }` for **(1)** each found property and **(2)** each generated property, too. The `decorator`
+    function may return `null` or `undefined` to indicate no change for the given property; otherwise, it
+    should return an object that will be used (like `cfg.descriptor`) to *update* settings in the property's
+    descriptor—in other words, the returned object needs only to mention those parts of the decorator that
+    should be changed, and most commonly, an object like `{ value: 'helo', }` where only `value` is set will
+    suffice. In case both `cfg.descriptor` and the return value of the `decorator` function mention the same
+    descriptor settings, the ones returned by the latter (the `decorator` function) will overwrite those of
+    the former (i.e. the decorator always has the last word).
 
 ## `time`
 
@@ -304,12 +311,6 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
-* **`[–]`** in `props.acquire_depth_first()`, do not silently overwrite earlier properties with later ones;
-  instead, use `cfg.overwrite` to determine what should happen (`true` overwrites, function calls back,
-  `false` throw an error).
-* **`[–]`** in `props.acquire_depth_first()`, add `cfg.generate()` (?) option to allow generation of any
-  number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
-  called. Should probably require `cfg.generate()` to be a generator function.
 
 ## Is Done
 
@@ -319,3 +320,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   (`bigint`, `zero_bigint` &c)
 * **`[+]`** in `types.validate`, return input value such that `x is types.validate.whatever x` is always
   satisfied unless `x` doesn't validate
+* **`[+]`** in `props.acquire_depth_first()`, do not silently overwrite earlier properties with later ones;
+  instead, use `cfg.overwrite` to determine what should happen (`true` overwrites, function calls back,
+  `false` throw an error).
+* **`[+]`** in `props.acquire_depth_first()`, add `cfg.generator()` (?) option to allow generation of any
+  number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
+  called. Should probably require `cfg.generator()` to be a generator function.
