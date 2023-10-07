@@ -41,6 +41,14 @@
 
 * **`acquire_depth_first = ( source, cfg ) ->`**
 
+  * **`filter`**: An optional function that will be called
+
+  * **`decorator`**:
+
+  * **`descriptor`**: An optional object containing updates to each property's descriptor. Use e.g.
+    `descriptor: { enumerate: true, }` in the call to `acquire_depth_first()` to ensure that all acquired
+    properties on the `target` object will be enumerable.
+
   * **`target`**: the object to which the properties are to be assigned to. If not given, a new empty object
     `{}` will be used.
   * **`overwrite`**:
@@ -292,3 +300,5 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   to floats and `BigInt`s (`4.0` and `4n`)? Could / should that be configurable?</del> <ins>remove all
   mentions of `BigInt`s in `isa` tests with a view to establish separate types for them in the future
   (`bigint`, `zero_bigint` &c)
+* **`[+]`** in `types.validate`, return input value such that `x is types.validate.whatever x` is always
+  satisfied unless `x` doesn't validate
