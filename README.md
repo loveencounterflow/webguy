@@ -41,6 +41,8 @@
 
 * **`acquire_depth_first = ( source, cfg ) ->`**
 
+  * **`target`**: the object to which the properties are to be assigned to. If not given, a new empty object
+    `{}` will be used.
   * **`overwrite`**:
     * **`false`** (default): Throw an error when an overriding key is detected
     * **`true`**: Later key / value pairs (that are closer to the source value) override earlier ones,
@@ -50,10 +52,10 @@
       value pair is retained.
 
   * **`generate`**: if given, must be a generator function `gf()` (a function using the `yield` keyword).
-    The generator function will be called with an object `{ owner, key, descriptor, }` for each property
-    found and is expected to yield any number of values of the format `{ key, descriptor, }`. `gf()` will
-    only be called if the property has not been not `filter`ed out. Yielded keys and descriptors will be
-    used to call `decorator` if that is set.
+    The generator function will be called with an object `{ target, owner, key, descriptor, }` for each
+    property found and is expected to yield any number of values of the format `{ key, descriptor, }`.
+    `gf()` will only be called if the property has not been not `filter`ed out. Yielded keys and descriptors
+    will be used to call `decorator` if that is set.
 
     **Points to keep in mind**:
 
