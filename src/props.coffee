@@ -12,6 +12,7 @@ templates =
   acquire_depth_first:
     target:     null
     filter:     null
+    generate:   ( x ) -> yield from [ x, ] ### 'generative identity element' ###
     decorator:  null
     descriptor: null
     overwrite:  false
@@ -86,7 +87,8 @@ obj_proto = Object.getPrototypeOf Object
           throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
             "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
     seen.add key
-    Object.assign descriptor, cfg.descriptor          if cfg.descriptor?
-    descriptor.value = cfg.decorator descriptor.value if cfg.decorator?
-    Object.defineProperty R, key, descriptor
+    for g from cfg.generate { owner, key, descriptor, }
+      Object.assign g.descriptor, cfg.descriptor            if cfg.descriptor?
+      g.descriptor.value = cfg.decorator g.descriptor.value if cfg.decorator?
+      Object.defineProperty R, g.key, g.descriptor
   return R
