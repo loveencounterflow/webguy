@@ -311,6 +311,9 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
+* **`[–]`** in `props.acquire_depth_first()`, allow both `generator` and `decorator` to produce a 'local'
+  value for `target` that will override `cfg.target`; this will allow to distribute properties over a number
+  of targets.
 
 ## Is Done
 
