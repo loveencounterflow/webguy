@@ -75,7 +75,8 @@ obj_proto = Object.getPrototypeOf Object
   R     = cfg.target ? {}
   seen  = new Set()
   for { owner, key, descriptor, } from @walk_depth_first_property_descriptors source
-    if cfg.filter? then continue unless cfg.filter key
+    ### `validate.boolean cfg.filter ...` ###
+    if cfg.filter? then continue unless cfg.filter { target: R, owner, key, descriptor, }
     if seen.has key
       switch cfg.overwrite
         when 'ignore' then continue
