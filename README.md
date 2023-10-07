@@ -60,8 +60,10 @@
     `descriptor: { enumerate: true, }` in the call to `acquire_depth_first()` to ensure that all acquired
     properties on the `target` object will be enumerable.
 
-  * **`target`**: the object to which the properties are to be assigned to. If not given, a new empty object
-    `{}` will be used.
+  * **`target`**: the 'static' or 'default target', i.e. the object to which the properties are to be
+    assigned to. If not given, a new empty object `{}` will be used. It is also possible to set a 'dynamic
+    target' (that will override the static target) in the yielded values of `generator`, for which see
+    below.
 
   * **`overwrite`**: controls how to deal with property keys that appear more than once in the prototype
     chain. Since `acquire_depth_first()`'s raison d'être is doing depth-first 'anti-inheritance', there are
@@ -76,6 +78,10 @@
   * **`generator`**: if given, must be a generator function `gf()` (a function using the `yield` keyword).
     The generator function will be called with an object `{ target, owner, key, descriptor, }` for each
     property found and is expected to yield any number of values of the format `{ key, descriptor, }`.
+    Optionally, this object may also have `target` set (the 'dynamic target'), which will be the object that
+    the current property will be set on. This is useful e.g. to distribute multiple derived properties over
+    a number of target objects.
+
     `gf()` will only be called if the property has not been not `filter`ed out. Yielded keys and descriptors
     will be used to call `decorator` if that is set.
 
@@ -311,9 +317,6 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
     to declaration object
-* **`[–]`** in `props.acquire_depth_first()`, allow both `generator` and `decorator` to produce a 'local'
-  value for `target` that will override `cfg.target`; this will allow to distribute properties over a number
-  of targets.
 
 ## Is Done
 
@@ -329,3 +332,6 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
 * **`[+]`** in `props.acquire_depth_first()`, add `cfg.generator()` (?) option to allow generation of any
   number of additional members in addition to seen ones. This should be called before `cfg.decorator()` gets
   called. Should probably require `cfg.generator()` to be a generator function.
+* **`[+]`** in `props.acquire_depth_first()`, allow both `generator` <del>and `decorator`</del> to produce a
+  'local' value for `target` that will override `cfg.target`; this will allow to distribute properties over
+  a number of targets.
