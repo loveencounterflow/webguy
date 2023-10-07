@@ -134,6 +134,8 @@ defaults                  = Object.freeze
     @validate     = {}
     props.hide @, '_isa_methods', []
     #.......................................................................................................
+    # generator     = ({ target, owner, key, descriptor, }) ->
+    # decorator     = ({ target, owner, key, descriptor, }) ->
     for [ type, method, ] from @_walk_keys_and_methods declarations
       # debug '^_compile@1^', type, method
       method              = method.bind @
