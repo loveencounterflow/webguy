@@ -150,12 +150,12 @@ defaults                  = Object.freeze
         #...................................................................................................
         # validate_$type
         proto_vld[ type   ] = props.nameit "validate_#{type}", ( x ) =>
-          return true if ( method x )
+          return x if ( method x )
           throw new Error "expected a #{type} got a #{@type_of x}"
         #...................................................................................................
         # validate_optional_$type
         proto_vld[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
-          return true if ( not x? ) or ( method x )
+          return x if ( not x? ) or ( method x )
           throw new Error "expected an #{otype} got a #{@type_of x}"
       #.....................................................................................................
       continue if type in [ 'nothing', 'something', 'anything', ]
