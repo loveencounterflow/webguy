@@ -87,7 +87,7 @@ obj_proto = Object.getPrototypeOf Object
           throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
             "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
     seen.add key
-    for g from cfg.generate { owner, key, descriptor, }
+    for g from cfg.generate { target: R, owner, key, descriptor, }
       Object.assign g.descriptor, cfg.descriptor            if cfg.descriptor?
       g.descriptor.value = cfg.decorator g.descriptor.value if cfg.decorator?
       Object.defineProperty R, g.key, g.descriptor
