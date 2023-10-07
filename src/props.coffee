@@ -71,12 +71,12 @@ obj_proto = Object.getPrototypeOf Object
 
 #-----------------------------------------------------------------------------------------------------------
 @acquire_depth_first = ( source, cfg ) ->
-  cfg   = { templates.acquire_depth_first..., cfg..., }
-  R     = cfg.target ? {}
-  seen  = new Set()
+  cfg     = { templates.acquire_depth_first..., cfg..., }
+  target  = cfg.target ? {}
+  seen    = new Set()
   for { owner, key, descriptor, } from @walk_depth_first_property_descriptors source
     ### `validate.boolean cfg.filter ...` ###
-    if cfg.filter? then continue unless cfg.filter { target: R, owner, key, descriptor, }
+    if cfg.filter? then continue unless cfg.filter { target, owner, key, descriptor, }
     if seen.has key
       switch cfg.overwrite
         when 'ignore' then continue
@@ -88,8 +88,8 @@ obj_proto = Object.getPrototypeOf Object
           throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
             "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
     seen.add key
-    for g from cfg.generate { target: R, owner, key, descriptor, }
-      Object.assign g.descriptor, cfg.descriptor            if cfg.descriptor?
-      g.descriptor.value = cfg.decorator g.descriptor.value if cfg.decorator?
-      Object.defineProperty R, g.key, g.descriptor
-  return R
+    for g from cfg.generate { target, owner, key, descriptor, }
+      Object.assign g.descriptor, cfg.descriptor                                           if cfg.descriptor?
+      g.descriptor.value = cfg.decorator { target, owner, key, descriptor: g.descriptor, } if cfg.decorator?
+      Object.defineProperty target, g.key, g.descriptor
+  return target
