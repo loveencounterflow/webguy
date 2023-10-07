@@ -72,7 +72,7 @@ obj_proto = Object.getPrototypeOf Object
 #-----------------------------------------------------------------------------------------------------------
 @acquire_depth_first = ( source, cfg ) ->
   cfg     = { templates.acquire_depth_first..., cfg..., }
-  target  = cfg.target ? {}
+  target  = dyn_target = cfg.target ? {}
   seen    = new Set()
   for src from @walk_depth_first_property_descriptors source
     src.target = target
@@ -89,8 +89,10 @@ obj_proto = Object.getPrototypeOf Object
           throw new Error "^props.acquire_depth_first@2^ illegal value for `overwrite` " + \
             "#{rpr cfg.overwrite}; expected one of `true`, `false`, `'ignore'`"
     seen.add src.key
-    for { key, descriptor, } from cfg.generator src
+    for d from cfg.generator src
+      { key, descriptor, }  = d
+      dyn_target            = d.target ? dyn_target
       Object.assign descriptor, cfg.descriptor
-      Object.assign descriptor, cfg.decorator { target, owner: src.owner, key, descriptor, }
-      Object.defineProperty target, key, descriptor
+      Object.assign descriptor, cfg.decorator { target: dyn_target, owner: src.owner, key, descriptor, }
+      Object.defineProperty dyn_target, key, descriptor
   return target
