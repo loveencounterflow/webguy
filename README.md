@@ -39,11 +39,25 @@
 
 * **`walk_depth_first_property_descriptors = ( x ) ->`**: Given a value `x`, return an iterator
 
-* **`acquire_depth_first = ( source, cfg ) ->`**
+* **`acquire_depth_first = ( source, cfg ) ->`**: given a `source` object, walk the property chain from the
+  bottom to the top (using `walk_depth_first_property_descriptors()`) and transfer all properties to a new
+  or a given `target` object. This is most useful when used with a `filter` to select, a `generator`
+  function to generate new, and&nbsp;/ or a `decorator` to modify accepted and generated properties.
+  `acquire_depth_first()` will keep the relative ordering: **(1)** 'top-down' for each object (properties
+  declared earlier will appear, on the target, before ones declared later); **(2)** w.r.t. inheritance in
+  the sense that the prototype of a given object `x` in the prototype chain will be looked at *before*
+  properties on `x` itself is considered. Later properties *may* shadow (replace) earlier ones but it's also
+  possible to forbid shadowing or ignore it altogether (see `overwrite`, below).
 
-  * **`filter`**: An optional function that will be called
+  When a `cfg` object is given as second arguments, it may have the below settings, all of which are
+  optional:
 
-  * **`decorator`**:
+  * **`filter`**: An optional function that will be called with an object `{ target, owner, key, descriptor,
+    }` for **(1)** each found property; it should return either `true` (to keep the property) or `false` (to
+    skip the property); non-Boolean return values will cause an error.
+
+  * **`decorator`**: An optional function that will be called with an object `{ target, owner, key,
+    descriptor, }` for **(1)** each found property and **(2)** each generated property, too.
 
   * **`descriptor`**: An optional object containing updates to each property's descriptor. Use e.g.
     `descriptor: { enumerate: true, }` in the call to `acquire_depth_first()` to ensure that all acquired
@@ -51,7 +65,10 @@
 
   * **`target`**: the object to which the properties are to be assigned to. If not given, a new empty object
     `{}` will be used.
-  * **`overwrite`**:
+
+  * **`overwrite`**: controls how to deal with property keys that appear more than once in the prototype
+    chain. Since `acquire_depth_first()`'s raison d'être is doing depth-first 'anti-inheritance', there are
+    several ways to deal with repeated properties, as the case may be:
     * **`false`** (default): Throw an error when an overriding key is detected
     * **`true`**: Later key / value pairs (that are closer to the source value) override earlier ones,
       resulting in a key resolution that is like inheritance (but without the possibility to access a
