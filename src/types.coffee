@@ -137,59 +137,53 @@ defaults                  = Object.freeze
     me            = @
     #.......................................................................................................
     cfg =
-      target:     @isa
       descriptor: { enumerable: false, }
       overwrite:  false
       #.....................................................................................................
-      generator:  ({ target, owner, key: type, descriptor, }) ->
-        yield { key: type, descriptor, }
+      generator:  ({ target, owner, key, descriptor, }) ->
+        type = key
+        yield { target: me.isa, key, descriptor, }
         #...................................................................................................
-        value       = ( x ) => ( not x? ) or ( target[ type ] x )
-        descriptor  = { descriptor..., value, }
-        yield { key: "optional_#{type}", descriptor, }
+        # optional_$type
+        yield do ( key = "optional_#{type}" ) ->
+          value       = ( x ) -> ( not x? ) or ( me.isa[ type ] x )
+          descriptor  = { descriptor..., value, }
+          return { target: me.isa, key, descriptor, }
+        #...................................................................................................
+        # validate_$type
+        yield do ( key = type ) ->
+          value       = ( x ) =>
+            return x if ( me.isa[ type ] x )
+            throw new Error "expected a #{key} got a #{me.type_of x}"
+          descriptor  = { descriptor..., value, }
+          return { target: me.validate, key, descriptor, }
+        #...................................................................................................
+        # validate_optional_$type
+        yield do ( key = "optional_#{type}" ) ->
+          value       = ( x ) =>
+            return x if ( not x? ) or ( me.isa[ type ] x )
+            throw new Error "expected an #{key} got a #{me.type_of x}"
+          descriptor  = { descriptor..., value, }
+          return { target: me.validate, key, descriptor, }
         #...................................................................................................
         return null
       #.....................................................................................................
       decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
-        # debug '^_compile@1^', { type, value, }
-        value = props.nameit "isa_#{type}", value.bind me
+        # @validate[ type   ] = props.nameit "validate_#{type}", ( x ) =>
+        # @validate[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
+        ### TAINT must name according to target ###
         #...................................................................................................
-        unless ( type.startsWith 'optional_' ) or ( type in [ 'nothing', 'something', 'anything', ] )
-          me._isa_methods.push [ type, value, ]
+        switch target
+          when me.isa
+            value = props.nameit "isa_#{type}", value.bind me
+            unless ( type.startsWith 'optional_' ) or ( type in [ 'nothing', 'something', 'anything', ] )
+              me._isa_methods.push [ type, value, ]
+          when me.validate
+            value = props.nameit "validate_#{type}", value.bind me
         return { value, }
     #.......................................................................................................
     props.acquire_depth_first declarations, cfg
     # debug '^_compile@2^', ( k for k of @isa )
-    return null
-
-    #.......................................................................................................
-    #.......................................................................................................
-    #.......................................................................................................
-    for [ type, method, ] from @_walk_keys_and_methods declarations
-      # debug '^_compile@1^', type, method
-      method              = method.bind @
-      otype               = "optional_#{type}"
-      @isa[ type   ] = method
-      #.....................................................................................................
-      do ( type, otype, method ) =>
-        #...................................................................................................
-        # isa_optional_$type
-        @isa[ otype  ] = props.nameit "isa_#{otype}", ( x ) =>
-          return ( not x? ) or ( method x )
-        #...................................................................................................
-        # validate_$type
-        @validate[ type   ] = props.nameit "validate_#{type}", ( x ) =>
-          return x if ( method x )
-          throw new Error "expected a #{type} got a #{@type_of x}"
-        #...................................................................................................
-        # validate_optional_$type
-        @validate[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
-          return x if ( not x? ) or ( method x )
-          throw new Error "expected an #{otype} got a #{@type_of x}"
-      #.....................................................................................................
-      continue if type in [ 'nothing', 'something', 'anything', ]
-      @_isa_methods.push [ type, method, ]
-    #.......................................................................................................
     return null
 
   #---------------------------------------------------------------------------------------------------------
