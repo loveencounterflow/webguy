@@ -169,10 +169,6 @@ defaults                  = Object.freeze
         return null
       #.....................................................................................................
       decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
-        # @validate[ type   ] = props.nameit "validate_#{type}", ( x ) =>
-        # @validate[ otype  ] = props.nameit "validate_#{otype}", ( x ) =>
-        ### TAINT must name according to target ###
-        #...................................................................................................
         switch target
           when me.isa
             value = props.nameit "isa_#{type}", value.bind me
@@ -183,7 +179,6 @@ defaults                  = Object.freeze
         return { value, }
     #.......................................................................................................
     props.acquire_depth_first declarations, cfg
-    # debug '^_compile@2^', ( k for k of @isa )
     return null
 
   #---------------------------------------------------------------------------------------------------------
