@@ -114,6 +114,8 @@ defaults                  = Object.freeze
     cfg =
       descriptor: { enumerable: false, }
       overwrite:  false
+      # #.....................................................................................................
+      # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
       generator:  ({ target, owner, key, descriptor, }) ->
         type = key
