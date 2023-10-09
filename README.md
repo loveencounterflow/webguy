@@ -314,6 +314,8 @@ coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
     to declaration object
 * **`[–]`** in `props.acquire_depth_first()`, fix handling of descriptors
 * **`[–]`** use an instance of `Types` in its methods ('dogfeeding')
+  * **`[–]`** consider to instantiate `Types` from `Pre_types` passing in an instance of itself (`Types`),
+    thus allowing the instance to use 'itself' / 'a clone of itself' without incurring infinite regress
 
 ## Is Done
 
