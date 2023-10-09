@@ -88,18 +88,6 @@ isa_class                 = ( x ) ->
 
 
 #===========================================================================================================
-do rename_isa_methods = =>
-  props ?= require './props'
-  for key in props.public_keys Isa::
-    continue unless isa_function ( f = Isa::[ key ] )
-    # do ( f ) =>
-    props.nameit "isa_#{key}", f
-      # return null
-  # console.log 26575, Isa::[ key ] for key in props.public_keys Isa::
-  return null
-
-
-#===========================================================================================================
 defaults                  = Object.freeze
   types_cfg:
     declarations: Isa
@@ -111,21 +99,8 @@ defaults                  = Object.freeze
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     cfg = { defaults.types_cfg..., cfg..., }
-    # debug '^constructor@1^', cfg.declarations.constructor.name, cfg.declarations
     @_compile cfg.declarations
     return undefined
-
-  #---------------------------------------------------------------------------------------------------------
-  _walk_keys_and_methods: ( x ) ->
-    ### Iterate over enumerable `[ key, method, ]` pairs of `x` and its prototypes. The iteration will start
-    with `x.prototype` ) `x::` if `x` is a class and with `x` itself otherwise. ###
-    props  ?= require './props'
-    top     = if isa_class x then ( x:: ) else x
-    for key in props.public_keys top
-      method = top[ key ]
-      continue unless isa_function method
-      yield [ key, method, ]
-    return null
 
   #---------------------------------------------------------------------------------------------------------
   _compile: ( declarations ) ->
@@ -185,7 +160,6 @@ defaults                  = Object.freeze
   type_of: ( x ) ->
     for [ type, isa_method, ] in @_isa_methods
       return type if isa_method x
-    # debug '^Types::type_of@1^', @get_denicola_device_name x
     return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
     ### TAINT return class name? ###
     ### TAINT raise exception? ###
