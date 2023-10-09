@@ -90,11 +90,11 @@ isa_class                 = ( x ) ->
 #===========================================================================================================
 defaults                  = Object.freeze
   types_cfg:
-    declarations: Isa
+    declarations: Isa::
 
 
 #===========================================================================================================
-@Types = class Types
+@Pre_types = class Pre_types
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
@@ -108,7 +108,6 @@ defaults                  = Object.freeze
     @isa          = {}
     @validate     = {}
     props.hide @, '_isa_methods', []
-    declarations  = if isa_class then ( declarations:: ) else ( declarations )
     me            = @
     #.......................................................................................................
     cfg =
@@ -186,6 +185,22 @@ defaults                  = Object.freeze
     ( @get_denicola_device_name x                   )
     ( @get_carter_device_name   x                   )
     ( if Number.isNaN           x then 'N' else '0' ) ].join '/'
+
+
+#===========================================================================================================
+@Types = class Types extends Pre_types
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ( cfg ) ->
+    super cfg
+    return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  _compile: ( declarations ) ->
+    props  ?= require './props'
+    props.hide @, '_types', new Pre_types() ### NOTE could use custom declarations ###
+    declarations  = if @_types.isa.class declarations then ( declarations:: ) else ( declarations )
+    return super declarations
 
 
 #===========================================================================================================
