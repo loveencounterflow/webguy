@@ -103,6 +103,19 @@ defaults                  = Object.freeze
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
+  _isa_optional: ( key, type, x ) -> ( not x? ) or ( @isa[ type ] x )
+
+  #---------------------------------------------------------------------------------------------------------
+  _validate: ( key, type, x ) ->
+    return x if ( @isa[ type ] x )
+    throw new Error "expected a #{key} got a #{@type_of x}"
+
+  #---------------------------------------------------------------------------------------------------------
+  _validate_optional: ( key, type, x ) ->
+    return x if ( not x? ) or ( @isa[ type ] x )
+    throw new Error "expected a #{key} got a #{@type_of x}"
+
+  #---------------------------------------------------------------------------------------------------------
   _compile: ( declarations ) ->
     props        ?= require './props'
     @isa          = {}
@@ -121,24 +134,20 @@ defaults                  = Object.freeze
         yield { target: me.isa, key, descriptor, }
         #...................................................................................................
         # optional_$type
-        yield do ( key = "optional_#{type}" ) ->
-          value       = ( x ) -> ( not x? ) or ( me.isa[ type ] x )
+        yield do ( key = "optional_#{type}", type ) ->
+          value       = ( x ) -> me._isa_optional key, type, x
           descriptor  = { descriptor..., value, }
           return { target: me.isa, key, descriptor, }
         #...................................................................................................
         # validate_$type
-        yield do ( key = type ) ->
-          value       = ( x ) =>
-            return x if ( me.isa[ type ] x )
-            throw new Error "expected a #{key} got a #{me.type_of x}"
+        yield do ( key = type, type ) ->
+          value       = ( x ) => me._validate key, type, x
           descriptor  = { descriptor..., value, }
           return { target: me.validate, key, descriptor, }
         #...................................................................................................
         # validate_optional_$type
-        yield do ( key = "optional_#{type}" ) ->
-          value       = ( x ) =>
-            return x if ( not x? ) or ( me.isa[ type ] x )
-            throw new Error "expected an #{key} got a #{me.type_of x}"
+        yield do ( key = "optional_#{type}", type ) ->
+          value       = ( x ) => me._validate_optional key, type, x
           descriptor  = { descriptor..., value, }
           return { target: me.validate, key, descriptor, }
         #...................................................................................................
