@@ -5,11 +5,6 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
-#-----------------------------------------------------------------------------------------------------------
-isa_function              = ( x ) -> ( Object::toString.call x ) is '[object Function]'
-isa_class                 = ( x ) ->
-  ( ( Object::toString.call x ) is '[object Function]' ) and \
-    ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
 
 
 #===========================================================================================================
@@ -67,7 +62,9 @@ class Isa
   #=========================================================================================================
   # Classes
   #---------------------------------------------------------------------------------------------------------
-  class:          ( x ) -> isa_class x
+  class:          ( x ) ->
+    ( ( Object::toString.call x ) is '[object Function]' ) and \
+      ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
 
   #=========================================================================================================
   # Other Types
@@ -75,7 +72,7 @@ class Isa
   boolean:        ( x ) -> ( x is true ) or ( x is false )
   object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
   buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false
-  function:       ( x ) -> isa_function x
+  function:       ( x ) -> ( Object::toString.call x ) is '[object Function]'
   asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
   symbol:         ( x ) -> ( typeof x ) is 'symbol'
 
