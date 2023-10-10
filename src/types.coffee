@@ -13,7 +13,7 @@ isa_class                 = ( x ) ->
 
 
 #===========================================================================================================
-@Isa = class Isa
+class Isa
 
   #=========================================================================================================
   # Bottom Types
@@ -94,7 +94,7 @@ defaults                  = Object.freeze
 
 
 #===========================================================================================================
-@Pre_types = class Pre_types
+class _Types
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
@@ -196,7 +196,7 @@ defaults                  = Object.freeze
 
 
 #===========================================================================================================
-@Types = class Types extends Pre_types
+class Types extends _Types
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
@@ -206,7 +206,7 @@ defaults                  = Object.freeze
   #---------------------------------------------------------------------------------------------------------
   _compile: ( declarations ) ->
     props  ?= require './props'
-    props.hide @, '_types', new Pre_types() ### NOTE could use custom declarations ###
+    props.hide @, '_types', new _Types() ### NOTE could use custom declarations ###
     declarations  = if @_types.isa.class declarations then ( declarations:: ) else ( declarations )
     return super declarations
 
