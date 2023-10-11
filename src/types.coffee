@@ -97,7 +97,7 @@ class Isa
   $known_type_name: ( x ) -> ( @isa.jsidentifier x ) and ( @isa.$type_declaration_function @isa[ x ] )
 
   #---------------------------------------------------------------------------------------------------------
-  $type_declaration_object: ( x ) ->
+  $type_declaration_fields_object: ( x ) ->
     return false unless ( @isa.object x )
     for k, v of x
       return false unless @isa.jsidentifier k
