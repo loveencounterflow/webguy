@@ -75,6 +75,7 @@ class Isa
   function:       ( x ) -> ( Object::toString.call x ) is '[object Function]'
   asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
   symbol:         ( x ) -> ( typeof x ) is 'symbol'
+  keyowner:       ( x ) -> return true for _ of x ? {}; return false
 
   #=========================================================================================================
   # Existential Types
@@ -82,6 +83,37 @@ class Isa
   nothing:        ( x ) -> not x?
   something:      ( x ) -> x?
   anything:       ( x ) -> true
+
+  #=========================================================================================================
+  # Declaration Types
+  #---------------------------------------------------------------------------------------------------------
+  $type_declaration: ( x ) ->
+    ( @isa.$known_type_name x ) or \
+    ( @isa.$type_declaration_function x ) or \
+    ( @isa.$type_declaration_object x )
+
+  #---------------------------------------------------------------------------------------------------------
+  $type_declaration_function: ( x ) -> ( @isa.function x ) and ( x.length is 1 )
+  $known_type_name: ( x ) -> ( @isa.jsidentifier x ) and ( @isa.$type_declaration_function @isa[ x ] )
+
+  #---------------------------------------------------------------------------------------------------------
+  $type_declaration_object: ( x ) ->
+    return false unless ( @isa.object x )
+    for k, v of x
+      return false unless @isa.jsidentifier k
+      return false unless @isa.$type_declaration x
+    return true
+
+  #---------------------------------------------------------------------------------------------------------
+  ### NOTE to be rewitten in object style ###
+  $type_declaration_object: ( x ) ->
+    return false unless @isa.keyowner                             x
+    return false unless @isa.optional_$type_declaration_function  x.isa
+    return false unless @isa.optional_$type_declaration_function  x.create
+    return false unless @isa.optional_$type_declaration_object    x.fields
+    return false unless @isa.optional_$type_declaration_template  x.template
+    return false unless @isa.optional_function                    x.cast
+    return true
 
 
 #===========================================================================================================
@@ -104,13 +136,16 @@ class _Types
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
+    # debug '^_Types::_validate@1^', "#{key} #{type} #{x}"
     return x if ( @isa[ type ] x )
-    throw new Error "expected a #{key} got a #{@type_of x}"
+    ### TAINT put message into a resource object? ###
+    throw new Error "expected a #{key}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
   _validate_optional: ( key, type, x ) ->
     return x if ( not x? ) or ( @isa[ type ] x )
-    throw new Error "expected a #{key} got a #{@type_of x}"
+    ### TAINT put message into a resource object? ###
+    throw new Error "expected a #{key}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
   _collect_and_generate_declarations: ( declarations ) ->
@@ -121,7 +156,7 @@ class _Types
     me            = @
     #.......................................................................................................
     cfg =
-      descriptor: { enumerable: false, }
+      descriptor: { enumerable: true, }
       overwrite:  false
       # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
@@ -207,6 +242,15 @@ class Types extends _Types
     props.hide @, '_types', new _Types() ### NOTE could use custom declarations ###
     declarations  = if @_types.isa.class declarations then ( declarations:: ) else ( declarations )
     return super declarations
+
+  #---------------------------------------------------------------------------------------------------------
+  _transform_and_validate_declarations: ->
+    # debug '^Types::_transform_and_validate_declarations@1^'
+    for k, v of @isa
+      # debug '^Types::_transform_and_validate_declarations@1^', k, v
+      unless ( @validate.jsidentifier k ) then null
+      unless ( @validate.$type_declaration k ) then null
+    return null
 
 
 #===========================================================================================================
