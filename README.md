@@ -254,11 +254,13 @@ and `name` is `null`.
 
     The default value of an enumeration will always be its first value. Implicitly, a `create()` method is
     added that will accept zero or one of the listed values as inputs; to create a new `favorite_thing`,
-    call e.g. `types.create.favorite_thing()` (returns `'snowflakes'`) or `types.create.favorite_thing 'beesting'`
-    (which will fail as `'beesting'` is none of my `favorite_thing`s).
+    call e.g. `types.create.favorite_thing()` (returns `'snowflakes'`) or `types.create.favorite_thing
+    'beesting'` (which will fail as `'beesting'` is none of my `favorite_thing`s).
 
-  * type declared by giving a `$type_declaration_function`:
-    * a `$type_declaration_function`, i.e. a unary function (that takes exactly one argument) that always
+  * **Function**: type declared by giving a function of type `$type_declaration_function` i.e. a unary
+    function (that takes exactly one argument) (and that *never throw an exception* and *always returns
+    either true or false*, but these are not enforceable in JS). In order to define `measure` as an `object`
+    with fields `q`(uantity) and `u`(nit), one may write:
 
     ```coffee
     measure: ( x ) ->
@@ -268,27 +270,29 @@ and `name` is `null`.
       return true
     ```
 
-  * type declared by giving a `$type_declaration_object` where `isa` is a `$type_declaration_fields_object`
-    that lists the types of all fields; implicitly, this means that a `measure` is a plain old `object` (as
-    opposed to, say, an array):
+  * **Object**: type declared by giving a `$type_declaration_object`.
 
-    ```coffee
-    measure:
-      isa:
-        q:  'float'
-        u:  'nonempty_text'
-    ```
+    * where `isa` is a
+      `$type_declaration_fields_object` that lists the types of all fields; implicitly, this means that a
+      `measure` is a plain old `object` (as opposed to, say, an array):
 
-  * type declared by giving a `$type_declaration_object` where `extends` indicates inheritance and `isa` is a
-    `$type_declaration_fields_object`. Type `length` is declared as an extension of `measure` with the added
-    stipulation that `u`(nit) be a `length_unit` (declared elsewhere, probably by enumeration):
+      ```coffee
+      measure:
+        isa:
+          q:  'float'
+          u:  'nonempty_text'
+      ```
 
-    ```coffee
-    length:
-      extends: 'measure'
-      isa:
-        u:  'length_unit'
-    ```
+    * type declared by giving a `$type_declaration_object` where `extends` indicates inheritance and `isa` is
+      a `$type_declaration_fields_object`. Type `length` is declared as an extension of `measure` with the
+      added stipulation that `u`(nit) be a `length_unit` (declared elsewhere, probably by enumeration):
+
+      ```coffee
+      length:
+        extends: 'measure'
+        isa:
+          u:  'length_unit'
+      ```
 
 
 ### Type Signatures
