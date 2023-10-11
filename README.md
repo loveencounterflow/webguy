@@ -231,57 +231,64 @@ and `name` is `null`.
 
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
   | \p{ID_Continue} )* $ ///u`)
-* type declaration may be
-  * name of a known type
-  * a list of arbitrary values
-  * a `$type_declaration_function`, i.e. a unary function (that takes exactly one argument) that always
-    returns either `true` or `false` and never throws an error.
-  * a `$type_declaration_object`. A declaration object may have the following fields:
-    * `isa`
 
+* type declarations must be of type `$type_declaration`, which is any of the below:
 
-* type declared by enumeration of arbitrary values:
+  * **Aliasing**: type declared by naming an existing type; `b: 'a'` where `a` is a known type makes `b` an
+    alias of `a`. This is similar to what `extends` (see below) does but without any way to refine or modify
+    the newly declared type. This is the way to go for many field declarations (which are, recursively, of
+    type `$type_declaration` themselves). The declaration
 
-  ```coffee
-  my_favorite_things: [ 'snowflakes', 'packages', 'do-re-mi', ]
-  ```
+    ```coffee
+    quantity: 'float'
+    ```
 
-* type declared by aliasing an existing type (like `extends` but no way to refine):
+    may be read as 'a quantity is extensionally (materially) nothing but a float; intentionally speaking,
+    not all floats are necessarily used as quantities'.
 
-  ```coffee
-  quantity: 'other_name_for_the_same'
-  ```
+  * **Enumeration**: type declared by a non-empty enumeration of arbitrary values:
 
-* type declared by giving an ISA function:
+    ```coffee
+    favorite_thing: [ 'snowflakes', 'packages', 'do-re-mi', ]
+    ```
 
-  ```coffee
-  quantity: ( x ) ->
-    return false unless ( @isa.object         x   )
-    return false unless ( @isa.float          x.q )
-    return false unless ( @isa.nonempty_text  x.u )
-    return true
-  ```
+    The default value of an enumeration will always be its first value. Implicitly, a `create()` method is
+    added that will accept zero or one of the listed values as inputs; to create a new `favorite_thing`,
+    call e.g. `types.create.favorite_thing()` (returns `'snowflakes'`) or `types.create.favorite_thing 'beesting'`
+    (which will fail as `'beesting'` is none of my `favorite_thing`s).
 
-* type declared by giving an ISA object where `isa` is an ISA fields object; implicitly, this means that
-  a `quantity` is a plain old `object` (as opposed to, say, an array):
+  * type declared by giving a `$type_declaration_function`:
+    * a `$type_declaration_function`, i.e. a unary function (that takes exactly one argument) that always
 
-  ```coffee
-  quantity:
-    isa:
-      q:  'float'
-      u:  'nonempty_text'
-  ```
+    ```coffee
+    measure: ( x ) ->
+      return false unless ( @isa.object         x   )
+      return false unless ( @isa.float          x.q )
+      return false unless ( @isa.nonempty_text  x.u )
+      return true
+    ```
 
-* type declared by giving an ISA object where `isa` is an ISA fields object and `extends` indicates
-  inheritance. Here a `length` is declared as a `quantity` where the `u`(nit) field is a `length_unit`
-  (declared elsewhere, probably by enumeration):
+  * type declared by giving a `$type_declaration_object` where `isa` is a `$type_declaration_fields_object`
+    that lists the types of all fields; implicitly, this means that a `measure` is a plain old `object` (as
+    opposed to, say, an array):
 
-  ```coffee
-  length:
-    extends: 'quantity'
-    isa:
-      u:  'length_unit'
-  ```
+    ```coffee
+    measure:
+      isa:
+        q:  'float'
+        u:  'nonempty_text'
+    ```
+
+  * type declared by giving a `$type_declaration_object` where `extends` indicates inheritance and `isa` is a
+    `$type_declaration_fields_object`. Type `length` is declared as an extension of `measure` with the added
+    stipulation that `u`(nit) be a `length_unit` (declared elsewhere, probably by enumeration):
+
+    ```coffee
+    length:
+      extends: 'measure'
+      isa:
+        u:  'length_unit'
+    ```
 
 
 ### Type Signatures
