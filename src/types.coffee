@@ -96,7 +96,7 @@ class _Types
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     cfg = { defaults.types_cfg..., cfg..., }
-    @_compile cfg.declarations
+    @_collect_and_generate_declarations cfg.declarations
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ class _Types
     throw new Error "expected a #{key} got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
-  _compile: ( declarations ) ->
+  _collect_and_generate_declarations: ( declarations ) ->
     props        ?= require './props'
     @isa          = {}
     @validate     = {}
@@ -198,10 +198,11 @@ class Types extends _Types
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     super cfg
+    @_transform_and_validate_declarations()
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  _compile: ( declarations ) ->
+  _collect_and_generate_declarations: ( declarations ) ->
     props  ?= require './props'
     props.hide @, '_types', new _Types() ### NOTE could use custom declarations ###
     declarations  = if @_types.isa.class declarations then ( declarations:: ) else ( declarations )
