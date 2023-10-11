@@ -15,6 +15,7 @@
   - [`trm`](#trm)
   - [`types`](#types)
     - [API](#api)
+    - [Declarations](#declarations)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -226,6 +227,62 @@ and `name` is `null`.
 * `validate.t x, ...`—returns `true` on success, throws error otherwise
 * `isa.t      x, ...`—returns `true` on success, `false` otherwise
 
+### Declarations
+
+* type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
+  | \p{ID_Continue} )* $ ///u`)
+* type declaration may be
+  * name of a known type
+  * a list of arbitrary values
+  * a `$type_declaration_function`, i.e. a unary function (that takes exactly one argument) that always
+    returns either `true` or `false` and never throws an error.
+  * a `$type_declaration_object`. A declaration object may have the following fields:
+    * `isa`
+
+
+* type declared by enumeration of arbitrary values:
+
+  ```coffee
+  my_favorite_things: [ 'snowflakes', 'packages', 'do-re-mi', ]
+  ```
+
+* type declared by aliasing an existing type (like `extends` but no way to refine):
+
+  ```coffee
+  quantity: 'other_name_for_the_same'
+  ```
+
+* type declared by giving an ISA function:
+
+  ```coffee
+  quantity: ( x ) ->
+    return false unless ( @isa.object         x   )
+    return false unless ( @isa.float          x.q )
+    return false unless ( @isa.nonempty_text  x.u )
+    return true
+  ```
+
+* type declared by giving an ISA object where `isa` is an ISA fields object; implicitly, this means that
+  a `quantity` is a plain old `object` (as opposed to, say, an array):
+
+  ```coffee
+  quantity:
+    isa:
+      q:  'float'
+      u:  'nonempty_text'
+  ```
+
+* type declared by giving an ISA object where `isa` is an ISA fields object and `extends` indicates
+  inheritance. Here a `length` is declared as a `quantity` where the `u`(nit) field is a `length_unit`
+  (declared elsewhere, probably by enumeration):
+
+  ```coffee
+  length:
+    extends: 'quantity'
+    isa:
+      u:  'length_unit'
+  ```
+
 
 ### Type Signatures
 
@@ -248,49 +305,6 @@ and `name` is `null`.
 
 Results are joined with a slash `/`.
 
-**### TAINT test for class instances?**
-
-```coffeescript
-( typeof x )
-( x?.constructor.name ? '-' )
-( Number.isNaN x ) ].join '/'
-
-( ( Object::toString.call x ).replace /^\[object (.+?)\]$/u, '$1' )
-( x?.constructor.name ? '0' )
-( if Number.isNaN x then 'N' else '-' )
-###
-
-xxx The [Carter Device (by one Ian Carter, 2021-09-24)](https://stackoverflow.com/a/69316645/7568091) for
-those values whose Miller Device Name is `[object Function]`:
-
-Also see [this detailed answer in the same discussion](https://stackoverflow.com/a/72326559/7568091).
-
-[Link to specs](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation)
-
-###
-get_carter_device_name = ( x, miller_device_name = null ) ->
-  miller_device_name ?= Object::toString.call x
-  return '-'  unless miller_device_name is '[object Function]'
-  return 'fn' unless ( descriptor = Object.getOwnPropertyDescriptor x, 'prototype' )?
-  return 'fn' if descriptor.writable
-  return 'class'
-console.log '^4234-1^', isa_class ( class D )
-console.log '^4234-2^', isa_class ( -> )
-f = -> new Promise ( resolve , reject ) ->
-  console.log '^4234-3^', isa_class resolve
-  console.log '^4234-4^', isa_class reject
-  console.log '^4234-5^', Object.getOwnPropertyDescriptor resolve, 'prototype'
-  resolve null
-await f()
-###
-https://stackoverflow.com/a/69316645/7568091 (2021-09-24 Ian Carter)
-https://stackoverflow.com/a/72326559/7568091
-coffee> ( Object.getOwnPropertyDescriptor d, 'prototype' )?.writable ? false
-{ value: {}, writable: false, enumerable: false, configurable: false }
-coffee> Object.getOwnPropertyDescriptor (->), 'prototype'
-{ value: {}, writable: true, enumerable: false, configurable: false }
-###
-```
 
 ## To Do
 
