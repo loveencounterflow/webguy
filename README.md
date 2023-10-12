@@ -20,7 +20,6 @@
       - [Declaration by Value Enumeration](#declaration-by-value-enumeration)
       - [Declaration by ISA Function](#declaration-by-isa-function)
       - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
-        - [...](#)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -241,7 +240,7 @@ and `name` is `null`.
 
 #### Declaration by Type Alias
 
-A new type may be declared by giving the name of an existing type. The declaration
+A new type may be declared by giving the **name of an existing type**. The declaration
 
 ```coffee
 quantity: 'float'
@@ -256,7 +255,7 @@ declared type. Aliases are most often used for the fields of structured types (s
 
 #### Declaration by Value Enumeration
 
-A type may be declared by providing a non-empty enumeration of arbitrary values:
+A type may be declared by providing a non-empty **enumeration of arbitrary values**:
 
 ```coffee
 favorite_thing: [ 'snowflakes', 'packages', 'do-re-mi', ]
@@ -272,9 +271,9 @@ of my `favorite_thing`s).
 
 #### Declaration by ISA Function
 
-A type may be declared by giving a function of type `$type_declaration_function` (a *unary function* (that
-takes exactly one argument) that *never throws an exception* and *always returns either true or false*). In
-order to define `measure` as an `object` with fields `q`(uantity) and `u`(nit), one may write:
+A type may be declared by giving a **function** of type `$type_declaration_function` (a *unary function*
+(that takes exactly one argument) that *never throws an exception* and *always returns either true or
+false*). In order to define `measure` as an `object` with fields `q`(uantity) and `u`(nit), one may write:
 
 ```coffee
 measure: ( x ) ->
@@ -286,9 +285,25 @@ measure: ( x ) ->
 
 #### Declaration by Declaration Objects
 
-##### ...
+A type may be declared by giving an **object** of type `$type_declaration_object`. The properties of a type
+declaration object are all optional, but at a minimum either `isa` or `fields` or both must be given.
 
-* **Object**: type declared by giving a `$type_declaration_object`.
+```coffee
+measure: ( x ) ->
+  return false unless ( @isa.object         x   ) # don't even try if it's not an object
+  return false unless ( @isa.float          x.q ) # bail out unless field `q` isn't a `float`
+  return false unless ( @isa.nonempty_text  x.u ) # need to give a `u`nit, too
+  return true                                     # if none of the above matched, we're fine
+```
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
 
 * where `isa` is a
 `$type_declaration_fields_object` that lists the types of all fields; implicitly, this means that a
