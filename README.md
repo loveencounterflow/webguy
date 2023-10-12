@@ -312,9 +312,9 @@ unless the `isa` property is also given, which will then be called before testin
 
 [^1]: The current `Intertype` concept of an `object` tests a value against three constraints:
 
-* `x?` (`x` isn't `null` or `undefined`),
-* `typeof x` returns `'object'`,
-* `( Object::toString.call x )` gives `'[object Object]`
+  * `x?` (`x` isn't `null` or `undefined`),
+  * `typeof x` returns `'object'`,
+  * `( Object::toString.call x )` gives `'[object Object]`
 
 
 ```coffee
