@@ -15,11 +15,13 @@
   - [`trm`](#trm)
   - [`types`](#types)
     - [API](#api)
+    - [Base Types, Refinements, Optional Types](#base-types-refinements-optional-types)
     - [Declarations](#declarations)
       - [Declaration by Type Alias](#declaration-by-type-alias)
       - [Declaration by Value Enumeration](#declaration-by-value-enumeration)
       - [Declaration by ISA Function](#declaration-by-isa-function)
       - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
+      - [Declaration with Fields](#declaration-with-fields)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -231,6 +233,19 @@ and `name` is `null`.
 * `validate.t x, ...`—returns `true` on success, throws error otherwise
 * `isa.t      x, ...`—returns `true` on success, `false` otherwise
 
+### Base Types, Refinements, Optional Types
+
+* As **base types** we regard roughly what JavaScript itself considers the `typeof` a value—*roughly*
+  because JS's concept of types is (in)famously hazy and riddled with pitfalls. But we can probably agree on
+  what constitutes, say, a JS `array`, a `null`, a `boolean`, or a `function` in JavaScript. It's somewhat
+  more difficult with `object` since (almost, but not quite) 'everything is an object' in JS (even `null` in
+  a way which makes no sense at all).
+
+* A **refined type** is a base type plus additional constraints. For example, in the set of values that are
+  regarded as `number`s in JS, there's a subset of values that are `integer` `number`s, and of these, there
+  are the two subsets `even` and `odd` `integer` `numbers`. Therefore, `even` and `odd` can be regarded as
+  refinements of both type `number` and type `integer`.
+
 ### Declarations
 
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
@@ -286,7 +301,13 @@ measure: ( x ) ->
 #### Declaration by Declaration Objects
 
 A type may be declared by giving an **object** of type `$type_declaration_object`. The properties of a type
-declaration object are all optional, but at a minimum either `isa` or `fields` or both must be given.
+declaration object are all optional, but at a minimum either `fields` or `isa` (or both) must be given.
+
+
+#### Declaration with Fields
+
+The `fields` property of a declaration object lists all the fields (properties) that a value of the declared
+type may have. When present, values will implicitly first tested whether `object.`
 
 ```coffee
 measure: ( x ) ->
