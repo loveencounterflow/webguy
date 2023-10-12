@@ -307,7 +307,12 @@ declaration object are all optional, but at a minimum either `fields` or `isa` (
 #### Declaration with Fields
 
 The `fields` property of a declaration object lists all the fields (properties) that a value of the declared
-type may have. When present, values will implicitly first tested whether `object.`
+type may have. When present, values will implicitly first tested whether they qualify as an `object`[^1]
+unless the `isa` property is also given, which will then be called before testing the fields one by one.
+
+[^1]: **(1)**&nbsp;`x?` (`x` isn't `null` or `undefined`), **(2)**&nbsp;`typeof x` returns `'object'`,
+**(3)**&nbsp;`( Object::toString.call x )` gives `'[object Object]`
+
 
 ```coffee
 measure: ( x ) ->
