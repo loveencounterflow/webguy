@@ -123,7 +123,7 @@ defaults                  = Object.freeze
 
 
 #===========================================================================================================
-class _Types
+class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
@@ -136,7 +136,7 @@ class _Types
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
-    # debug '^_Types::_validate@1^', "#{key} #{type} #{x}"
+    # debug '^_Intertype::_validate@1^', "#{key} #{type} #{x}"
     return x if ( @isa[ type ] x )
     ### TAINT put message into a resource object? ###
     throw new Error "expected a #{key}, got a #{@type_of x}"
@@ -228,7 +228,7 @@ class _Types
 
 
 #===========================================================================================================
-class Types extends _Types
+class Intertype extends _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
@@ -239,22 +239,22 @@ class Types extends _Types
   #---------------------------------------------------------------------------------------------------------
   _collect_and_generate_declarations: ( declarations ) ->
     props  ?= require './props'
-    props.hide @, '_types', new _Types() ### NOTE could use custom declarations ###
+    props.hide @, '_types', new _Intertype() ### NOTE could use custom declarations ###
     declarations  = if @_types.isa.class declarations then ( declarations:: ) else ( declarations )
     return super declarations
 
   #---------------------------------------------------------------------------------------------------------
   _transform_and_validate_declarations: ->
-    # debug '^Types::_transform_and_validate_declarations@1^'
+    # debug '^Intertype::_transform_and_validate_declarations@1^'
     for k, v of @isa
-      # debug '^Types::_transform_and_validate_declarations@1^', k, v
+      # debug '^Intertype::_transform_and_validate_declarations@1^', k, v
       unless ( @validate.jsidentifier k ) then null
       unless ( @validate.$type_declaration k ) then null
     return null
 
 
 #===========================================================================================================
-module.exports          = new Types()
-module.exports.Isa      = Isa
-module.exports.Types    = Types
+module.exports            = new Intertype()
+module.exports.Isa        = Isa
+module.exports.Intertype  = Intertype
 
