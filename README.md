@@ -16,10 +16,10 @@
   - [`types`](#types)
     - [API](#api)
     - [Declarations](#declarations)
-      - [Declaration by Type Alias](#declaration-by-type-alias)
-      - [Declaration by Value Enumeration](#declaration-by-value-enumeration)
-      - [Declaration by ISA Function](#declaration-by-isa-function)
-      - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
+      - [█ Declaration by Type Alias](#%E2%96%88-declaration-by-type-alias)
+      - [█ Declaration by Value Enumeration](#%E2%96%88-declaration-by-value-enumeration)
+      - [█ Declaration by ISA Function](#%E2%96%88-declaration-by-isa-function)
+      - [█ Declaration by Declaration Object](#%E2%96%88-declaration-by-declaration-object)
         - [...](#)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
@@ -239,7 +239,7 @@ and `name` is `null`.
 
 * type declarations must be of type `$type_declaration`, which is any of the below:
 
-#### Declaration by Type Alias
+#### █ Declaration by Type Alias
 
 A new type may be declared by giving the name of an existing type. The declaration
 
@@ -254,7 +254,7 @@ This is similar to what `extends` (see below) does but without any way to refine
 declared type. Aliases are most often used for the fields of structured types (see below).
 
 
-#### Declaration by Value Enumeration
+#### █ Declaration by Value Enumeration
 
 A type may be declared by providing a non-empty enumeration of arbitrary values:
 
@@ -270,7 +270,7 @@ to create a new `favorite_thing`, call e.g. `types.create.favorite_thing()` (whi
 of my `favorite_thing`s).
 
 
-#### Declaration by ISA Function
+#### █ Declaration by ISA Function
 
 A type may be declared by giving a function of type `$type_declaration_function` (a *unary function* (that
 takes exactly one argument) that *never throws an exception* and *always returns either true or false*). In
@@ -284,7 +284,7 @@ measure: ( x ) ->
   return true                                     # if none of the above matched, we're fine
 ```
 
-#### Declaration by Declaration Objects
+#### █ Declaration by Declaration Object
 
 ##### ...
 
