@@ -15,6 +15,8 @@
     - [Declaration by ISA Function](#declaration-by-isa-function)
     - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
     - [Declaration with Fields](#declaration-with-fields)
+  - [Standard Types](#standard-types)
+    - [`object`](#object)
   - [Type Signatures](#type-signatures)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -101,14 +103,8 @@ declaration object are all optional, but at a minimum either `fields` or `isa` (
 ### Declaration with Fields
 
 The `fields` property of a declaration object lists all the fields (properties) that a value of the declared
-type may have. When present, values will implicitly first tested whether they qualify as an `object`[^1]
+type may have. When present, values will implicitly first tested whether they qualify as an [`object`](...)
 unless the `isa` property is also given, which will then be called before testing the fields one by one.
-
-[^1]: The current `Intertype` concept of an `object` tests a value against three constraints:
-
-  * `x?` (`x` isn't `null` or `undefined`),
-  * `typeof x` returns `'object'`,
-  * `( Object::toString.call x )` gives `'[object Object]`
 
 
 ```coffee
@@ -118,6 +114,16 @@ measure: ( x ) ->
   return false unless ( @isa.nonempty_text  x.u ) # need to give a `u`nit, too
   return true                                     # if none of the above matched, we're fine
 ```
+
+## Standard Types
+
+### `object`
+
+`object` tests a value against three constraints:
+
+  * `x?` (`x` isn't `null` or `undefined`),
+  * `typeof x` returns `'object'`,
+  * `( Object::toString.call x )` gives `'[object Object]`
 
 
 --------------------------------------------------------
