@@ -16,6 +16,9 @@
   - [`types`](#types)
     - [API](#api)
     - [Declarations](#declarations)
+      - [H4](#h4)
+        - [H5](#h5)
+          - [H6](#h6)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -231,6 +234,27 @@ and `name` is `null`.
 
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
   | \p{ID_Continue} )* $ ///u`)
+
+#### H4
+
+xxx
+
+
+##### H5
+
+xxx
+
+
+###### H6
+
+xxx
+
+
+####### H7
+
+xxx
+
+
 
 * type declarations must be of type `$type_declaration`, which is any of the below:
 
