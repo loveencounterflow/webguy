@@ -16,9 +16,11 @@
   - [`types`](#types)
     - [API](#api)
     - [Declarations](#declarations)
-      - [H4](#h4)
-        - [H5](#h5)
-          - [H6](#h6)
+      - [Declaration by Type Alias](#declaration-by-type-alias)
+      - [Declaration by Value Enumeration](#declaration-by-value-enumeration)
+      - [Declaration by ISA Function](#declaration-by-isa-function)
+      - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
+        - [...](#)
     - [Type Signatures](#type-signatures)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -235,64 +237,56 @@ and `name` is `null`.
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
   | \p{ID_Continue} )* $ ///u`)
 
-#### H4
-
-xxx
-
-
-##### H5
-
-xxx
-
-
-###### H6
-
-xxx
-
-
-####### H7
-
-xxx
-
-
-
 * type declarations must be of type `$type_declaration`, which is any of the below:
 
-  * **Aliasing**: type declared by naming an existing type; `b: 'a'` where `a` is a known type makes `b` an
-    alias of `a`. This is similar to what `extends` (see below) does but without any way to refine or modify
-    the newly declared type. This is the way to go for many field declarations (which are, recursively, of
-    type `$type_declaration` themselves). The declaration
+#### Declaration by Type Alias
 
-    ```coffee
-    quantity: 'float'
-    ```
+A new type may be declared by giving the name of an existing type. The declaration
 
-    may be read as 'a quantity is extensionally (materially) nothing but a float; intentionally speaking,
-    not all floats are necessarily used as quantities'.
+```coffee
+quantity: 'float'
+```
 
-  * **Enumeration**: type declared by a non-empty enumeration of arbitrary values:
+may be read as 'a `quantity` is extensionally (materially) nothing but a `float` (so all `quantities` are
+`float`s, but, *intentionally* speaking, not all `float`s are necessarily used as `quantity`s').
 
-    ```coffee
-    favorite_thing: [ 'snowflakes', 'packages', 'do-re-mi', ]
-    ```
+This is similar to what `extends` (see below) does but without any way to refine or modify the newly
+declared type. Aliases are most often used for the fields of structured types (see below).
 
-    The default value of an enumeration will always be its first value. Implicitly, a `create()` method is
-    added that will accept zero or one of the listed values as inputs; to create a new `favorite_thing`,
-    call e.g. `types.create.favorite_thing()` (returns `'snowflakes'`) or `types.create.favorite_thing
-    'beesting'` (which will fail as `'beesting'` is none of my `favorite_thing`s).
 
-  * **Function**: type declared by giving a function of type `$type_declaration_function` i.e. a unary
-    function (that takes exactly one argument) (and that *never throw an exception* and *always returns
-    either true or false*, but these are not enforceable in JS). In order to define `measure` as an `object`
-    with fields `q`(uantity) and `u`(nit), one may write:
+#### Declaration by Value Enumeration
 
-    ```coffee
-    measure: ( x ) ->
-      return false unless ( @isa.object         x   )
-      return false unless ( @isa.float          x.q )
-      return false unless ( @isa.nonempty_text  x.u )
-      return true
-    ```
+A type may be declared by providing a non-empty enumeration of arbitrary values:
+
+```coffee
+favorite_thing: [ 'snowflakes', 'packages', 'do-re-mi', ]
+```
+
+The default value of an enumeration will always be its first value.
+
+Implicitly, a `create()` method is added that accepts zero arguments or one of the listed values as inputs;
+to create a new `favorite_thing`, call e.g. `types.create.favorite_thing()` (which will return
+`'snowflakes'`) or `types.create.favorite_thing 'bee_sting'` (which will fail because `'bee_sting'` is none
+of my `favorite_thing`s).
+
+
+#### Declaration by ISA Function
+
+A type may be declared by giving a function of type `$type_declaration_function` (a *unary function* (that
+takes exactly one argument) that *never throws an exception* and *always returns either true or false*). In
+order to define `measure` as an `object` with fields `q`(uantity) and `u`(nit), one may write:
+
+```coffee
+measure: ( x ) ->
+  return false unless ( @isa.object         x   ) # don't even try if it's not an object
+  return false unless ( @isa.float          x.q ) # bail out unless field `q` isn't a `float`
+  return false unless ( @isa.nonempty_text  x.u ) # need to give a `u`nit, too
+  return true                                     # if none of the above matched, we're fine
+```
+
+#### Declaration by Declaration Objects
+
+##### ...
 
   * **Object**: type declared by giving a `$type_declaration_object`.
 
