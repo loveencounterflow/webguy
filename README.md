@@ -7,23 +7,23 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [WebGuy is a Guy for the Web](#webguy-is-a-guy-for-the-web)
-  - [`props`](#props)
-  - [`time`](#time)
-    - [Configuration](#configuration)
-    - [Performance Considerations](#performance-considerations)
-  - [`environment`](#environment)
-  - [`trm`](#trm)
-  - [`types`](#types)
-    - [API](#api)
-    - [Declarations](#declarations)
-      - [█ Declaration by Type Alias](#%E2%96%88-declaration-by-type-alias)
-      - [█ Declaration by Value Enumeration](#%E2%96%88-declaration-by-value-enumeration)
-      - [█ Declaration by ISA Function](#%E2%96%88-declaration-by-isa-function)
-      - [█ Declaration by Declaration Object](#%E2%96%88-declaration-by-declaration-object)
-        - [...](#)
-    - [Type Signatures](#type-signatures)
-  - [To Do](#to-do)
-  - [Is Done](#is-done)
+  - [█ `props`](#%E2%96%88-props)
+  - [█ `time`](#%E2%96%88-time)
+    - [█ Configuration](#%E2%96%88-configuration)
+    - [█ Performance Considerations](#%E2%96%88-performance-considerations)
+  - [█ `environment`](#%E2%96%88-environment)
+  - [█ `trm`](#%E2%96%88-trm)
+  - [█ `types`](#%E2%96%88-types)
+    - [█ API](#%E2%96%88-api)
+    - [█ Declarations](#%E2%96%88-declarations)
+      - [█ █ Declaration by Type Alias](#%E2%96%88-%E2%96%88-declaration-by-type-alias)
+      - [█ █ Declaration by Value Enumeration](#%E2%96%88-%E2%96%88-declaration-by-value-enumeration)
+      - [█ █ Declaration by ISA Function](#%E2%96%88-%E2%96%88-declaration-by-isa-function)
+      - [█ █ Declaration by Declaration Object](#%E2%96%88-%E2%96%88-declaration-by-declaration-object)
+        - [█ ...](#%E2%96%88-)
+    - [█ Type Signatures](#%E2%96%88-type-signatures)
+  - [█ To Do](#%E2%96%88-to-do)
+  - [█ Is Done](#%E2%96%88-is-done)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -33,7 +33,7 @@
 
 # WebGuy is a Guy for the Web
 
-## `props`
+## █ `props`
 
 * **`public_keys = ( owner ) ->`**: return a list of property names, including inherited ones, but excluding
   non-enumerables, symbols, and non-userland ones like `constructor`.
@@ -112,7 +112,7 @@
     descriptor settings, the ones returned by the latter (the `decorator` function) will overwrite those of
     the former (i.e. the decorator always has the last word).
 
-## `time`
+## █ `time`
 
 `WEBGUY.time` contains facilities to create timestamps for purposes like logging or to create dated DB
 records.
@@ -166,7 +166,7 @@ harder when you bring in typical constraints. One wants one's timestamps to be:
 * **`stamp()`** is a convenience equivalent to `monostamp_s1()`.
 
 
-### Configuration
+### █ Configuration
 
 ```coffeescript
 cfg =
@@ -188,7 +188,7 @@ cfg =
     and still sorts correctly is `YYYYMMDDHHmmssµ`, which produces `compact` format timestamps like
     `20230913090909275140:000` (the counter being implicitly added).
 
-### Performance Considerations
+### █ Performance Considerations
 
 A quick test convinced me that I'm getting around 170 calls to `time.monostamp_s1()` into a single
 millisecond; these timestamps then look like
@@ -214,32 +214,32 @@ methods stop(), start() to keep current time (but not counter)
 
  -->
 
-## `environment`
+## █ `environment`
 
 `( require 'webguy' ).environment` is an object like `{ browser: false, node: true, webworker: false, jsdom:
 false, deno: false, name: 'node', }` with boolean and one text properties that tell you in what kind of
 environment the code is running. Observe that there may be environments where no boolean property is `true`
 and `name` is `null`.
 
-## `trm`
+## █ `trm`
 
 * **`rpr = ( x ) ->`**: return a formatted textual representation of any value `x`.
 
-## `types`
+## █ `types`
 
-### API
+### █ API
 
 * `validate.t x, ...`—returns `true` on success, throws error otherwise
 * `isa.t      x, ...`—returns `true` on success, `false` otherwise
 
-### Declarations
+### █ Declarations
 
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
   | \p{ID_Continue} )* $ ///u`)
 
 * type declarations must be of type `$type_declaration`, which is any of the below:
 
-#### █ Declaration by Type Alias
+#### █ █ Declaration by Type Alias
 
 A new type may be declared by giving the name of an existing type. The declaration
 
@@ -254,7 +254,7 @@ This is similar to what `extends` (see below) does but without any way to refine
 declared type. Aliases are most often used for the fields of structured types (see below).
 
 
-#### █ Declaration by Value Enumeration
+#### █ █ Declaration by Value Enumeration
 
 A type may be declared by providing a non-empty enumeration of arbitrary values:
 
@@ -270,7 +270,7 @@ to create a new `favorite_thing`, call e.g. `types.create.favorite_thing()` (whi
 of my `favorite_thing`s).
 
 
-#### █ Declaration by ISA Function
+#### █ █ Declaration by ISA Function
 
 A type may be declared by giving a function of type `$type_declaration_function` (a *unary function* (that
 takes exactly one argument) that *never throws an exception* and *always returns either true or false*). In
@@ -284,9 +284,9 @@ measure: ( x ) ->
   return true                                     # if none of the above matched, we're fine
 ```
 
-#### █ Declaration by Declaration Object
+#### █ █ Declaration by Declaration Object
 
-##### ...
+##### █ ...
 
   * **Object**: type declared by giving a `$type_declaration_object`.
 
@@ -313,7 +313,7 @@ measure: ( x ) ->
       ```
 
 
-### Type Signatures
+### █ Type Signatures
 
 * string of variable length reflecting the results of a minimal number of tests that never fail and
   give each type of values a unique name
@@ -335,7 +335,7 @@ measure: ( x ) ->
 Results are joined with a slash `/`.
 
 
-## To Do
+## █ To Do
 
 * **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
   non-objects as well or catch exception (better)
@@ -360,7 +360,7 @@ Results are joined with a slash `/`.
   * **`[–]`** consider to instantiate `Types` from `Pre_types` passing in an instance of itself (`Types`),
     thus allowing the instance to use 'itself' / 'a clone of itself' without incurring infinite regress
 
-## Is Done
+## █ Is Done
 
 * **`[+]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or
   to floats and `BigInt`s (`4.0` and `4n`)? Could / should that be configurable?</del> <ins>remove all
