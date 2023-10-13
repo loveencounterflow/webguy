@@ -17,6 +17,47 @@
     - [Declaration with Fields](#declaration-with-fields)
   - [Standard Types](#standard-types)
     - [`object`](#object)
+    - [Bottom Types](#bottom-types)
+      - [null:          ( x ) -> x is null](#null-----------x----x-is-null)
+      - [undefined:     ( x ) -> x is undefined](#undefined------x----x-is-undefined)
+    - [Textual Types](#textual-types)
+      - [text:          ( x ) -> ( typeof x ) is 'string'](#text-----------x-----typeof-x--is-string)
+      - [codepoint:     ( x ) -> ( @isa.text x ) and ( /^.$/u.test x )](#codepoint------x-----isatext-x--and--%5Eutest-x-)
+      - [regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'](#regex----------x-----objecttostringcall-x--is-object-regexp)
+      - [buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x](#buffer---------x-----globalthisbufferisbuffer----false--x)
+    - [thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and](#thx-to-httpsgithubcommathiasbynensmothereffinblobmasterjs-variableseffjs-and)
+      - [jsidentifier:  ( x ) -> ( @isa.text x ) and ( x.match \](#jsidentifier---x-----isatext-x--and--xmatch-%5C)
+    - [Container Types](#container-types)
+      - [list:       ( x ) -> Array.isArray x](#list--------x----arrayisarray-x)
+      - [set:        ( x ) -> x instanceof Set](#set---------x----x-instanceof-set)
+      - [map:        ( x ) -> x instanceof Map](#map---------x----x-instanceof-map)
+    - [Numeric Types](#numeric-types)
+      - [infinity:      ( x ) -> ( x is +Infinity ) or ( x is -Infinity )](#infinity-------x-----x-is-infinity--or--x-is--infinity-)
+      - [float:         ( x ) -> Number.isFinite x](#float----------x----numberisfinite-x)
+      - [numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )](#numeric--------x-----numberisfinite-x--or--typeof-x-is-bigint-)
+      - [bigint:        ( x ) -> typeof x is 'bigint'](#bigint---------x----typeof-x-is-bigint)
+      - [integer:       ( x ) -> Number.isInteger x](#integer--------x----numberisinteger-x)
+      - [codepointid:   ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )](#codepointid----x-----isainteger-x--and--0x00000--x--0x1ffff-)
+      - [cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )](#cardinal-------x-----numberisinteger-x--and--x--0-)
+      - [zero:          ( x ) -> x is 0 ### NOTE true for -0 as well](#zero-----------x----x-is-0--note-true-for--0-as-well)
+      - [nan:           ( x ) -> Number.isNaN x](#nan------------x----numberisnan-x)
+      - [nonzero:       ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )](#nonzero--------x-----isanumeric-x--and--not-isazero-x-)
+      - [even:          ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )](#even-----------x-----numberisinteger-x--and---x-%25-2--is---0-)
+      - [odd:           ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )](#odd------------x-----numberisinteger-x--and---x-%25-2--isnt-0-)
+    - [Classes](#classes)
+      - [class:          ( x ) ->](#class-----------x---)
+    - [Other Types](#other-types)
+      - [boolean:        ( x ) -> ( x is true ) or ( x is false )](#boolean---------x-----x-is-true--or--x-is-false-)
+      - [object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )](#object----------x----x-and--typeof-x-is-object--and---objecttostringcall-x--is-object-object-)
+      - [buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false](#buffer----------x----if-globalthisbuffer-then-bufferisbuffer-x-else-false)
+      - [function:       ( x ) -> ( Object::toString.call x ) is '[object Function]'](#function--------x-----objecttostringcall-x--is-object-function)
+      - [asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'](#asyncfunction---x-----objecttostringcall-x--is-object-asyncfunction)
+      - [symbol:         ( x ) -> ( typeof x ) is 'symbol'](#symbol----------x-----typeof-x--is-symbol)
+      - [keyowner:       ( x ) -> return true for _ of x ? {}; return false](#keyowner--------x----return-true-for-_-of-x---return-false)
+    - [Existential Types](#existential-types)
+      - [nothing:        ( x ) -> not x?](#nothing---------x----not-x)
+      - [something:      ( x ) -> x?](#something-------x----x)
+      - [anything:       ( x ) -> true](#anything--------x----true)
   - [Type Signatures](#type-signatures)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -124,6 +165,82 @@ measure: ( x ) ->
   * `x?` (`x` isn't `null` or `undefined`),
   * `typeof x` returns `'object'`,
   * `( Object::toString.call x )` gives `'[object Object]`
+
+
+
+
+### Bottom Types
+
+#### null:          ( x ) -> x is null
+#### undefined:     ( x ) -> x is undefined
+
+
+### Textual Types
+
+#### text:          ( x ) -> ( typeof x ) is 'string'
+#### codepoint:     ( x ) -> ( @isa.text x ) and ( /^.$/u.test x )
+#### regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
+#### buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
+
+#---------------------------------------------------------------------------------------------------------
+### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
+https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
+#### jsidentifier:  ( x ) -> ( @isa.text x ) and ( x.match \
+  /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
+
+
+### Container Types
+
+#### list:       ( x ) -> Array.isArray x
+#### set:        ( x ) -> x instanceof Set
+#### map:        ( x ) -> x instanceof Map
+
+<!--
+# sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
+# container:  ( x ) -> ( typeof x ) isnt 'string' and ( @isa.iterable x ) and ( @isa.sized x )
+# iterable:   ( x ) -> ( ( typeof x ) is 'string' ) and try ( Reflect.has Symbol.iterator ) catch error then false
+
+ -->
+
+### Numeric Types
+
+#### infinity:      ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
+#### float:         ( x ) -> Number.isFinite x
+#### numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
+#### bigint:        ( x ) -> typeof x is 'bigint'
+#### integer:       ( x ) -> Number.isInteger x
+#### codepointid:   ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
+#### cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
+#### zero:          ( x ) -> x is 0 ### NOTE true for -0 as well ###
+#### nan:           ( x ) -> Number.isNaN x
+#### nonzero:       ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
+#### even:          ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )
+#### odd:           ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )
+
+
+### Classes
+
+#### class:          ( x ) ->
+  ( ( Object::toString.call x ) is '[object Function]' ) and \
+    ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
+
+
+### Other Types
+
+#### boolean:        ( x ) -> ( x is true ) or ( x is false )
+#### object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
+#### buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false
+#### function:       ( x ) -> ( Object::toString.call x ) is '[object Function]'
+#### asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
+#### symbol:         ( x ) -> ( typeof x ) is 'symbol'
+#### keyowner:       ( x ) -> return true for _ of x ? {}; return false
+
+
+### Existential Types
+
+#### nothing:        ( x ) -> not x?
+#### something:      ( x ) -> x?
+#### anything:       ( x ) -> true
 
 
 --------------------------------------------------------
