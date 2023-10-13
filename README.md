@@ -251,6 +251,9 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** in `types`, consider to implement a decorator that does the validation, `cfg` computation
 * **`[–]`** in `types`, consider to allow template to be a (decorated?) function that produces a new
   instance, as in `object.template == -> {}`, avoiding risk of re-use
+* **`[–]`** in `types`, consider to allow implementing types as opt-in classes where a type (e.g.
+  `function`) can set a property (`callable: true`) or 'name a name' (`[ 'callable', ..., ]`) to signal that
+  it belongs to a given type (`callable`)
 
 ## Is Done
 
