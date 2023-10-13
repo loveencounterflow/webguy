@@ -16,7 +16,6 @@
     - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
     - [Declaration with Fields](#declaration-with-fields)
   - [Standard Types](#standard-types)
-    - [`object`](#object)
     - [Bottom Types](#bottom-types)
       - [`null`](#null)
       - [`undefined`](#undefined)
@@ -48,7 +47,7 @@
       - [`class`](#class)
     - [Other Types](#other-types)
       - [`boolean`](#boolean)
-      - [`object`](#object-1)
+      - [`object`](#object)
       - [`buffer`](#buffer-1)
       - [`function`](#function)
       - [`asyncfunction`](#asyncfunction)
@@ -159,16 +158,6 @@ measure: ( x ) ->
 ```
 
 ## Standard Types
-
-### `object`
-
-`object` tests a value against three constraints:
-
-  * `x?` (`x` isn't `null` or `undefined`),
-  * `typeof x` returns `'object'`,
-  * `( Object::toString.call x )` gives `'[object Object]`
-
-
 
 
 ### Bottom Types
@@ -306,19 +295,27 @@ https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
 
 #### `object`
 
-`( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )`
+`object` tests a value against three constraints:
+
+  * `x?` (excludes `null` and `undefined`),
+  * `typeof x` returns `'object'`,
+  * and `( Object::toString.call x )` gives `'[object Object]`
+
 
 #### `buffer`
 
-`( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false`
+`false` when used outside of NodeJS; if `globalThis.Buffer` is set, the result of `Buffer.isBuffer x`.
 
 #### `function`
 
-`( x ) -> ( Object::toString.call x ) is '[object Function]'`
+`isa.function x` is `true` for all values whose MDN is `[object Function]`; this includes classical
+functions proper, fat-arrow functions and bound methods and excludes asynchronous functions, generator functions and
+generators.
 
 #### `asyncfunction`
 
-`( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'`
+Satisfied if the value's MDN is `[object AsyncFunction]`. This includes `async` funtions proper and excludes
+asynchronous iterators.
 
 #### `symbol`
 
