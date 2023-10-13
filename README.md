@@ -249,6 +249,8 @@ See [the InterType documentation](./README-types.md)
   (https://youtu.be/dtGzfYvBn3w?t=2930)?
 * **`[–]`** in `types`, consider to implement a proxy that checks for correctness on each change
 * **`[–]`** in `types`, consider to implement a decorator that does the validation, `cfg` computation
+* **`[–]`** in `types`, consider to allow template to be a (decorated?) function that produces a new
+  instance, as in `object.template == -> {}`, avoiding risk of re-use
 
 ## Is Done
 
