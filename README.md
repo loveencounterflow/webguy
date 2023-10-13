@@ -245,6 +245,10 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** use an instance of `Types` in its methods ('dogfeeding')
   * **`[–]`** consider to instantiate `Types` from `Pre_types` passing in an instance of itself (`Types`),
     thus allowing the instance to use 'itself' / 'a clone of itself' without incurring infinite regress
+* **`[–]`** in `types`, is it possible to implement `explain()` a la Closure `spec`
+  (https://youtu.be/dtGzfYvBn3w?t=2930)?
+* **`[–]`** in `types`, consider to implement a proxy that checks for correctness on each change
+* **`[–]`** in `types`, consider to implement a decorator that does the validation, `cfg` computation
 
 ## Is Done
 
