@@ -54,6 +54,8 @@ class Isa
   list:       ( x ) -> Array.isArray x
   set:        ( x ) -> x instanceof Set
   map:        ( x ) -> x instanceof Map
+  weakmap:    ( x ) -> ( Object::toString.call x ) is '[object WeakMap]'
+  weakset:    ( x ) -> ( Object::toString.call x ) is '[object WeakSet]'
   # sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
 
   # container:  ( x ) -> ( typeof x ) isnt 'string' and ( @isa.iterable x ) and ( @isa.sized x )
@@ -62,19 +64,20 @@ class Isa
   #=========================================================================================================
   # Numeric Types
   #---------------------------------------------------------------------------------------------------------
-  infinity:       ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
-  float:          ( x ) -> Number.isFinite x
-  infinitefloat:  ( x ) => ( @isa.float x ) or ( x is Infinity ) or ( x is -Infinity )
-  int32:          ( x ) -> ( @isa.integer x ) and ( -2147483648 <= x <= 2147483647 )
-  numeric:        ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
-  bigint:         ( x ) -> typeof x is 'bigint'
-  integer:        ( x ) -> Number.isInteger x
-  safeinteger:    ( x ) => Number.isSafeInteger x
-  codepointid:    ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
-  cardinal:       ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
-  zero:           ( x ) -> x is 0 ### NOTE true for -0 as well ###
-  nan:            ( x ) -> Number.isNaN x
-  nonzero:        ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
+  infinity:         ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
+  float:            ( x ) -> Number.isFinite x
+  infinitefloat:    ( x ) => ( @isa.float x ) or ( x is Infinity ) or ( x is -Infinity )
+  int32:            ( x ) -> ( @isa.integer x ) and ( -2147483648 <= x <= 2147483647 )
+  proper_fraction:  ( x ) => ( @isa.float x ) and ( 0 <= x <= 1 )
+  numeric:          ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
+  bigint:           ( x ) -> typeof x is 'bigint'
+  integer:          ( x ) -> Number.isInteger x
+  safeinteger:      ( x ) => Number.isSafeInteger x
+  codepointid:      ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
+  cardinal:         ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
+  zero:             ( x ) -> x is 0 ### NOTE true for -0 as well ###
+  nan:              ( x ) -> Number.isNaN x
+  nonzero:          ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
 
   #---------------------------------------------------------------------------------------------------------
   even:          ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )
@@ -111,6 +114,10 @@ class Isa
   textiterator:           ( x ) => ( Object::toString.call x ) is '[object StringIterator]'
   setiterator:            ( x ) => ( Object::toString.call x ) is '[object SetIterator]'
   mapiterator:            ( x ) => ( Object::toString.call x ) is '[object MapIterator]'
+  #---------------------------------------------------------------------------------------------------------
+  promise:                ( x ) => ( @isa.nativepromise x ) or ( @isa.thenable x )
+  nativepromise:          ( x ) => x instanceof Promise
+  thenable:               ( x ) => @isa.function ( @type_of x?.then ? null )
 
   #=========================================================================================================
   # Generics and Qualified Types
@@ -122,11 +129,16 @@ class Isa
   sealed:                 ( x ) => Object.isSealed      x
   extensible:             ( x ) => Object.isExtensible  x
   ### These qualified types should never be returned by `type_of()`: ###
-  empty_list:             ( x ) => ( @isa.list    x ) and ( x.length is 0 )
-  empty_text:             ( x ) => ( @isa.text    x ) and ( x.length is 0 )
-  empty_map:              ( x ) => ( @isa.map     x ) and ( x.size   is 0 )
-  empty_set:              ( x ) => ( @isa.set     x ) and ( x.size   is 0 )
+  empty_list:             ( x ) => ( @isa.list    x ) and ( x.length is   0 )
+  empty_text:             ( x ) => ( @isa.text    x ) and ( x.length is   0 )
+  empty_map:              ( x ) => ( @isa.map     x ) and ( x.size   is   0 )
+  empty_set:              ( x ) => ( @isa.set     x ) and ( x.size   is   0 )
+  nonempty_list:          ( x ) => ( @isa.list    x ) and ( x.length isnt 0 )
+  nonempty_text:          ( x ) => ( @isa.text    x ) and ( x.length isnt 0 )
+  nonempty_map:           ( x ) => ( @isa.map     x ) and ( x.size   isnt 0 )
+  nonempty_set:           ( x ) => ( @isa.set     x ) and ( x.size   isnt 0 )
   empty_object:           ( x ) => ( @isa.object  x ) and ( not @isa.keyowner x )
+  nonempty_object:        ( x ) => ( @isa.object  x ) and (     @isa.keyowner x )
   ### Generic types: ###
   truthy:                 ( x ) -> not not x
   falsy:                  ( x ) ->     not x
