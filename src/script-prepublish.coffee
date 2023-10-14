@@ -14,7 +14,8 @@ path = PATH.resolve PATH.join __dirname, '../README-types.md'
 log path
 readme = FS.readFileSync path, { encoding: 'utf-8', }
 
-for match from readme.matchAll /^#### `([^`]+)`/ug
+for match from readme.matchAll /^#### `([^`]+)`/ugs
+                                 #### `function`
   log match
 
 
