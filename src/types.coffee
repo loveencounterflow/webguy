@@ -215,7 +215,10 @@ class _Intertype
         switch target
           when me.isa
             value = props.nameit "isa_#{type}", value.bind me
-            unless ( type.startsWith 'optional_' ) or ( type in [ 'nothing', 'something', 'anything', ] )
+            unless \
+                ( type.startsWith 'optional_'                     ) or \
+                ( type.startsWith '$'                             ) or \
+                ( type in [ 'nothing', 'something', 'anything', ] )
               me._isa_methods.push [ type, value, ]
           when me.validate
             value = props.nameit "validate_#{type}", value.bind me
