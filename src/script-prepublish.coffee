@@ -19,7 +19,11 @@ implemented_types   = ( type for type in implemented_types when not type.startsW
 undocumented_types  = ( type for type in implemented_types when type not in documented_types )
 
 #===========================================================================================================
-log documented_types
-log implemented_types
-log undocumented_types
+# log documented_types
+# log implemented_types
+if undocumented_types.length > 0
+  log "========================="
+  log "Undocumented types:"
+  log "========================="
+  log undocumented_types.join ', '
 
