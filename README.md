@@ -254,6 +254,9 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** in `types`, consider to allow implementing types as opt-in classes where a type (e.g.
   `function`) can set a property (`callable: true`) or 'name a name' (`[ 'callable', ..., ]`) to signal that
   it belongs to a given type (`callable`)
+* **`[–]`** add maintenance scripts
+  * **`[–]`** to list all declared but undocumented types (and vice versa) (prepublish)
+  * **`[–]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
 
 ## Is Done
 
