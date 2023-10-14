@@ -8,6 +8,8 @@
   },
   "main": "lib/main.js",
   "scripts": {
+    "prepublishOnly": "echo 'PREPUBLISH'",
+    "postpublish": "echo 'POSTPUBLISH'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
