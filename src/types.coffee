@@ -24,6 +24,9 @@ class Isa
   blank_text:     ( x ) -> ( @isa.text x ) and      ( /// ^ \s* $ ///us.test x )
   nonblank_text:  ( x ) -> ( @isa.text x ) and not  ( /// ^ \s* $ ///us.test x )
   # codepoint:      ( x ) -> ( @isa.text x ) and      ( /^.$/u.test x )
+  int2text:       ( x ) => ( @isa.text x ) and ( x.match /^[01]+$/ )?
+  int10text:      ( x ) => ( @isa.text x ) and ( x.match /^[0-9]+$/ )?
+  int16text:      ( x ) => ( @isa.text x ) and ( x.match /^[0-9a-fA-F]+$/ )?
   regex:          ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
   buffer:         ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
 
@@ -59,16 +62,19 @@ class Isa
   #=========================================================================================================
   # Numeric Types
   #---------------------------------------------------------------------------------------------------------
-  infinity:      ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
-  float:         ( x ) -> Number.isFinite x
-  numeric:       ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
-  bigint:        ( x ) -> typeof x is 'bigint'
-  integer:       ( x ) -> Number.isInteger x
-  codepointid:   ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
-  cardinal:      ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
-  zero:          ( x ) -> x is 0 ### NOTE true for -0 as well ###
-  nan:           ( x ) -> Number.isNaN x
-  nonzero:       ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
+  infinity:       ( x ) -> ( x is +Infinity ) or ( x is -Infinity )
+  float:          ( x ) -> Number.isFinite x
+  infinitefloat:  ( x ) => ( @isa.float x ) or ( x is Infinity ) or ( x is -Infinity )
+  int32:          ( x ) -> ( @isa.integer x ) and ( -2147483648 <= x <= 2147483647 )
+  numeric:        ( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )
+  bigint:         ( x ) -> typeof x is 'bigint'
+  integer:        ( x ) -> Number.isInteger x
+  safeinteger:    ( x ) => Number.isSafeInteger x
+  codepointid:    ( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )
+  cardinal:       ( x ) -> ( Number.isInteger x ) and ( x >= 0 )
+  zero:           ( x ) -> x is 0 ### NOTE true for -0 as well ###
+  nan:            ( x ) -> Number.isNaN x
+  nonzero:        ( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )
 
   #---------------------------------------------------------------------------------------------------------
   even:          ( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )
@@ -84,10 +90,15 @@ class Isa
   #=========================================================================================================
   # Other Types
   #---------------------------------------------------------------------------------------------------------
+  date:           ( x ) => ( Object::toString.call x ) is '[object Date]'
   boolean:        ( x ) -> ( x is true ) or ( x is false )
+  true:           ( x ) -> x is true
+  false:          ( x ) -> x is false
   object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
   buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false
   symbol:         ( x ) -> ( typeof x ) is 'symbol'
+  error:          ( x ) -> ( Object::toString.call x ) is 'error'
+  global:         ( x ) -> x is globalThis
   #---------------------------------------------------------------------------------------------------------
   function:               ( x ) -> ( Object::toString.call x ) is '[object Function]'
   asyncfunction:          ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
@@ -95,14 +106,30 @@ class Isa
   asyncgeneratorfunction: ( x ) => ( Object::toString.call x ) is 'asyncgeneratorfunction'
   asyncgenerator:         ( x ) => ( Object::toString.call x ) is 'asyncgenerator'
   generator:              ( x ) => ( Object::toString.call x ) is 'generator'
-
+  #---------------------------------------------------------------------------------------------------------
+  listiterator:           ( x ) => ( Object::toString.call x ) is '[object ArrayIterator]'
+  textiterator:           ( x ) => ( Object::toString.call x ) is '[object StringIterator]'
+  setiterator:            ( x ) => ( Object::toString.call x ) is '[object SetIterator]'
+  mapiterator:            ( x ) => ( Object::toString.call x ) is '[object MapIterator]'
 
   #=========================================================================================================
-  # Generics
+  # Generics and Qualified Types
   #---------------------------------------------------------------------------------------------------------
   ### Almost anything in JS can be a `keyowner` (i.e. have one or more enumerable properties attached to it)
   so we test for this late in the chain: ###
-  keyowner:       ( x ) -> return true for _ of x ? {}; return false
+  keyowner:               ( x ) -> return true for _ of x ? {}; return false
+  frozen:                 ( x ) => Object.isFrozen      x
+  sealed:                 ( x ) => Object.isSealed      x
+  extensible:             ( x ) => Object.isExtensible  x
+  ### These qualified types should never be returned by `type_of()`: ###
+  empty_list:             ( x ) => ( @isa.list    x ) and ( x.length is 0 )
+  empty_text:             ( x ) => ( @isa.text    x ) and ( x.length is 0 )
+  empty_map:              ( x ) => ( @isa.map     x ) and ( x.size   is 0 )
+  empty_set:              ( x ) => ( @isa.set     x ) and ( x.size   is 0 )
+  empty_object:           ( x ) => ( @isa.object  x ) and ( not @isa.keyowner x )
+  ### Generic types: ###
+  truthy:                 ( x ) -> not not x
+  falsy:                  ( x ) ->     not x
 
   #=========================================================================================================
   # Existential Types
