@@ -19,10 +19,25 @@ class Isa
   #=========================================================================================================
   # Textual Types
   #---------------------------------------------------------------------------------------------------------
-  text:          ( x ) -> ( typeof x ) is 'string'
-  codepoint:     ( x ) -> ( @isa.text x ) and ( /^.$/u.test x )
-  regex:         ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
-  buffer:        ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
+  text:           ( x ) -> ( typeof x ) is 'string'
+  chr:            ( x ) -> ( @isa.text x ) and      ( /// ^  .  $ ///us.test x )
+  blank_text:     ( x ) -> ( @isa.text x ) and      ( /// ^ \s* $ ///us.test x )
+  nonblank_text:  ( x ) -> ( @isa.text x ) and not  ( /// ^ \s* $ ///us.test x )
+  # codepoint:      ( x ) -> ( @isa.text x ) and      ( /^.$/u.test x )
+  regex:          ( x ) -> ( Object::toString.call x ) is '[object RegExp]'
+  buffer:         ( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x
+
+  #---------------------------------------------------------------------------------------------------------
+  arraybuffer:        ( x ) => ( Object::toString.call x ) is '[object ArrayBuffer]'
+  int8array:          ( x ) => ( Object::toString.call x ) is '[object Int8Array]'
+  uint8array:         ( x ) => ( Object::toString.call x ) is '[object Uint8Array]'
+  uint8clampedarray:  ( x ) => ( Object::toString.call x ) is '[object Uint8ClampedArray]'
+  int16array:         ( x ) => ( Object::toString.call x ) is '[object Int16Array]'
+  uint16array:        ( x ) => ( Object::toString.call x ) is '[object Uint16Array]'
+  int32array:         ( x ) => ( Object::toString.call x ) is '[object Int32Array]'
+  uint32array:        ( x ) => ( Object::toString.call x ) is '[object Uint32Array]'
+  float32array:       ( x ) => ( Object::toString.call x ) is '[object Float32Array]'
+  float64array:       ( x ) => ( Object::toString.call x ) is '[object Float64Array]'
 
   #---------------------------------------------------------------------------------------------------------
   ### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
@@ -72,9 +87,21 @@ class Isa
   boolean:        ( x ) -> ( x is true ) or ( x is false )
   object:         ( x ) -> x? and ( typeof x is 'object' ) and ( ( Object::toString.call x ) is '[object Object]' )
   buffer:         ( x ) -> if globalThis.Buffer? then Buffer.isBuffer x else false
-  function:       ( x ) -> ( Object::toString.call x ) is '[object Function]'
-  asyncfunction:  ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
   symbol:         ( x ) -> ( typeof x ) is 'symbol'
+  #---------------------------------------------------------------------------------------------------------
+  function:               ( x ) -> ( Object::toString.call x ) is '[object Function]'
+  asyncfunction:          ( x ) -> ( Object::toString.call x ) is '[object AsyncFunction]'
+  generatorfunction:      ( x ) => ( Object::toString.call x ) is 'generatorfunction'
+  asyncgeneratorfunction: ( x ) => ( Object::toString.call x ) is 'asyncgeneratorfunction'
+  asyncgenerator:         ( x ) => ( Object::toString.call x ) is 'asyncgenerator'
+  generator:              ( x ) => ( Object::toString.call x ) is 'generator'
+
+
+  #=========================================================================================================
+  # Generics
+  #---------------------------------------------------------------------------------------------------------
+  ### Almost anything in JS can be a `keyowner` (i.e. have one or more enumerable properties attached to it)
+  so we test for this late in the chain: ###
   keyowner:       ( x ) -> return true for _ of x ? {}; return false
 
   #=========================================================================================================
