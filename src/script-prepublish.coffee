@@ -9,13 +9,17 @@ WG                        = require './main'
 FS                        = require 'fs'
 PATH                      = require 'path'
 
-log __filename
-path = PATH.resolve PATH.join __dirname, '../README-types.md'
-log path
-readme = FS.readFileSync path, { encoding: 'utf-8', }
+#===========================================================================================================
+path                = PATH.resolve PATH.join __dirname, '../README-types.md'
+readme              = FS.readFileSync path, { encoding: 'utf-8', }
+documented_types    = ( m[ 1 ] for m from readme.matchAll /\n#### `([^`]+)`/ugs )
+implemented_types   = ( type for type of ( require './types' ).isa )
+implemented_types   = ( type for type in implemented_types when not type.startsWith 'optional_' )
+implemented_types   = ( type for type in implemented_types when not type.startsWith '$' )
+undocumented_types  = ( type for type in implemented_types when type not in documented_types )
 
-for match from readme.matchAll /^#### `([^`]+)`/ugs
-                                 #### `function`
-  log match
-
+#===========================================================================================================
+log documented_types
+log implemented_types
+log undocumented_types
 
