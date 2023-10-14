@@ -9,7 +9,7 @@
   "main": "lib/main.js",
   "scripts": {
     "prepublishOnly": "node lib/script-prepublish.js",
-    "postpublish": "node lib/script-prepublish.js",
+    "postpublish": "node lib/script-postpublish.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
