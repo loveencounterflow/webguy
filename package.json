@@ -8,8 +8,8 @@
   },
   "main": "lib/main.js",
   "scripts": {
-    "prepublishOnly": "echo 'PREPUBLISH'",
-    "postpublish": "echo 'POSTPUBLISH'",
+    "prepublishOnly": "node lib/script-prepublish.js'",
+    "postpublish": "node lib/script-prepublish.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
