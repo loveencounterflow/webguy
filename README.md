@@ -255,10 +255,10 @@ See [the InterType documentation](./README-types.md)
   `function`) can set a property (`callable: true`) or 'name a name' (`[ 'callable', ..., ]`) to signal that
   it belongs to a given type (`callable`). Call it 'tags', allow CSS-class-like string of space-separated
   terms; consider to declare tags to license their use
-* **`[–]`** add maintenance scripts
-  * **`[+]`** to list all declared but undocumented types (and vice versa) (prepublish)
-  * **`[+]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
-* **`[–]`** in `types`, implement `isa.list_of.integer`? same with `set_of`
+* **`[–]`** in `types`, <del>implement `isa.list_of.integer`? same with `set_of`</del> implement `all_of()`,
+  `any_of()` as 'intermediate decorators' (as in `isa.integer all_of x`, `isa.integer any_of x`)
+* **`[–]`** in `types`, implement `optional()` as 'intermediate decorator' (as in `isa.integer optional x`,
+  `validate.integer optional x`)
 
 ## Is Done
 
@@ -283,3 +283,6 @@ See [the InterType documentation](./README-types.md)
   module may or may not see the same instance of `WEBGUY.types`, depending on their precise dependency
   declarations *and* depending on the package manager used.</del> <ins>Types are now always declared at
   instantiation time, later declarations are not (and likely will not be) implemented.
+* **`[+]`** add maintenance scripts
+  * **`[+]`** to list all declared but undocumented types (and vice versa) (prepublish)
+  * **`[+]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
