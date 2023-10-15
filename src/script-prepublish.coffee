@@ -12,7 +12,7 @@ PATH                      = require 'path'
 #===========================================================================================================
 path                = PATH.resolve PATH.join __dirname, '../README-types.md'
 readme              = FS.readFileSync path, { encoding: 'utf-8', }
-documented_types    = ( m[ 1 ] for m from readme.matchAll /\n#### `([^`]+)`/ugs )
+documented_types    = ( m[ 1 ] for m from readme.matchAll /\n\* \*\*`([^`\x20]+)`\*\*/ugs )
 implemented_types   = ( type for type of ( require './types' ).isa )
 implemented_types   = ( type for type in implemented_types when not type.startsWith 'optional_' )
 implemented_types   = ( type for type in implemented_types when not type.startsWith '$' )
