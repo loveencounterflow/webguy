@@ -8,6 +8,7 @@ WG                        = require './main'
 { log }                   = console
 PATH                      = require 'node:path'
 FS                        = require 'node:fs'
+{ $: zx, cd, }            = await import( 'zx' )
 
 log '==========================================================='
 log __filename
@@ -24,20 +25,13 @@ log "InterType dependencies:"
 log intertype_pkgjson.dependencies
 log '-----------------------------------------------------------'
 
-f = ->
-  { $: zx, cd, }       = await import( 'zx' )
-  cd '../intertype-banzai'
-  # await zx"pwd"
-  # await zx"git status -sb"
-  await zx"git add package.json"
-  try await zx"git commit -m'bumped webguy version'" catch error
-    rpr error.message
-  await zx"git push"
-  # log '^543-6^', await zx"ls ."
-  # log '^543-7^', await zx"cd ../intertype-banzai && ls ."
-  return null
-
-await f()
+cd '../intertype-banzai'
+# await zx"pwd"
+# await zx"git status -sb"
+await zx"git add package.json"
+try await zx"git commit -m'bumped webguy version'" catch error
+  rpr error.message
+await zx"git push"
 log '==========================================================='
 log __filename
 log "Done"
