@@ -205,6 +205,8 @@ class _Intertype
     cfg         = { defaults.types_cfg..., cfg..., }
     @_collect_and_generate_declarations cfg.declarations
     @_optional  = new Optional()
+    props.hide @, 'optional', @optional.bind  @
+    props.hide @, 'type_of',  @type_of.bind   @
     return undefined
 
   # #---------------------------------------------------------------------------------------------------------
