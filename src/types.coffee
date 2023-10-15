@@ -16,6 +16,19 @@ class Optional
 
 
 #===========================================================================================================
+class Iterator
+  constructor: ( x ) ->
+    me        = @
+    @value    = x
+    @iterator = switch type = _types.type_of @value
+      when 'list' then @value.values()
+      when 'text' then ( -> yield from me.value )()
+      else throw new Error "unable to iterate over a #{type}"
+    return undefined
+  [Symbol.iterator]: -> @iterator
+
+
+#===========================================================================================================
 class Isa
 
   #=========================================================================================================
@@ -321,7 +334,11 @@ class Intertype extends _Intertype
 
 
 #===========================================================================================================
+_types                    = new _Intertype()
 module.exports            = new Intertype()
 module.exports.Isa        = Isa
 module.exports.Intertype  = Intertype
+module.exports.Optional   = Optional
+module.exports.Iterator   = Iterator
+
 
