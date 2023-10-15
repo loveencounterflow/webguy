@@ -160,210 +160,112 @@ measure: ( x ) ->
 ## Standard Types
 
 
-#### `null`: `( x ) -> x is null`
-#### `undefined`:`( x ) -> x is undefined`
-#### `text`: `( x ) -> ( typeof x ) is 'string'`
-#### `chr`: `( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
-#### `regex`: `( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
-#### `blank_text`
-#### `nonblank_text`
-#### `int2text`
-#### `int10text`
-#### `int16text`
-#### `arraybuffer`
-#### `int8array`
-#### `uint8array`
-#### `uint8clampedarray`
-#### `int16array`
-#### `uint16array`
-#### `int32array`
-#### `uint32array`
-#### `float32array`
-#### `float64array`
-#### `weakmap`
-#### `weakset`
-#### `infinitefloat`
-#### `int32`
-#### `proper_fraction`
-#### `safeinteger`
-#### `date`
-#### `true`
-#### `false`
-#### `error`
-#### `global`
-#### `generatorfunction`
-#### `asyncgeneratorfunction`
-#### `asyncgenerator`
-#### `generator`
-#### `listiterator`
-#### `textiterator`
-#### `setiterator`
-#### `mapiterator`
-#### `promise`
-#### `nativepromise`
-#### `thenable`
-#### `frozen`
-#### `sealed`
-#### `extensible`
-#### `empty_list`
-#### `empty_text`
-#### `empty_map`
-#### `empty_set`
-#### `nonempty_list`
-#### `nonempty_text`
-#### `nonempty_map`
-#### `nonempty_set`
-#### `empty_object`
-#### `nonempty_object`
-#### `truthy`
-#### `falsy`
-#### `buffer`: `( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
-
-
-
-### Container Types
-
-#### `list`
-
-`( x ) -> Array.isArray x`
-
-#### `set`
-
-`( x ) -> x instanceof Set`
-
-#### `map`
-
-`( x ) -> x instanceof Map`
-
-
-<!--
-# sized:      ( x ) -> try ( ( Reflect.has x, 'length' ) or ( Reflect.has x, 'size' ) ) catch error then false
-# container:  ( x ) -> ( typeof x ) isnt 'string' and ( @isa.iterable x ) and ( @isa.sized x )
-# iterable:   ( x ) -> ( ( typeof x ) is 'string' ) and try ( Reflect.has Symbol.iterator ) catch error then false
-
- -->
-
-### Numeric Types
-
-#### `infinity`
-
-`( x ) -> ( x is +Infinity ) or ( x is -Infinity )`
-
-#### `float`
-
-`( x ) -> Number.isFinite x`
-
-#### `numeric`
-
-`( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )`
-
-#### `bigint`
-
-`( x ) -> typeof x is 'bigint'`
-
-#### `integer`
-
-`( x ) -> Number.isInteger x`, which evaluates to `false` for `±Infinity`, `BigInt`s, and `NaN`.
-
-
-#### `codepointid`
-
-`( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )`
-
-#### `cardinal`
-
-`( x ) -> ( Number.isInteger x ) and ( x >= 0 )`
-
-#### `zero`
-
-`( x ) -> x is 0 ### NOTE true for -0 as well ###`
-
-#### `nan`
-
-`( x ) -> Number.isNaN x`
-
-#### `nonzero`
-
-`( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )`
-
-#### `even`
-
-`( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )`
-
-#### `odd`
-
-`( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )`
-
-
-
-### Classes
-
-#### `class`
-
-`( x ) ->`
-
-  ( ( Object::toString.call x ) is '[object Function]' ) and \
-    ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
-
-
-### Other Types
-
-#### `boolean`
-
-`( x ) -> ( x is true ) or ( x is false )`
-
-#### `object`
-
-`object` tests a value against three constraints:
-
-  * `x?` (excludes `null` and `undefined`),
-  * `typeof x` returns `'object'`,
-  * and `( Object::toString.call x )` gives `'[object Object]`
-
-
-#### `buffer`
-
-`false` when used outside of NodeJS; if `globalThis.Buffer` is set, the result of `Buffer.isBuffer x`.
-
-#### `function`
-
-`isa.function x` is `true` for all values whose MDN is `[object Function]`; this includes classical
-functions proper, fat-arrow functions and bound methods and excludes asynchronous functions, generator functions and
-generators.
-
-#### `asyncfunction`
-
-Satisfied if the value's MDN is `[object AsyncFunction]`. This includes `async` funtions proper and excludes
-asynchronous iterators.
-
-#### `symbol`
-
-`( x ) -> ( typeof x ) is 'symbol'`
-
-
-
-#### `nothing`
-
-`( x ) -> not x?`
-
-#### `something`
-
-`( x ) -> x?`
-
-#### `anything`
-
-`( x ) -> true`
-
-
-#---------------------------------------------------------------------------------------------------------
-### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
-https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
-#### `jsidentifier`
-
-```
-( x ) -> ( @isa.text x ) and ( x.match \
-  /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
-```
+* **`null`**: `( x ) -> x is null`
+* **`undefined`**:`( x ) -> x is undefined`
+* **`text`**: `( x ) -> ( typeof x ) is 'string'`
+* **`chr`**: `( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
+* **`regex`**: `( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
+* **`blank_text`**
+* **`nonblank_text`**
+* **`int2text`**
+* **`int10text`**
+* **`int16text`**
+* **`arraybuffer`**
+* **`int8array`**
+* **`uint8array`**
+* **`uint8clampedarray`**
+* **`int16array`**
+* **`uint16array`**
+* **`int32array`**
+* **`uint32array`**
+* **`float32array`**
+* **`float64array`**
+* **`weakmap`**
+* **`weakset`**
+* **`infinitefloat`**
+* **`int32`**
+* **`proper_fraction`**
+* **`safeinteger`**
+* **`date`**
+* **`true`**
+* **`false`**
+* **`error`**
+* **`global`**
+* **`generatorfunction`**
+* **`asyncgeneratorfunction`**
+* **`asyncgenerator`**
+* **`generator`**
+* **`listiterator`**
+* **`textiterator`**
+* **`setiterator`**
+* **`mapiterator`**
+* **`promise`**
+* **`nativepromise`**
+* **`thenable`**
+* **`frozen`**
+* **`sealed`**
+* **`extensible`**
+* **`empty_list`**
+* **`empty_text`**
+* **`empty_map`**
+* **`empty_set`**
+* **`nonempty_list`**
+* **`nonempty_text`**
+* **`nonempty_map`**
+* **`nonempty_set`**
+* **`empty_object`**
+* **`nonempty_object`**
+* **`truthy`**
+* **`falsy`**
+* **`buffer`**: `( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
+* **`list`**: `( x ) -> Array.isArray x`
+* **`set`**: `( x ) -> x instanceof Set`
+* **`map`**: `( x ) -> x instanceof Map`
+* **`infinity`**: `( x ) -> ( x is +Infinity ) or ( x is -Infinity )`
+* **`float`**: `( x ) -> Number.isFinite x`
+* **`numeric`**: `( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )`
+* **`bigint`**: `( x ) -> typeof x is 'bigint'`
+* **`integer`**: `( x ) -> Number.isInteger x`, which evaluates to `false` for `±Infinity`, `BigInt`s, and `NaN`.
+* **`codepointid`**: `( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )`
+* **`cardinal`**: `( x ) -> ( Number.isInteger x ) and ( x >= 0 )`
+* **`zero`**: `( x ) -> x is 0 ### NOTE true for -0 as well ###`
+* **`nan`**: `( x ) -> Number.isNaN x`
+* **`nonzero`**: `( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )`
+* **`even`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )`
+* **`odd`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )`
+* **`boolean`**: `( x ) -> ( x is true ) or ( x is false )`
+* **`buffer`**: `false` when used outside of NodeJS; if `globalThis.Buffer` is set, the result of `Buffer.isBuffer x`.
+* **`function`**: `isa.function x` is `true` for all values whose MDN is `[object Function]`; this includes classical functions proper, fat-arrow functions and bound methods and excludes asynchronous functions, generator functions and generators.
+* **`asyncfunction`**: Satisfied if the value's MDN is `[object AsyncFunction]`. This includes `async` funtions proper and excludes asynchronous iterators.
+* **`symbol`**: `( x ) -> ( typeof x ) is 'symbol'`
+* **`nothing`**: `( x ) -> not x?`
+* **`something`**: `( x ) -> x?`
+* **`anything`**: `( x ) -> true`
+
+* **`class`**
+
+  `( x ) ->`
+
+    ( ( Object::toString.call x ) is '[object Function]' ) and \
+      ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
+
+* **`object`**
+
+  `object` tests a value against three constraints:
+
+    * `x?` (excludes `null` and `undefined`),
+    * `typeof x` returns `'object'`,
+    * and `( Object::toString.call x )` gives `'[object Object]`
+
+* **`jsidentifier`**
+
+  ```
+  ( x ) -> ( @isa.text x ) and ( x.match \
+    /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
+  ```
+
+  (thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
+   https://mathiasbynens.be/notes/javascript-identifiers-es6)
 
 
 --------------------------------------------------------
