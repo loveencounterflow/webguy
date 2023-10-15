@@ -17,6 +17,7 @@ implemented_types   = ( type for type of ( require './types' ).isa )
 implemented_types   = ( type for type in implemented_types when not type.startsWith 'optional_' )
 implemented_types   = ( type for type in implemented_types when not type.startsWith '$' )
 undocumented_types  = ( type for type in implemented_types when type not in documented_types )
+unimplemented_types = ( type for type in documented_types  when type not in implemented_types )
 
 #===========================================================================================================
 # log documented_types
@@ -27,5 +28,9 @@ if undocumented_types.length > 0
   log "Undocumented types:"
   log '==========================================================='
   log undocumented_types.join ', '
+  log '==========================================================='
+  log "Unimplemented types:"
+  log '==========================================================='
+  log unimplemented_types.join ', '
   log '==========================================================='
 
