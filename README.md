@@ -256,8 +256,9 @@ See [the InterType documentation](./README-types.md)
   it belongs to a given type (`callable`). Call it 'tags', allow CSS-class-like string of space-separated
   terms; consider to declare tags to license their use
 * **`[–]`** add maintenance scripts
-  * **`[–]`** to list all declared but undocumented types (and vice versa) (prepublish)
-  * **`[–]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
+  * **`[+]`** to list all declared but undocumented types (and vice versa) (prepublish)
+  * **`[+]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
+* **`[–]`** in `types`, implement `isa.list_of.integer`? same with `set_of`
 
 ## Is Done
 
