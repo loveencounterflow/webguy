@@ -15,7 +15,8 @@ log __filename
 log "Updating WebGuy version in InterType"
 log '==========================================================='
 webguy_pkgjson                        = require '../package.json'
-intertype_pkgjson_path                = PATH.resolve PATH.join __dirname, '../../intertype-banzai/package.json'
+intertype_path                        = PATH.resolve PATH.join __dirname, '../../intertype-banzai'
+intertype_pkgjson_path                = PATH.resolve PATH.join intertype_path, 'package.json'
 intertype_pkgjson                     = require intertype_pkgjson_path
 intertype_pkgjson.dependencies       ?= {}
 intertype_pkgjson.dependencies.webguy = "^#{webguy_pkgjson.version}"
@@ -24,13 +25,9 @@ FS.writeFileSync intertype_pkgjson_path, intertype_pkgjson_text
 log "InterType dependencies:"
 log intertype_pkgjson.dependencies
 log '-----------------------------------------------------------'
-
-cd '../intertype-banzai'
-# await zx"pwd"
-# await zx"git status -sb"
+cd intertype_path
 await zx"git add package.json"
-try await zx"git commit -m'bumped webguy version'" catch error
-  rpr error.message
+try await zx"git commit -m'bumped webguy version'" catch error then rpr error.message
 await zx"git push"
 log '==========================================================='
 log __filename
