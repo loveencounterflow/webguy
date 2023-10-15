@@ -18,5 +18,8 @@
   "dependencies": {
     "dayjs": "^1.11.9",
     "intertype": "7.6.3"
+  },
+  "devDependencies": {
+    "zx": "^7.2.3"
   }
 }

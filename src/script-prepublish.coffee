@@ -22,8 +22,9 @@ undocumented_types  = ( type for type in implemented_types when type not in docu
 # log documented_types
 # log implemented_types
 if undocumented_types.length > 0
-  log "========================="
+  log '==========================================================='
+  log __filename
   log "Undocumented types:"
-  log "========================="
+  log '==========================================================='
   log undocumented_types.join ', '
 
