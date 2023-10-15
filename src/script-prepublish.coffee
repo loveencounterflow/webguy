@@ -27,4 +27,5 @@ if undocumented_types.length > 0
   log "Undocumented types:"
   log '==========================================================='
   log undocumented_types.join ', '
+  log '==========================================================='
 
