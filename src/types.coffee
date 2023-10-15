@@ -10,9 +10,9 @@ nothing                   = Symbol 'nothing'
 
 #===========================================================================================================
 class Optional
-  constructor:  -> @get(); undefined
-  set: ( x )    -> @value = x; @
-  get:          -> [ R, @value, ] = [ @value, nothing, ]; R
+  constructor:      -> @get(); undefined
+  set: ( x )        -> @value = x; @
+  get: ( r = null ) -> [ R, @value, ] = [ @value, nothing, ]; r ? R
 
 
 #===========================================================================================================
