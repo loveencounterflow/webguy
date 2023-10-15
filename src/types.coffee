@@ -5,7 +5,14 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
-optional_sym              = Symbol 'optional'
+nothing                   = Symbol 'nothing'
+
+
+#===========================================================================================================
+class Optional
+  constructor:  -> @get(); undefined
+  set: ( x )    -> @value = x; @
+  get:          -> [ R, @value, ] = [ @value, nothing, ]; R
 
 
 #===========================================================================================================
@@ -194,17 +201,20 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
-    cfg = { defaults.types_cfg..., cfg..., }
+    props      ?= require './props'
+    cfg         = { defaults.types_cfg..., cfg..., }
     @_collect_and_generate_declarations cfg.declarations
+    @_optional  = new Optional()
     return undefined
 
-  #---------------------------------------------------------------------------------------------------------
-  _isa_optional: ( key, type, x ) -> ( not x? ) or ( @isa[ type ] x )
+  # #---------------------------------------------------------------------------------------------------------
+  # _isa_optional: ( key, type, x ) -> ( not x? ) or ( @isa[ type ] x )
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
     # debug '^_Intertype::_validate@1^', "#{key} #{type} #{x}"
-    return x if ( @isa[ type ] x )
+    return x.value  if ( x is @_optional )
+    return x        if ( @isa[ type ] x )
     ### TAINT put message into a resource object? ###
     throw new Error "expected a #{key}, got a #{@type_of x}"
 
@@ -228,29 +238,29 @@ class _Intertype
       # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
       generator:  ({ target, owner, key, descriptor, }) ->
-        type  = key
-        isa   = descriptor.value
-        value = ( x ) -> if ( x is optional_sym ) then true else isa.call @, x
+        type        = key
+        isa         = descriptor.value
+        value       = ( x ) -> if ( x is @_optional ) then true else isa.call me, x
         descriptor  = { descriptor..., value, }
         yield { target: me.isa, key, descriptor, }
-        #...................................................................................................
-        # optional_$type
-        yield do ( key = "optional_#{type}", type ) ->
-          value       = ( x ) -> me._isa_optional key, type, x
-          descriptor  = { descriptor..., value, }
-          return { target: me.isa, key, descriptor, }
+        # #...................................................................................................
+        # # optional_$type
+        # yield do ( key = "optional_#{type}", type ) ->
+        #   value       = ( x ) -> me._isa_optional key, type, x
+        #   descriptor  = { descriptor..., value, }
+        #   return { target: me.isa, key, descriptor, }
         #...................................................................................................
         # validate_$type
         yield do ( key = type, type ) ->
           value       = ( x ) => me._validate key, type, x
           descriptor  = { descriptor..., value, }
           return { target: me.validate, key, descriptor, }
-        #...................................................................................................
-        # validate_optional_$type
-        yield do ( key = "optional_#{type}", type ) ->
-          value       = ( x ) => me._validate_optional key, type, x
-          descriptor  = { descriptor..., value, }
-          return { target: me.validate, key, descriptor, }
+        # #...................................................................................................
+        # # validate_optional_$type
+        # yield do ( key = "optional_#{type}", type ) ->
+        #   value       = ( x ) => me._validate_optional key, type, x
+        #   descriptor  = { descriptor..., value, }
+        #   return { target: me.validate, key, descriptor, }
         #...................................................................................................
         return null
       #.....................................................................................................
@@ -271,8 +281,7 @@ class _Intertype
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  optional_sym: optional_sym
-  optional:     ( x ) -> if x? then x else optional_sym
+  optional: ( x ) -> if x? then x else @_optional.set x
 
   #---------------------------------------------------------------------------------------------------------
   type_of: ( x ) ->
