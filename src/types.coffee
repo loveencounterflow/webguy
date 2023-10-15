@@ -231,7 +231,7 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _isa: ( key, type, x, isa ) ->
-    return true if ( x is @_optional )
+    return x.get true if ( x is @_optional )
     #.......................................................................................................
     if x instanceof All_of
       for element from x.value
@@ -247,8 +247,8 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
-    return x.value  if ( x is @_optional )
-    return get_value x if ( @isa[ type ] x ) is true
+    return x.get()      if ( x is @_optional )
+    return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
     throw new Error "expected a #{key}, got a #{@type_of x}"
 
