@@ -246,7 +246,11 @@ class _Intertype
   _validate: ( key, type, x ) ->
     # debug '^_Intertype::_validate@1^', "#{key} #{type} #{x}"
     return x.value  if ( x is @_optional )
-    return x        if ( @isa[ type ] x )
+    # return x.value  if ( x instanceof All_of )
+    # return x.value  if ( x instanceof Any_of )
+    return x if ( @isa[ type ] x ) is true
+    # debug '^_Intertype::_validate@1^', ( ( require './trm' ).rpr x ), ( x instanceof All_of ), ( x instanceof Any_of )
+    # x = x.value if ( x instanceof All_of ) or ( x instanceof Any_of )
     ### TAINT put message into a resource object? ###
     throw new Error "expected a #{key}, got a #{@type_of x}"
 
