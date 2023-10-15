@@ -160,46 +160,65 @@ measure: ( x ) ->
 ## Standard Types
 
 
-### Bottom Types
+#### `null`: `( x ) -> x is null`
+#### `undefined`:`( x ) -> x is undefined`
+#### `text`: `( x ) -> ( typeof x ) is 'string'`
+#### `chr`: `( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
+#### `regex`: `( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
+#### `blank_text`
+#### `nonblank_text`
+#### `int2text`
+#### `int10text`
+#### `int16text`
+#### `arraybuffer`
+#### `int8array`
+#### `uint8array`
+#### `uint8clampedarray`
+#### `int16array`
+#### `uint16array`
+#### `int32array`
+#### `uint32array`
+#### `float32array`
+#### `float64array`
+#### `weakmap`
+#### `weakset`
+#### `infinitefloat`
+#### `int32`
+#### `proper_fraction`
+#### `safeinteger`
+#### `date`
+#### `true`
+#### `false`
+#### `error`
+#### `global`
+#### `generatorfunction`
+#### `asyncgeneratorfunction`
+#### `asyncgenerator`
+#### `generator`
+#### `listiterator`
+#### `textiterator`
+#### `setiterator`
+#### `mapiterator`
+#### `promise`
+#### `nativepromise`
+#### `thenable`
+#### `frozen`
+#### `sealed`
+#### `extensible`
+#### `empty_list`
+#### `empty_text`
+#### `empty_map`
+#### `empty_set`
+#### `nonempty_list`
+#### `nonempty_text`
+#### `nonempty_map`
+#### `nonempty_set`
+#### `empty_object`
+#### `nonempty_object`
+#### `truthy`
+#### `falsy`
+#### `buffer`: `( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
 
-#### `null`
-
-`( x ) -> x is null`
-
-#### `undefined`
-
-`( x ) -> x is undefined`
-
-
-
-### Textual Types
-
-#### `text`
-
-`( x ) -> ( typeof x ) is 'string'`
-
-#### `codepoint`
-
-`( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
-
-#### `regex`
-
-`( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
-
-#### `buffer`
-
-`( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
-
-
-#---------------------------------------------------------------------------------------------------------
-### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
-https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
-#### `jsidentifier`
-
-```
-( x ) -> ( @isa.text x ) and ( x.match \
-  /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
-```
 
 
 ### Container Types
@@ -321,13 +340,7 @@ asynchronous iterators.
 
 `( x ) -> ( typeof x ) is 'symbol'`
 
-#### `keyowner`
 
-`( x ) -> return true for _ of x ? {}; return false`
-
-
-
-### Existential Types
 
 #### `nothing`
 
@@ -341,6 +354,16 @@ asynchronous iterators.
 
 `( x ) -> true`
 
+
+#---------------------------------------------------------------------------------------------------------
+### thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
+https://mathiasbynens.be/notes/javascript-identifiers-es6 ###
+#### `jsidentifier`
+
+```
+( x ) -> ( @isa.text x ) and ( x.match \
+  /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
+```
 
 
 --------------------------------------------------------

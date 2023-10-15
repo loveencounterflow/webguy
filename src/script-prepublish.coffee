@@ -24,12 +24,16 @@ unimplemented_types = ( type for type in documented_types  when type not in impl
 # log implemented_types
 log '==========================================================='
 log __filename
-log "Undocumented types (#{undocumented_types.length}):"
-log '==========================================================='
-log undocumented_types.join ', '
-log '==========================================================='
-log "Unimplemented types (#{unimplemented_types.length}):"
-log '==========================================================='
-log unimplemented_types.join ', '
+if undocumented_types.length > 0
+  log '==========================================================='
+  log "Undocumented types (#{undocumented_types.length}):"
+  log '==========================================================='
+  log undocumented_types.join ', '
+
+if unimplemented_types.length > 0
+  log '==========================================================='
+  log "Unimplemented types (#{unimplemented_types.length}):"
+  log '==========================================================='
+  log unimplemented_types.join ', '
 log '==========================================================='
 

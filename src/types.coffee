@@ -122,9 +122,9 @@ class Isa
   #=========================================================================================================
   # Generics and Qualified Types
   #---------------------------------------------------------------------------------------------------------
-  ### Almost anything in JS can be a `keyowner` (i.e. have one or more enumerable properties attached to it)
+  ### Almost anything in JS can be a `$keyowner` (i.e. have one or more enumerable properties attached to it)
   so we test for this late in the chain: ###
-  keyowner:               ( x ) -> return true for _ of x ? {}; return false
+  $keyowner:              ( x ) -> return true for _ of x ? {}; return false
   frozen:                 ( x ) => Object.isFrozen      x
   sealed:                 ( x ) => Object.isSealed      x
   extensible:             ( x ) => Object.isExtensible  x
@@ -137,8 +137,8 @@ class Isa
   nonempty_text:          ( x ) => ( @isa.text    x ) and ( x.length isnt 0 )
   nonempty_map:           ( x ) => ( @isa.map     x ) and ( x.size   isnt 0 )
   nonempty_set:           ( x ) => ( @isa.set     x ) and ( x.size   isnt 0 )
-  empty_object:           ( x ) => ( @isa.object  x ) and ( not @isa.keyowner x )
-  nonempty_object:        ( x ) => ( @isa.object  x ) and (     @isa.keyowner x )
+  empty_object:           ( x ) => ( @isa.object  x ) and ( not @isa.$keyowner x )
+  nonempty_object:        ( x ) => ( @isa.object  x ) and (     @isa.$keyowner x )
   ### Generic types: ###
   truthy:                 ( x ) -> not not x
   falsy:                  ( x ) ->     not x
