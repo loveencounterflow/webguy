@@ -5,6 +5,7 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
+optional_sym              = Symbol 'optional'
 
 
 #===========================================================================================================
@@ -227,7 +228,10 @@ class _Intertype
       # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
       generator:  ({ target, owner, key, descriptor, }) ->
-        type = key
+        type  = key
+        isa   = descriptor.value
+        value = ( x ) -> if ( x is optional_sym ) then true else isa.call @, x
+        descriptor  = { descriptor..., value, }
         yield { target: me.isa, key, descriptor, }
         #...................................................................................................
         # optional_$type
@@ -265,6 +269,10 @@ class _Intertype
     #.......................................................................................................
     props.acquire_depth_first declarations, cfg
     return null
+
+  #---------------------------------------------------------------------------------------------------------
+  optional_sym: optional_sym
+  optional:     ( x ) -> if x? then x else optional_sym
 
   #---------------------------------------------------------------------------------------------------------
   type_of: ( x ) ->
