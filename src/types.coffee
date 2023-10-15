@@ -23,9 +23,13 @@ class Iterator
     @iterator = switch type = _types.type_of @value
       when 'list' then @value.values()
       when 'text' then ( -> yield from me.value )()
-      else throw new Error "unable to iterate over a #{type}"
+      else
+        R if ( R = x?[Symbol.iterator] )?
+        throw new Error "unable to iterate over a #{type}"
     return undefined
   [Symbol.iterator]: -> @iterator
+class All_of extends Iterator
+class Any_of extends Iterator
 
 
 #===========================================================================================================
@@ -223,6 +227,22 @@ class _Intertype
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
+  _isa: ( key, type, x, isa ) ->
+    return true if ( x is @_optional )
+    #.......................................................................................................
+    if x instanceof All_of
+      for element from x.value
+        return false unless isa.call @, element
+      return true
+    #.......................................................................................................
+    else if x instanceof Any_of
+      for element from x.value
+        return true if isa.call @, element
+      return false
+    #.......................................................................................................
+    return isa.call @, x
+
+  #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
     # debug '^_Intertype::_validate@1^', "#{key} #{type} #{x}"
     return x.value  if ( x is @_optional )
@@ -246,7 +266,7 @@ class _Intertype
       generator:  ({ target, owner, key, descriptor, }) ->
         type        = key
         isa         = descriptor.value
-        value       = ( x ) -> if ( x is @_optional ) then true else isa.call me, x
+        value       = ( x ) -> me._isa key, type, x, isa
         descriptor  = { descriptor..., value, }
         yield { target: me.isa, key, descriptor, }
         #...................................................................................................
@@ -276,6 +296,8 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   optional: ( x ) -> if x? then x else @_optional.set x
+  all_of:   ( x ) -> new All_of x
+  any_of:   ( x ) -> new Any_of x
 
   #---------------------------------------------------------------------------------------------------------
   type_of: ( x ) ->
@@ -340,5 +362,7 @@ module.exports.Isa        = Isa
 module.exports.Intertype  = Intertype
 module.exports.Optional   = Optional
 module.exports.Iterator   = Iterator
+module.exports.All_of     = All_of
+module.exports.Any_of     = Any_of
 
 
