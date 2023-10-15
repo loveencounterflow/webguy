@@ -16,47 +16,6 @@
     - [Declaration by Declaration Objects](#declaration-by-declaration-objects)
     - [Declaration with Fields](#declaration-with-fields)
   - [Standard Types](#standard-types)
-    - [Bottom Types](#bottom-types)
-      - [`null`](#null)
-      - [`undefined`](#undefined)
-    - [Textual Types](#textual-types)
-      - [`text`](#text)
-      - [`codepoint`](#codepoint)
-      - [`regex`](#regex)
-      - [`buffer`](#buffer)
-    - [thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and](#thx-to-httpsgithubcommathiasbynensmothereffinblobmasterjs-variableseffjs-and)
-      - [`jsidentifier`](#jsidentifier)
-    - [Container Types](#container-types)
-      - [`list`](#list)
-      - [`set`](#set)
-      - [`map`](#map)
-    - [Numeric Types](#numeric-types)
-      - [`infinity`](#infinity)
-      - [`float`](#float)
-      - [`numeric`](#numeric)
-      - [`bigint`](#bigint)
-      - [`integer`](#integer)
-      - [`codepointid`](#codepointid)
-      - [`cardinal`](#cardinal)
-      - [`zero`](#zero)
-      - [`nan`](#nan)
-      - [`nonzero`](#nonzero)
-      - [`even`](#even)
-      - [`odd`](#odd)
-    - [Classes](#classes)
-      - [`class`](#class)
-    - [Other Types](#other-types)
-      - [`boolean`](#boolean)
-      - [`object`](#object)
-      - [`buffer`](#buffer-1)
-      - [`function`](#function)
-      - [`asyncfunction`](#asyncfunction)
-      - [`symbol`](#symbol)
-      - [`keyowner`](#keyowner)
-    - [Existential Types](#existential-types)
-      - [`nothing`](#nothing)
-      - [`something`](#something)
-      - [`anything`](#anything)
   - [Type Signatures](#type-signatures)
   - [See also](#see-also)
 
@@ -160,112 +119,90 @@ measure: ( x ) ->
 ## Standard Types
 
 
-* **`null`**: `( x ) -> x is null`
-* **`undefined`**:`( x ) -> x is undefined`
-* **`text`**: `( x ) -> ( typeof x ) is 'string'`
-* **`chr`**: `( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
-* **`regex`**: `( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
-* **`blank_text`**
-* **`nonblank_text`**
-* **`int2text`**
-* **`int10text`**
-* **`int16text`**
+* **`anything`**: `( x ) -> true`
 * **`arraybuffer`**
-* **`int8array`**
-* **`uint8array`**
-* **`uint8clampedarray`**
-* **`int16array`**
-* **`uint16array`**
-* **`int32array`**
-* **`uint32array`**
+* **`asyncfunction`**: Satisfied if the value's MDN is `[object AsyncFunction]`. This includes `async` funtions proper and excludes asynchronous iterators.
+* **`asyncgenerator`**
+* **`asyncgeneratorfunction`**
+* **`bigint`**: `( x ) -> typeof x is 'bigint'`
+* **`blank_text`**
+* **`boolean`**: `( x ) -> ( x is true ) or ( x is false )`
+* **`buffer`**: `( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
+* **`buffer`**: `false` when used outside of NodeJS; if `globalThis.Buffer` is set, the result of `Buffer.isBuffer x`.
+* **`cardinal`**: `( x ) -> ( Number.isInteger x ) and ( x >= 0 )`
+* **`chr`**: `( x ) -> ( @isa.text x ) and ( /^.$/u.test x )`
+* **`class`**: returns `true` if value is a function and its `x.prototype` is `writable`
+* **`codepointid`**: `( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )`
+* **`date`**
+* **`empty_list`**
+* **`empty_map`**
+* **`empty_object`**
+* **`empty_set`**
+* **`empty_text`**
+* **`error`**
+* **`even`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )`
+* **`extensible`**
+* **`false`**
+* **`falsy`**
 * **`float32array`**
 * **`float64array`**
+* **`float`**: `( x ) -> Number.isFinite x`
+* **`frozen`**
+* **`function`**: `isa.function x` is `true` for all values whose MDN is `[object Function]`; this includes classical functions proper, fat-arrow functions and bound methods and excludes asynchronous functions, generator functions and generators.
+* **`generator`**
+* **`generatorfunction`**
+* **`global`**
+* **`infinitefloat`**
+* **`infinity`**: `( x ) -> ( x is +Infinity ) or ( x is -Infinity )`
+* **`int10text`**
+* **`int16array`**
+* **`int16text`**
+* **`int2text`**
+* **`int32`**
+* **`int32array`**
+* **`int8array`**
+* **`integer`**: `( x ) -> Number.isInteger x`, which evaluates to `false` for `±Infinity`, `BigInt`s, and `NaN`.
+* **`jsidentifier`**: all texts that can be used as JavaScript identifiers
+* **`list`**: `( x ) -> Array.isArray x`
+* **`listiterator`**
+* **`map`**: `( x ) -> x instanceof Map`
+* **`mapiterator`**
+* **`nan`**: `( x ) -> Number.isNaN x`
+* **`nativepromise`**
+* **`nonblank_text`**
+* **`nonempty_list`**
+* **`nonempty_map`**
+* **`nonempty_object`**
+* **`nonempty_set`**
+* **`nonempty_text`**
+* **`nonzero`**: `( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )`
+* **`nothing`**: `( x ) -> not x?`
+* **`null`**: `( x ) -> x is null`
+* **`numeric`**: `( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )`
+* **`object`**: all values whose `typeof` is `object` and whose MDN is `'[object Object]'`
+* **`odd`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )`
+* **`promise`**
+* **`proper_fraction`**
+* **`regex`**: `( x ) -> ( Object::toString.call x ) is '[object RegExp]'`
+* **`safeinteger`**
+* **`sealed`**
+* **`set`**: `( x ) -> x instanceof Set`
+* **`setiterator`**
+* **`something`**: `( x ) -> x?`
+* **`symbol`**: `( x ) -> ( typeof x ) is 'symbol'`
+* **`text`**: `( x ) -> ( typeof x ) is 'string'`
+* **`textiterator`**
+* **`thenable`**
+* **`true`**
+* **`truthy`**
+* **`uint16array`**
+* **`uint32array`**
+* **`uint8array`**
+* **`uint8clampedarray`**
+* **`undefined`**:`( x ) -> x is undefined`
 * **`weakmap`**
 * **`weakset`**
-* **`infinitefloat`**
-* **`int32`**
-* **`proper_fraction`**
-* **`safeinteger`**
-* **`date`**
-* **`true`**
-* **`false`**
-* **`error`**
-* **`global`**
-* **`generatorfunction`**
-* **`asyncgeneratorfunction`**
-* **`asyncgenerator`**
-* **`generator`**
-* **`listiterator`**
-* **`textiterator`**
-* **`setiterator`**
-* **`mapiterator`**
-* **`promise`**
-* **`nativepromise`**
-* **`thenable`**
-* **`frozen`**
-* **`sealed`**
-* **`extensible`**
-* **`empty_list`**
-* **`empty_text`**
-* **`empty_map`**
-* **`empty_set`**
-* **`nonempty_list`**
-* **`nonempty_text`**
-* **`nonempty_map`**
-* **`nonempty_set`**
-* **`empty_object`**
-* **`nonempty_object`**
-* **`truthy`**
-* **`falsy`**
-* **`buffer`**: `( x ) -> ( globalThis.Buffer?.isBuffer ? -> false ) x`
-* **`list`**: `( x ) -> Array.isArray x`
-* **`set`**: `( x ) -> x instanceof Set`
-* **`map`**: `( x ) -> x instanceof Map`
-* **`infinity`**: `( x ) -> ( x is +Infinity ) or ( x is -Infinity )`
-* **`float`**: `( x ) -> Number.isFinite x`
-* **`numeric`**: `( x ) -> ( Number.isFinite x ) or ( typeof x is 'bigint' )`
-* **`bigint`**: `( x ) -> typeof x is 'bigint'`
-* **`integer`**: `( x ) -> Number.isInteger x`, which evaluates to `false` for `±Infinity`, `BigInt`s, and `NaN`.
-* **`codepointid`**: `( x ) -> ( @isa.integer x ) and ( 0x00000 <= x <= 0x1ffff )`
-* **`cardinal`**: `( x ) -> ( Number.isInteger x ) and ( x >= 0 )`
-* **`zero`**: `( x ) -> x is 0 ### NOTE true for -0 as well ###`
-* **`nan`**: `( x ) -> Number.isNaN x`
-* **`nonzero`**: `( x ) -> ( @isa.numeric x ) and ( not @isa.zero x )`
-* **`even`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) is   0 )`
-* **`odd`**: `( x ) -> ( Number.isInteger x ) and ( ( x % 2 ) isnt 0 )`
-* **`boolean`**: `( x ) -> ( x is true ) or ( x is false )`
-* **`buffer`**: `false` when used outside of NodeJS; if `globalThis.Buffer` is set, the result of `Buffer.isBuffer x`.
-* **`function`**: `isa.function x` is `true` for all values whose MDN is `[object Function]`; this includes classical functions proper, fat-arrow functions and bound methods and excludes asynchronous functions, generator functions and generators.
-* **`asyncfunction`**: Satisfied if the value's MDN is `[object AsyncFunction]`. This includes `async` funtions proper and excludes asynchronous iterators.
-* **`symbol`**: `( x ) -> ( typeof x ) is 'symbol'`
-* **`nothing`**: `( x ) -> not x?`
-* **`something`**: `( x ) -> x?`
-* **`anything`**: `( x ) -> true`
-
-* **`class`**
-
-  `( x ) ->`
-
-    ( ( Object::toString.call x ) is '[object Function]' ) and \
-      ( Object.getOwnPropertyDescriptor x, 'prototype' )?.writable is false
-
-* **`object`**
-
-  `object` tests a value against three constraints:
-
-    * `x?` (excludes `null` and `undefined`),
-    * `typeof x` returns `'object'`,
-    * and `( Object::toString.call x )` gives `'[object Object]`
-
-* **`jsidentifier`**
-
-  ```
-  ( x ) -> ( @isa.text x ) and ( x.match \
-    /// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ] | \p{ID_Continue} )* $ ///u )?
-  ```
-
-  (thx to https://github.com/mathiasbynens/mothereff.in/blob/master/js-variables/eff.js and
-   https://mathiasbynens.be/notes/javascript-identifiers-es6)
+* **`zero`**: `true` if value is `±0`
 
 
 --------------------------------------------------------
