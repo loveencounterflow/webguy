@@ -259,6 +259,8 @@ See [the InterType documentation](./README-types.md)
   `any_of()` as 'intermediate decorators' (as in `isa.integer all_of x`, `isa.integer any_of x`)
 * **`[–]`** in `types`, implement `optional()` as 'intermediate decorator' (as in `isa.integer optional x`,
   `validate.integer optional x`)
+* **`[–]`** in `types`, make sure that nested use of `optional` does not mix up values (which it currently
+  does?); use stack if in doubt
 
 ## Is Done
 
