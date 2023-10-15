@@ -22,6 +22,7 @@ intertype_pkgjson_text                = JSON.stringify intertype_pkgjson, null, 
 FS.writeFileSync intertype_pkgjson_path, intertype_pkgjson_text
 log "InterType dependencies:"
 log intertype_pkgjson.dependencies
+log '-----------------------------------------------------------'
 
 f = ->
   { $: zx, cd, }       = await import( 'zx' )
