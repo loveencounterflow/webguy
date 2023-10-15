@@ -43,6 +43,20 @@
   `integer` `numbers`. Therefore, `even` and `odd` can be regarded as refinements of both type `number` and
   type `integer`.
 
+* An **optional type** is `null`able one (which includes `undefined`, because JS). It is produced with the
+  'interloper' ('intermediate decorator') `types.optional()`, e.g. `isa.integer optional x` is true when `x`
+  is either `null`, `undefined`, or satisfies `isa.integer x`.
+
+* A **collective type** is a type that refers to the elements of a collection rather than the collection
+  itself. Like optional types, this is implemented with a so-called interloper, of which there are two,
+  `types.all_of()` and `types.any_of()`. For example `isa.integer all_of [ 6, 5, 4, 3, 2, 1, ]` will return
+  `true`, while `isa.integer all_of [ 6, 5, 4, 3.9, 2, 1, ]` will return `false`; similarly with `any_of()`.
+  In order to ensure `x` is indeed a `list` (or a `text` or another known iterable),
+
+
+  `isa.integer all_of validate.list x`
+
+
 ## Declarations
 
 * type name must be a JS identifier (match `/// ^ (?: [ $_ ] | \p{ID_Start} ) (?: [ $ _ \u{200c} \u{200d} ]
