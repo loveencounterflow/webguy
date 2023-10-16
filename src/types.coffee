@@ -251,13 +251,25 @@ class _Intertype
         return true if isa.call @, element
       return false
     #.......................................................................................................
+    else if ( x instanceof Failure )
+      return false
+    #.......................................................................................................
     return isa.call @, x
+
+  #---------------------------------------------------------------------------------------------------------
+  _verify: ( key, type, x, isa ) ->
+    debug '^Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x is @_optional ), }
+    return x.get()      if ( x is @_optional )
+    return get_value x  if ( isa.call @, x ) is true
+    return new Failure x
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
     return x.get()      if ( x is @_optional )
-    return get_value x  if ( @isa[ type ] x ) is true
+    unless ( x instanceof Failure )
+      return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
+    x = get_value x
     throw new Error "expected a #{key}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
@@ -265,6 +277,7 @@ class _Intertype
     props        ?= require './props'
     @isa          = {}
     @validate     = {}
+    @verify       = {}
     props.hide @, '_isa_methods', []
     me            = @
     #.......................................................................................................
@@ -279,6 +292,12 @@ class _Intertype
         value       = ( x ) -> me._isa key, type, x, isa
         descriptor  = { descriptor..., value, }
         yield { target: me.isa, key, descriptor, }
+        #...................................................................................................
+        # verify_$type
+        yield do ( key = type, type ) ->
+          value       = ( x ) => me._verify key, type, x, isa
+          descriptor  = { descriptor..., value, }
+          return { target: me.verify, key, descriptor, }
         #...................................................................................................
         # validate_$type
         yield do ( key = type, type ) ->
@@ -306,8 +325,8 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   optional: ( x ) -> if x? then x else @_optional.set x
-  all_of:   ( x ) -> new All_of x
-  any_of:   ( x ) -> new Any_of x
+  all_of:   ( x ) -> if x instanceof Failure then x else new All_of x
+  any_of:   ( x ) -> if x instanceof Failure then x else new Any_of x
 
   #---------------------------------------------------------------------------------------------------------
   type_of: ( x ) ->
@@ -370,6 +389,7 @@ _types                    = new _Intertype()
 module.exports            = new Intertype()
 module.exports.Isa        = Isa
 module.exports.Intertype  = Intertype
+module.exports.Failure    = Failure
 module.exports.Optional   = Optional
 module.exports.Iterator   = Iterator
 module.exports.All_of     = All_of
