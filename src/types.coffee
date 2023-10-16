@@ -9,6 +9,7 @@ nothing                   = Symbol 'nothing'
 
 
 #===========================================================================================================
+class Sentinel
 class Optional
   constructor:      -> @get(); undefined
   set: ( x )        -> @value = x; @
