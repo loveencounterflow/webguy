@@ -271,6 +271,8 @@ See [the InterType documentation](./README-types.md)
   * ❌ `only.$type x`
   * ❌ `ensure.$type x`
 
+* **`[–]`** in `types`, change default for custom return values in `get()` methods to `misfit`
+
 ## Is Done
 
 * **`[+]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or

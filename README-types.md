@@ -62,7 +62,7 @@
 
 * go in-between a test and a value
 * should normally not be used for the outermost call, unless you know what you're doing
-* may return `SIGNAL`
+* may return an instance of (a derivative of) `Sentinel`
 
 * `isa.$type                        x`: `true` if `x` is a `$type`
 * `isa.$type optional               x`: `true` if `x` is a `$type` or `null` or `undefined`
