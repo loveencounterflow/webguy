@@ -9,6 +9,7 @@
 - [InterType](#intertype)
   - [API](#api)
   - [Base Types, Refinements, Optional Types](#base-types-refinements-optional-types)
+  - [Mediaries](#mediaries)
   - [Declarations](#declarations)
     - [Declaration by Type Alias](#declaration-by-type-alias)
     - [Declaration by Value Enumeration](#declaration-by-value-enumeration)
@@ -44,18 +45,36 @@
   type `integer`.
 
 * An **optional type** is `null`able one (which includes `undefined`, because JS). It is produced with the
-  'interloper' ('intermediate decorator') `types.optional()`, e.g. `isa.integer optional x` is true when `x`
+  'mediary' ('intermediate decorator') `types.optional()`, e.g. `isa.integer optional x` is true when `x`
   is either `null`, `undefined`, or satisfies `isa.integer x`.
 
 * A **collective type** is a type that refers to the elements of a collection rather than the collection
-  itself. Like optional types, this is implemented with a so-called interloper, of which there are two,
+  itself. Like optional types, this is implemented with a so-called 'mediary', of which there are two,
   `types.all_of()` and `types.any_of()`. For example `isa.integer all_of [ 6, 5, 4, 3, 2, 1, ]` will return
   `true`, while `isa.integer all_of [ 6, 5, 4, 3.9, 2, 1, ]` will return `false`; similarly with `any_of()`.
-  In order to ensure `x` is indeed a `list` (or a `text` or another known iterable),
+  In order to ensure `x` is indeed a `list` (or a `text` or another known iterable), one may write
+  `isa.integer all_of validate.list x`, since `validate.list x` will throw an error if `x` is not a `list`
+  and return `x` otherwise, making the step transparent to `all_of()` which is to be called next. In order
+  to avoid exceptions and get a `true` or `false`, use `verify()`, for example `isa.integer all_of
+  verify.list x` which will never throw an error.
 
+## Mediaries
 
-  `isa.integer all_of validate.list x`
+* go in-between a test and a value
+* should normally not be used for the outermost call, unless you know what you're doing
+* may return `SIGNAL`
 
+* `isa.$type                        x`: `true` if `x` is a `$type`
+* `isa.$type optional               x`: `true` if `x` is a `$type` or `null` or `undefined`
+* `isa.$etype all_of                x`: `true` if all elements of `x` satisfy `$etype`
+* `isa.$etype any_of                x`: `true` if any elements of `x` satisfy `$etype`
+* `isa.$etype all_of verify.$ctype  x`: `true` if `x` satisfies `$ctype` and all elements of `x` satisfy
+  `$etype`
+* alternative syntax for the last: `( isa.$ctype x ) and ( isa.$etype all_of x )`
+
+* mediary `verify.$type x` is similar to `validate.$type x`, but never throws an exception; instead, it
+  returns a `Failure` object that wraps `x` and signals to the outer method that `x` does not satisfy
+  `$type`.
 
 ## Declarations
 

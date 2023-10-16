@@ -261,6 +261,15 @@ See [the InterType documentation](./README-types.md)
   `validate.integer optional x`)
 * **`[–]`** in `types`, make sure that nested use of `optional` does not mix up values (which it currently
   does?); use stack if in doubt
+* **`[–]`** in `types`, consider to change signature `_validate: ( key, type, x ) ->` to `_validate: ( key,
+  type, x, isa ) ->`
+* **`[–]`** in `types`, implement `ENSURE` (name pending) as an 'ancestor' to `validate`. `ENSURE.$type x`
+  returns `x` if `isa.$type x` holds and a sentinel `Failure` value otherwise. Candidate names:
+
+  * 💚 `verify.$type x`
+  * ❌ `confirm.$type x`
+  * ❌ `only.$type x`
+  * ❌ `ensure.$type x`
 
 ## Is Done
 
