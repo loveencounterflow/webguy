@@ -233,12 +233,12 @@ class _Intertype
   _isa: ( key, type, x, isa ) ->
     return x.get true if ( x is @_optional )
     #.......................................................................................................
-    if x instanceof All_of
+    if ( x instanceof All_of )
       for element from x.value
         return false unless isa.call @, element
       return true
     #.......................................................................................................
-    else if x instanceof Any_of
+    else if ( x instanceof Any_of )
       for element from x.value
         return true if isa.call @, element
       return false
