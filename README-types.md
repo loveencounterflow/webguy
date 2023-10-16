@@ -58,6 +58,14 @@
   to avoid exceptions and get a `true` or `false`, use `verify()`, for example `isa.integer all_of
   verify.list x` which will never throw an error.
 
+  When a list is empty (or `null` and licensed by preceding mediary `optional`), all element type tests with
+  `all_of()` will succeed, but all tests with `any_of()` will fail. From this one can see that `all_of` can
+  be thought of as 'no element violates the given condition', while `any_of` means 'there's at leas one
+  element that will satisfy the given condition:
+
+  * `isa.$type all_of []`, `isa.$type all_of optional null` will always return `true`;
+  * `isa.$type any_of []`, `isa.$type any_of optional null` will always return `false`.
+
 ## Mediaries
 
 * go in-between a test and a value

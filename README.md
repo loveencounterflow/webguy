@@ -272,6 +272,8 @@ See [the InterType documentation](./README-types.md)
   * ❌ `ensure.$type x`
 
 * **`[–]`** in `types`, change default for custom return values in `get()` methods to `misfit`
+* **`[–]`** in `types` (and elsewhere), use proper error classes (from `GUY.errors`). Consider to adjust
+  exception re-use policy and maybe only allow a single `throw` statement per error class
 
 ## Is Done
 
