@@ -35,11 +35,12 @@ class Iterator
         throw new Error "unable to iterate over a #{type}"
     return undefined
   [Symbol.iterator]: -> @iterator
+  get:          ( r = null )  -> r ? @value
 class All_of extends Iterator
 class Any_of extends Iterator
 
 #===========================================================================================================
-get_value = ( x ) -> if ( x instanceof All_of ) or ( x instanceof Any_of ) then x.value else x
+get_value = ( x, r = null ) -> if ( x instanceof Iterator ) or ( x instanceof Failure ) then x.get r else x
 
 
 #===========================================================================================================
