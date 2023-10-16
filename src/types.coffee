@@ -10,11 +10,17 @@ nothing                   = Symbol 'nothing'
 
 #===========================================================================================================
 class Sentinel
-class Optional
-  constructor:      -> @get(); undefined
-  set: ( x )        -> @value = x; @
-  get: ( r = null ) -> [ R, @value, ] = [ @value, nothing, ]; r ? R
 
+#===========================================================================================================
+class Optional
+  constructor:                -> @get(); undefined
+  set:          ( x )         -> @value = x; @
+  get:          ( r = null )  -> [ R, @value, ] = [ @value, nothing, ]; r ? R
+
+#===========================================================================================================
+class Failure
+  constructor:  ( x )         -> @value = x
+  get:          ( r = null )  -> r ? @value
 
 #===========================================================================================================
 class Iterator
