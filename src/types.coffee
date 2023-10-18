@@ -5,7 +5,7 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
-nothing                   = Symbol 'nothing'
+XXX_nothing                   = Symbol 'XXX_nothing'
 
 
 #===========================================================================================================
@@ -15,7 +15,11 @@ class Sentinel
 class Optional
   constructor:                -> @get(); undefined
   set:          ( x )         -> @value = x; @
-  get:          ( r = null )  -> [ R, @value, ] = [ @value, nothing, ]; r ? R
+  get: ( r = null ) ->
+    R       = @value
+    @value  = XXX_nothing
+    throw new Error "^Optional::get@1^ `Optional` instance is empty" if R is XXX_nothing
+    return r ? R
 
 #===========================================================================================================
 class Failure
@@ -27,14 +31,17 @@ class Iterator
   constructor: ( x ) ->
     me        = @
     @value    = x
-    @iterator = switch type = _types.type_of @value
-      when 'list' then @value.values()
-      when 'text' then ( -> yield from me.value )()
-      else
-        R if ( R = x?[Symbol.iterator] )?
-        throw new Error "unable to iterate over a #{type}"
+    if ( x instanceof Optional )
+      @iterator = [].values()
+    else
+      @iterator = switch type = _types.type_of @value
+        when 'list' then @value.values()
+        when 'text' then ( -> yield from me.value )()
+        else
+          R if ( R = x?[Symbol.iterator] )?
+          throw new Error "^Iterator::constructor@1^ unable to iterate over a #{type}"
     return undefined
-  [Symbol.iterator]: -> @iterator
+  # [Symbol.iterator]: -> @iterator
   get:          ( r = null )  -> r ? @value
 class All_of extends Iterator
 class Any_of extends Iterator
@@ -239,6 +246,8 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _isa: ( key, type, x, isa ) ->
+    # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
+    # debug '^_Intertype::_isa@2^', x instanceof Failure
     return x.get true if ( x is @_optional )
     #.......................................................................................................
     if ( x instanceof All_of )
@@ -258,8 +267,11 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _verify: ( key, type, x, isa ) ->
-    debug '^Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x is @_optional ), }
-    return x.get()      if ( x is @_optional )
+    # debug '^_Intertype::_verify@1^', { key, type, x, isa, }
+    # debug '^_Intertype::_verify@2^', ( x instanceof Failure ), ( x is @_optional )
+    # debug '^_Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x is @_optional ), }
+    # return x.get()      if ( x is @_optional )
+    return x            if ( x is @_optional )
     return get_value x  if ( isa.call @, x ) is true
     return new Failure x
 
@@ -269,8 +281,8 @@ class _Intertype
     unless ( x instanceof Failure )
       return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
-    x = get_value x
-    throw new Error "expected a #{key}, got a #{@type_of x}"
+    # x = get_value x
+    throw new Error "^_Intertype::_validate@1^ expected a #{key}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
   _collect_and_generate_declarations: ( declarations ) ->
