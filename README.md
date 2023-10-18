@@ -274,6 +274,23 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** in `types`, change default for custom return values in `get()` methods to `misfit`
 * **`[–]`** in `types` (and elsewhere), use proper error classes (from `GUY.errors`). Consider to adjust
   exception re-use policy and maybe only allow a single `throw` statement per error class
+* **`[–]`** in `types`, <del>what should be the outcome of `all_of 12`, should `isa.integer all_of 12`
+  return `true` or `false`? It shouldn't throw an error because none of the type testing functions throw an
+  error, ever, with the sole exception of `validate`.</del> <ins>ensure that the following invariants
+  hold:</ins>
+
+  * **`[–]`** `isa.$type all_of []`: `true` (following JS `[].every ( e ) -> ...`)
+  * **`[–]`** `isa.$type any_of []`: `false` (following JS `[].some ( e ) -> ...`)
+  * **`[–]`** `isa.$type all_of 12`: (N.A., therefore) `false`
+  * **`[–]`** `isa.$type any_of 12`: (N.A., therefore) `false`
+  * **`[–]`** `isa.$type all_of optional []`: `true` (same as above w/o `optional`)
+  * **`[–]`** `isa.$type any_of optional []`: `false` (same as above w/o `optional`)
+  * **`[–]`** `isa.$type all_of optional 12`: `false` (same as above w/o `optional`)
+  * **`[–]`** `isa.$type any_of optional 12`: `false` (same as above w/o `optional`)
+  * **`[–]`** `isa.$type all_of optional null`: `true` (all of zero elements `e` do satisfy `isa.$type e`)
+  * **`[–]`** `isa.$type any_of optional null`: `false` (there's no element, not any, so `false`)
+  * **`[–]`** `isa.$type all_of optional null`: `false`
+  * **`[–]`** `isa.$type any_of optional null`: `false`
 
 ## Is Done
 
