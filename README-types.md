@@ -342,7 +342,7 @@ Results are joined with a slash `/`.
 
 In the schematics,
 
-* steps are written in the order of processing (right-to-left ➔ top-down)
+* steps are written in the order of processing (so rightmost expression is first in list)
 * the tested value is called `x`
 * `x` may be re-assigned to a sentinel, original value preserved as `sentinel.value`
 * intermediate results shown in italics
@@ -350,7 +350,8 @@ In the schematics,
 
 <hr>
 
-* ✅ **`isa.integer 1234`**<br>
+* ✅ The simplest form is an `isa` test without mediaries; it can only ever return `true` or `false`:<br>
+**`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer x`<br>
 *`result:              `* **`true`**<br>
