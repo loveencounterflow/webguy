@@ -367,7 +367,7 @@ Results are joined with a slash `/`.
 
 * ✅ **`isa.integer all_of x = [ 'a', 'b', 'c', 'd', ]`**<br>
 `results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.text()` (iterates over `x.value`)<br>
+`base:                ` `isa.text()` (sees sentinal ➔ iterates over `x.value`)<br>
 `sentinel:            ` *`x = new All_of { value: x, }`*<br>
 `mediary:             ` `all_of()`<br>
 `value:               ` `x = [ 'a', 'b', 'c', 'd', ]`<br>
