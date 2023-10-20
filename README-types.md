@@ -427,7 +427,9 @@ In the schematics,
 `base:                ` `isa.integer x` (sees `Failure` sentinel ➔ fails)<br>
 **`result:              `** **`false`**<br>
 
-* ❌ **`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
+* ❌ When a collection is tested with `all_of`, the first non-conforming element will stop the
+  iteration:<br><br>
+**`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
 `mediary:             ` `verify.list x`<br>
 *`intermediate:        `* *`x = [ 1, 2, 'c', 4, ]`*<br>
