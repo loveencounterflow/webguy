@@ -428,7 +428,7 @@ In the schematics,
 **`result:              `** **`false`**<br>
 
 * ❌ When a collection is tested with `all_of`, the first non-conforming element will stop the
-  iteration:<br><br>
+  iteration and return `false`:<br><br>
 **`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
 `mediary:             ` `verify.list x`<br>
@@ -436,6 +436,17 @@ In the schematics,
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
+**`result:              `** **`false`**<br>
+
+* ✅ Conversely, when a collection is tested with `any_of`, the first *conforming* element will stop the
+  iteration and return `true`:<br><br>
+**`isa.text any_of verify.list [ 1, 2, 'c', 4, ]`**<br>
+`value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
+`mediary:             ` `verify.list x`<br>
+*`intermediate:        `* *`x = [ 1, 2, 'c', 4, ]`*<br>
+`mediary:             ` `any_of x`<br>
+*`sentinel:            `* *`x = new Any_of { value: [ 1, 2, 'c', 4, ], is_iterable: true, }`*<br>
+`base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ succeeds)<br>
 **`result:              `** **`false`**<br>
 
 
