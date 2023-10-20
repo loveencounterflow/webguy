@@ -341,12 +341,12 @@ Results are joined with a slash `/`.
 ## Schematics (Draft)
 
 
-* `isa.integer x = 1234`
+* `isa.integer x = 1234`<br>
 `results:             ` **`true`** | `false`<br>
 `base:                ` `isa.integer()`<br>
 `value:               ` `x = 1234`<br>
 
-* `isa.integer x = null`
+* `isa.integer x = null`<br>
 `results:             ` `true` | **`false`**<br>
 `base:                ` `isa.integer()`<br>
 `value:               ` `x = null`<br>
