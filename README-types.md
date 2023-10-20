@@ -350,20 +350,20 @@ In the schematics,
 
 <hr>
 
-* ✅ The simplest form is an `isa` test without mediaries; it can only ever return `true` or `false`:<br>
+* ✅ The simplest form is an `isa` test without mediaries; it can only ever return `true` or `false`:<br><br>
 **`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer x`<br>
 **`result:              `** **`true`**<br>
 
-* ❌ When `isa.integer()` sees a non-conforming value, it naturally returns `false`:<br>
+* ❌ When `isa.integer()` sees a value that does not pass the test, it naturally returns `false`:<br><br>
 **`isa.integer null`**<br>
 `value:               ` `x = null`<br>
 `base:                ` `isa.integer x`<br>
 **`result:              `** **`false`**<br>
 
 * ✅ Type test can be made 'nullable' by inserting an `optional` mediary into the call chain; this will
-cause the value to be wrapped into a sentinel of type `Optional`:<br>
+cause the value to be wrapped into a sentinel of type `Optional`:<br><br>
 **`isa.integer optional 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional x`<br>
