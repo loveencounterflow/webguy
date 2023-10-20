@@ -362,11 +362,11 @@ sentinel:           x = new Optional { value: x, }
 mediary:            optional()
 value:              x = null
 
-results:            true | (false)<br>
-base:               isa.text (iterates over `x.value`)<br>
-sentinel:           x = new All_of { value: x, }<br>
-mediary:            all_of()<br>
-value:              x = [ 'a', 'b', 'c', 'd', ]<br>
+`results:             ` **`true`** | `false`<br>
+`base:                ` `isa.text()` (iterates over `x.value`)<br>
+`sentinel:            ` *`x = new All_of { value: x, }`*<br>
+`mediary:             ` `all_of()`<br>
+`value:               ` `x = [ 'a', 'b', 'c', 'd', ]`<br>
 
 
 
