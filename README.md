@@ -292,6 +292,9 @@ See [the InterType documentation](./README-types.md)
   * **`[–]`** `isa.$type all_of optional null`: `false`
   * **`[–]`** `isa.$type any_of optional null`: `false`
 
+* **`[–]`** in `types`, make all mediaries always return a sentinel
+
+
 ## Is Done
 
 * **`[+]`** <del>in the `Isa` standard types, should e.g. `integer` only refer to integer floats (`4.0`) or

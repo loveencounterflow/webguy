@@ -19,6 +19,7 @@
   - [Standard Types](#standard-types)
   - [Type Signatures](#type-signatures)
   - [See also](#see-also)
+  - [Schematics (Draft)](#schematics-draft)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -336,4 +337,42 @@ Results are joined with a slash `/`.
 * [*Ectype - bringing type safety (and more!) to vanilla JavaScript* by Holly Wu (Strange Loop
   2023)](https://www.youtube.com/watch?v=vyjHRlQrVSA)
 * [*clojure.spec* by Rich Hickey (LispNYC 2016)](https://www.youtube.com/watch?v=dtGzfYvBn3w)
+
+## Schematics (Draft)
+
+
+
+results:            true | (false)
+base:               isa.integer()
+value:              x = 1234
+
+results:            (true) | false
+base:               isa.integer()
+value:              x = null
+
+results:            true | (false)
+base:               isa.integer()
+sentinel:           x = new Optional { value: x, }
+mediary:            optional()
+value:              x = 1234
+
+results:            true | (false)
+base:               isa.integer()
+sentinel:           x = new Optional { value: x, }
+mediary:            optional()
+value:              x = null
+
+results:            true | (false)<br>
+base:               isa.text (iterates over `x.value`)<br>
+sentinel:           x = new All_of { value: x, }<br>
+mediary:            all_of()<br>
+value:              x = [ 'a', 'b', 'c', 'd', ]<br>
+
+
+
+
+
+
+
+
 
