@@ -367,14 +367,14 @@ Results are joined with a slash `/`.
 
 * ✅ **`isa.integer all_of x = [ 1, 2, 3, 4, ]`**<br>
 `results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()` (sees sentinal ➔ iterates over `x.value`)<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value`)<br>
 `sentinel:            ` *`x = new All_of { value: x, }`*<br>
 `mediary:             ` `all_of()`<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 
 * ❌ **`isa.integer all_of x = 1234`**<br>
 `results:             ` (`true`) | **`false`**<br>
-`base:                ` `isa.integer()` (sees sentinal ➔ cannot iterate ➔ `false`)<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
 `sentinel:            ` *`x = new All_of { value: x, }`*<br>
 `mediary:             ` `all_of()`<br>
 `value:               ` `x = 1234`<br>
