@@ -348,6 +348,7 @@ In the schematics,
 * intermediate results shown in italics
 * final result shown in bold
 
+<hr>
 
 * ✅ **`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
