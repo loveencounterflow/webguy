@@ -344,29 +344,24 @@ Results are joined with a slash `/`.
 * ✅ **`isa.integer x = 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer()`<br>
-
 `result:              ` **`true`**<br>
-
-<hr>
 
 * ❌ **`isa.integer x = null`**<br>
 `value:               ` `x = null`<br>
 `base:                ` `isa.integer()`<br>
 `results:             ` **`false`**<br>
 
-<hr>
-
 * ✅ **`isa.integer optional x = 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional()`<br>
-`sentinel:            ` `x = new Optional { value: 1234, }`<br>
+`sentinel:            ` *`x = new Optional { value: 1234, }`*<br>
 `base:                ` `isa.integer()`<br>
 `result:              ` **`true`**<br>
 
 * ✅ **`isa.integer optional x = null`**<br>
 `value:               ` `x = null`<br>
 `mediary:             ` `optional()`<br>
-`sentinel:            ` `x = new Optional { value: null, }`<br>
+`sentinel:            ` *`x = new Optional { value: null, }`*<br>
 `base:                ` `isa.integer()`<br>
 `result:              ` **`true`**<br>
 
