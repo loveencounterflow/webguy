@@ -340,44 +340,52 @@ Results are joined with a slash `/`.
 
 ## Schematics (Draft)
 
+In the schematics,
+
+* steps are written in the order of processing (right-to-left ➔ top-down)
+* the tested value is called `x`
+* `x` may be re-assigned to a sentinel, original value preserved as `sentinel.value`
+* intermediate results shown in italics
+* final result shown in bold
+
 
 * ✅ **`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer x`<br>
-`result:              ` **`true`**<br>
+*`result:              `* **`true`**<br>
 
 * ❌ **`isa.integer null`**<br>
 `value:               ` `x = null`<br>
 `base:                ` `isa.integer x`<br>
-`results:             ` **`false`**<br>
+*`result:              `* **`false`**<br>
 
 * ✅ **`isa.integer optional 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional x`<br>
 *`sentinel:            `* *`x = new Optional { value: 1234, }`*<br>
 `base:                ` `isa.integer x`<br>
-`result:              ` **`true`**<br>
+*`result:              `* **`true`**<br>
 
 * ✅ **`isa.integer optional null`**<br>
 `value:               ` `x = null`<br>
 `mediary:             ` `optional x`<br>
 *`sentinel:            `* *`x = new Optional { value: null, }`*<br>
 `base:                ` `isa.integer x`<br>
-`result:              ` **`true`**<br>
+*`result:              `* **`true`**<br>
 
 * ✅ **`isa.integer all_of [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
-`result:              ` **`true`**<br>
+*`result:              `* **`true`**<br>
 
 * ❌ **`isa.integer all_of 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: 1234, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
-`results:             ` **`false`**<br>
+*`result:              `* **`false`**<br>
 
 * ✅ **`isa.integer all_of verify.list [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
@@ -386,7 +394,7 @@ Results are joined with a slash `/`.
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
-`result:              ` **`true`**<br>
+*`result:              `* **`true`**<br>
 
 * ❌ **`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
@@ -395,7 +403,7 @@ Results are joined with a slash `/`.
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
-`results:             ` **`false`**<br>
+*`result:              `* **`false`**<br>
 
 * ❌ **`isa.integer all_of verify.list 1234`**<br>
 `value:               ` `x = 1234`<br>
@@ -404,7 +412,7 @@ Results are joined with a slash `/`.
 `mediary:             ` `all_of x` (sees `Failure` sentinel ➔ passes it on)<br>
 *`sentinel:            `* *`x = New Failure { value: 1234, }`*<br>
 `base:                ` `isa.integer x` (sees `Failure` sentinel ➔ fails)<br>
-`results:             ` **`false`**<br>
+*`result:              `* **`false`**<br>
 
 
 
