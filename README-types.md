@@ -356,12 +356,15 @@ In the schematics,
 `base:                ` `isa.integer x`<br>
 **`result:              `** **`true`**<br>
 
-* ❌ **`isa.integer null`**<br>
+* ❌ When `isa.integer()` sees a non-conforming value, it naturally returns `false`:<br>
+**`isa.integer null`**<br>
 `value:               ` `x = null`<br>
 `base:                ` `isa.integer x`<br>
 **`result:              `** **`false`**<br>
 
-* ✅ **`isa.integer optional 1234`**<br>
+* ✅ Type test can be made 'nullable' by inserting an `optional` mediary into the call chain; this will
+cause the value to be wrapped into a sentinel of type `Optional`:<br>
+**`isa.integer optional 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional x`<br>
 *`sentinel:            `* *`x = new Optional { value: 1234, }`*<br>
