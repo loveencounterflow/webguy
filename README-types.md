@@ -354,40 +354,40 @@ In the schematics,
 **`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer x`<br>
-*`result:              `* **`true`**<br>
+**`result:              `** **`true`**<br>
 
 * ❌ **`isa.integer null`**<br>
 `value:               ` `x = null`<br>
 `base:                ` `isa.integer x`<br>
-*`result:              `* **`false`**<br>
+**`result:              `** **`false`**<br>
 
 * ✅ **`isa.integer optional 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional x`<br>
 *`sentinel:            `* *`x = new Optional { value: 1234, }`*<br>
 `base:                ` `isa.integer x`<br>
-*`result:              `* **`true`**<br>
+**`result:              `** **`true`**<br>
 
 * ✅ **`isa.integer optional null`**<br>
 `value:               ` `x = null`<br>
 `mediary:             ` `optional x`<br>
 *`sentinel:            `* *`x = new Optional { value: null, }`*<br>
 `base:                ` `isa.integer x`<br>
-*`result:              `* **`true`**<br>
+**`result:              `** **`true`**<br>
 
 * ✅ **`isa.integer all_of [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
-*`result:              `* **`true`**<br>
+**`result:              `** **`true`**<br>
 
 * ❌ **`isa.integer all_of 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: 1234, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
-*`result:              `* **`false`**<br>
+**`result:              `** **`false`**<br>
 
 * ✅ **`isa.integer all_of verify.list [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
@@ -396,7 +396,7 @@ In the schematics,
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
-*`result:              `* **`true`**<br>
+**`result:              `** **`true`**<br>
 
 * ❌ **`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
@@ -405,7 +405,7 @@ In the schematics,
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
-*`result:              `* **`false`**<br>
+**`result:              `** **`false`**<br>
 
 * ❌ **`isa.integer all_of verify.list 1234`**<br>
 `value:               ` `x = 1234`<br>
@@ -414,7 +414,7 @@ In the schematics,
 `mediary:             ` `all_of x` (sees `Failure` sentinel ➔ passes it on)<br>
 *`sentinel:            `* *`x = New Failure { value: 1234, }`*<br>
 `base:                ` `isa.integer x` (sees `Failure` sentinel ➔ fails)<br>
-*`result:              `* **`false`**<br>
+**`result:              `** **`false`**<br>
 
 
 
