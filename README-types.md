@@ -342,69 +342,74 @@ Results are joined with a slash `/`.
 
 
 * ✅ **`isa.integer x = 1234`**<br>
-`results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()`<br>
 `value:               ` `x = 1234`<br>
+`base:                ` `isa.integer()`<br>
+
+`result:              ` **`true`**<br>
+
+<hr>
 
 * ❌ **`isa.integer x = null`**<br>
-`results:             ` (`true`) | **`false`**<br>
-`base:                ` `isa.integer()`<br>
 `value:               ` `x = null`<br>
+`base:                ` `isa.integer()`<br>
+`results:             ` **`false`**<br>
+
+<hr>
 
 * ✅ **`isa.integer optional x = 1234`**<br>
-`results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()`<br>
-`sentinel:            ` `x = new Optional { value: 1234, }`<br>
-`mediary:             ` `optional()`<br>
 `value:               ` `x = 1234`<br>
+`mediary:             ` `optional()`<br>
+`sentinel:            ` `x = new Optional { value: 1234, }`<br>
+`base:                ` `isa.integer()`<br>
+`result:              ` **`true`**<br>
 
 * ✅ **`isa.integer optional x = null`**<br>
-`results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()`<br>
-`sentinel:            ` `x = new Optional { value: null, }`<br>
-`mediary:             ` `optional()`<br>
 `value:               ` `x = null`<br>
+`mediary:             ` `optional()`<br>
+`sentinel:            ` `x = new Optional { value: null, }`<br>
+`base:                ` `isa.integer()`<br>
+`result:              ` **`true`**<br>
 
 * ✅ **`isa.integer all_of x = [ 1, 2, 3, 4, ]`**<br>
-`results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value`)<br>
-`sentinel:            ` *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
-`mediary:             ` `all_of()`<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
+`mediary:             ` `all_of()`<br>
+`sentinel:            ` *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value`)<br>
+`result:              ` **`true`**<br>
 
 * ❌ **`isa.integer all_of x = 1234`**<br>
-`results:             ` (`true`) | **`false`**<br>
-`base:                ` `isa.integer()` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
-`sentinel:            ` *`x = new All_of { value: 1234, }`*<br>
-`mediary:             ` `all_of()`<br>
 `value:               ` `x = 1234`<br>
+`mediary:             ` `all_of()`<br>
+`sentinel:            ` *`x = new All_of { value: 1234, }`*<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
+`results:             ` **`false`**<br>
 
 * ✅ **`isa.integer all_of x = verify.list [ 1, 2, 3, 4, ]`**<br>
-`results:             ` **`true`** | (`false`)<br>
-`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value`)<br>
-`sentinel:            ` *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
-`mediary:             ` `all_of()`<br>
-`intermediate:        ` *`x = [ 1, 2, 3, 4, ]`*<br>
-`mediary:             ` `verify.list()`<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
+`mediary:             ` `verify.list()`<br>
+`intermediate:        ` *`x = [ 1, 2, 3, 4, ]`*<br>
+`mediary:             ` `all_of()`<br>
+`sentinel:            ` *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value`)<br>
+`result:              ` **`true`**<br>
 
 * ❌ **`isa.integer all_of x = verify.list [ 1, 2, 'c', 4, ]`**<br>
-`results:             ` (`true`) | **`false`**<br>
-`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
-`sentinel:            ` *`x = new All_of { value: [ 1, 2, 'c', 4, ], }`*<br>
-`mediary:             ` `all_of()`<br>
-`intermediate:        ` *`x = [ 1, 2, 'c', 4, ]`*<br>
-`mediary:             ` `verify.list()`<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
+`mediary:             ` `verify.list()`<br>
+`intermediate:        ` *`x = [ 1, 2, 'c', 4, ]`*<br>
+`mediary:             ` `all_of()`<br>
+`sentinel:            ` *`x = new All_of { value: [ 1, 2, 'c', 4, ], }`*<br>
+`base:                ` `isa.integer()` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
+`results:             ` **`false`**<br>
 
 * ❌ **`isa.integer all_of x = verify.list 1234`**<br>
-`results:             ` (`true`) | **`false`**<br>
-`base:                ` `isa.integer()` (sees `Failure` sentinel ➔ fails)<br>
-`sentinel:            ` *`x = New Failure { value: 1234, }`*<br>
-`mediary:             ` `all_of()` (sees `Failure` sentinel ➔ passes it on)<br>
-`intermediate:        ` *`x = New Failure { value: 1234, }`*<br>
-`mediary:             ` `verify.list()`<br>
 `value:               ` `x = 1234`<br>
+`mediary:             ` `verify.list()` (verification fails ➔ returns `Failure` sentinel)<br>
+`intermediate:        ` *`x = New Failure { value: 1234, }`*<br>
+`mediary:             ` `all_of()` (sees `Failure` sentinel ➔ passes it on)<br>
+`sentinel:            ` *`x = New Failure { value: 1234, }`*<br>
+`base:                ` `isa.integer()` (sees `Failure` sentinel ➔ fails)<br>
+`results:             ` **`false`**<br>
 
 
 
