@@ -397,6 +397,15 @@ Results are joined with a slash `/`.
 `mediary:             ` `verify.list()`<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
 
+* ❌ **`isa.integer all_of x = verify.list 1234`**<br>
+`results:             ` (`true`) | **`false`**<br>
+`base:                ` `isa.integer()` (sees `Failure` sentinel ➔ fails)<br>
+`sentinel:            ` *`x = New Failure { value: 1234, }`*<br>
+`mediary:             ` `all_of()`<br> (sees `Failure` sentinel ➔ passes it on)
+`intermediate:        ` *`x = New Failure { value: 1234, }`*<br>
+`mediary:             ` `verify.list()`<br>
+`value:               ` `x = 1234`<br>
+
 
 
 
