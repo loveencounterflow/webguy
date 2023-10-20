@@ -341,26 +341,27 @@ Results are joined with a slash `/`.
 ## Schematics (Draft)
 
 
+* `isa.integer x = 1234`
+`results:             ` **`true`** | `false`<br>
+`base:                ` `isa.integer()`<br>
+`value:               ` `x = 1234`<br>
 
-results:            true | (false)
-base:               isa.integer()
-value:              x = 1234
+* `isa.integer x = null`
+`results:             ` `true` | **`false`**<br>
+`base:                ` `isa.integer()`<br>
+`value:               ` `x = null`<br>
 
-results:            (true) | false
-base:               isa.integer()
-value:              x = null
+`results:             ` **`true`** | `false`<br>
+`base:                ` `isa.integer()`<br>
+`sentinel:            ` `x = new Optional { value: x, }`<br>
+`mediary:             ` `optional()`<br>
+`value:               ` `x = 1234`<br>
 
-results:            true | (false)
-base:               isa.integer()
-sentinel:           x = new Optional { value: x, }
-mediary:            optional()
-value:              x = 1234
-
-results:            true | (false)
-base:               isa.integer()
-sentinel:           x = new Optional { value: x, }
-mediary:            optional()
-value:              x = null
+`results:             ` **`true`** | `false`<br>
+`base:                ` `isa.integer()`<br>
+`sentinel:            ` `x = new Optional { value: x, }`<br>
+`mediary:             ` `optional()`<br>
+`value:               ` `x = null`<br>
 
 `results:             ` **`true`** | `false`<br>
 `base:                ` `isa.text()` (iterates over `x.value`)<br>
