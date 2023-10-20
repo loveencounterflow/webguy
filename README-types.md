@@ -350,7 +350,7 @@ In the schematics,
 
 <hr>
 
-* ✅ The simplest form is an `isa` test without mediaries; it can only ever return `true` or `false`:<br><br>
+* ✅ The simplest form is an ISA test without mediaries; it can only ever return `true` or `false`:<br><br>
 **`isa.integer 1234`**<br>
 `value:               ` `x = 1234`<br>
 `base:                ` `isa.integer x`<br>
@@ -362,42 +362,55 @@ In the schematics,
 `base:                ` `isa.integer x`<br>
 **`result:              `** **`false`**<br>
 
-* ✅ Type test can be made 'nullable' by inserting an `optional` mediary into the call chain; this will
-cause the value to be wrapped into a sentinel of type `Optional`:<br><br>
+* ✅ Type test can be made 'nullable' by inserting an `optional` mediary into the call chain; this will wrap
+  `x` in an `Optional` object. Here the sentinel's `is_null` property is set to false, which causes the
+  `isa` test to be performed as for any other value:<br><br>
 **`isa.integer optional 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `optional x`<br>
-*`sentinel:            `* *`x = new Optional { value: 1234, }`*<br>
-`base:                ` `isa.integer x`<br>
+*`sentinel:            `* *`x = new Optional { value: 1234, is_null: false, }`*<br>
+`base:                ` `isa.integer x` (sees `x.is_null == false` ➔ tests `x.value`)<br>
 **`result:              `** **`true`**<br>
 
-* ✅ **`isa.integer optional null`**<br>
+* ✅ On the other hand, when `x` is `null` or `undefined`, `is_null` will be set to `true`. This in turn
+  causes the ISA test to be skipped:<br><br>
+**`isa.integer optional null`**<br>
 `value:               ` `x = null`<br>
 `mediary:             ` `optional x`<br>
-*`sentinel:            `* *`x = new Optional { value: null, }`*<br>
-`base:                ` `isa.integer x`<br>
+*`sentinel:            `* *`x = new Optional { value: null, is_null: true, }`*<br>
+`base:                ` `isa.integer x` (sees `x.is_null == true` ➔ returns `true`)<br>
 **`result:              `** **`true`**<br>
 
-* ✅ **`isa.integer all_of [ 1, 2, 3, 4, ]`**<br>
+* ✅ Container types like lists, sets and texts can be tested for properties of their elements. One may
+  demand that all elements, or, less commonly, some elements of the collection satisfy a given condition,
+  such as being integer numbers. Mediaries `all_of` and `any_of` wrap their inputs into `Iterator`
+  sentinels:<br><br>
+**`isa.integer all_of [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 `mediary:             ` `all_of x`<br>
-*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
+*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
 **`result:              `** **`true`**<br>
 
-* ❌ **`isa.integer all_of 1234`**<br>
+* ❌ When an `Iterator` mediary such as `all_of` encounters a non-iterable value, the sentinel's
+  `is_iterable` property is set to `false`, which causes downstream tests to abort and return
+  `false`:<br><br>
+**`isa.integer all_of 1234`**<br>
 `value:               ` `x = 1234`<br>
 `mediary:             ` `all_of x`<br>
-*`sentinel:            `* *`x = new All_of { value: 1234, }`*<br>
-`base:                ` `isa.integer x` (sees sentinel ➔ cannot iterate over number ➔ `false`)<br>
+*`sentinel:            `* *`x = new All_of { value: 1234, is_iterable: false, }`*<br>
+`base:                ` `isa.integer x` (sees sentinel's `x.is_iterable == false` ➔ returns `false`)<br>
 **`result:              `** **`false`**<br>
 
-* ✅ **`isa.integer all_of verify.list [ 1, 2, 3, 4, ]`**<br>
+* ✅ It is often convenient to test for a collection's type as well as the type of its elements in one fell
+  swoop. This is made possible by the `verify` mediary, which will return `x` for all `x` that pass the
+  given ISA test, but return `x` wrapped in a `Failure` sentinel should the ISA test fail:<br><br>
+**`isa.integer all_of verify.list [ 1, 2, 3, 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 `mediary:             ` `verify.list x`<br>
 *`intermediate:        `* *`x = [ 1, 2, 3, 4, ]`*<br>
 `mediary:             ` `all_of x`<br>
-*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], }`*<br>
+*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
 **`result:              `** **`true`**<br>
 
@@ -406,7 +419,7 @@ cause the value to be wrapped into a sentinel of type `Optional`:<br><br>
 `mediary:             ` `verify.list x`<br>
 *`intermediate:        `* *`x = [ 1, 2, 'c', 4, ]`*<br>
 `mediary:             ` `all_of x`<br>
-*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], }`*<br>
+*`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
 **`result:              `** **`false`**<br>
 
