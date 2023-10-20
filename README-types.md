@@ -401,7 +401,7 @@ Results are joined with a slash `/`.
 `results:             ` (`true`) | **`false`**<br>
 `base:                ` `isa.integer()` (sees `Failure` sentinel ➔ fails)<br>
 `sentinel:            ` *`x = New Failure { value: 1234, }`*<br>
-`mediary:             ` `all_of()`<br> (sees `Failure` sentinel ➔ passes it on)
+`mediary:             ` `all_of()` (sees `Failure` sentinel ➔ passes it on)<br>
 `intermediate:        ` *`x = New Failure { value: 1234, }`*<br>
 `mediary:             ` `verify.list()`<br>
 `value:               ` `x = 1234`<br>
