@@ -341,31 +341,31 @@ Results are joined with a slash `/`.
 ## Schematics (Draft)
 
 
-* `isa.integer x = 1234`<br>
+* ✅ **`isa.integer x = 1234`**<br>
 `results:             ` **`true`** | (`false`)<br>
 `base:                ` `isa.integer()`<br>
 `value:               ` `x = 1234`<br>
 
-* `isa.integer x = null`<br>
+* ❌ **`isa.integer x = null`**<br>
 `results:             ` (`true`) | **`false`**<br>
 `base:                ` `isa.integer()`<br>
 `value:               ` `x = null`<br>
 
-* `isa.integer optional x = 1234`<br>
+* ✅ **`isa.integer optional x = 1234`**<br>
 `results:             ` **`true`** | (`false`)<br>
 `base:                ` `isa.integer()`<br>
 `sentinel:            ` `x = new Optional { value: x, }`<br>
 `mediary:             ` `optional()`<br>
 `value:               ` `x = 1234`<br>
 
-* `isa.integer optional x = null`<br>
+* ✅ **`isa.integer optional x = null`**<br>
 `results:             ` **`true`** | (`false`)<br>
 `base:                ` `isa.integer()`<br>
 `sentinel:            ` `x = new Optional { value: x, }`<br>
 `mediary:             ` `optional()`<br>
 `value:               ` `x = null`<br>
 
-* `isa.integer all_of x = [ 'a', 'b', 'c', 'd', ]`<br>
+* ✅ **`isa.integer all_of x = [ 'a', 'b', 'c', 'd', ]`**<br>
 `results:             ` **`true`** | (`false`)<br>
 `base:                ` `isa.text()` (iterates over `x.value`)<br>
 `sentinel:            ` *`x = new All_of { value: x, }`*<br>
