@@ -389,7 +389,7 @@ In the schematics,
 `value:               ` `x = [ 1, 2, 3, 4, ]`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 3, 4, ], is_iterable: true, }`*<br>
-`base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
+`base:                ` `isa.integer x` (sees `x.is_iterable == true` ➔ iterates over `x.value`)<br>
 **`result:              `** **`true`**<br>
 
 * ❌ When an `Iterator` mediary such as `all_of` encounters a non-iterable value, the sentinel's
@@ -399,7 +399,7 @@ In the schematics,
 `value:               ` `x = 1234`<br>
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: 1234, is_iterable: false, }`*<br>
-`base:                ` `isa.integer x` (sees sentinel's `x.is_iterable == false` ➔ returns `false`)<br>
+`base:                ` `isa.integer x` (sees `x.is_iterable == false` ➔ returns `false`)<br>
 **`result:              `** **`false`**<br>
 
 * ✅ It is often convenient to test for a collection's type as well as the type of its elements in one fell
@@ -414,6 +414,19 @@ In the schematics,
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value`)<br>
 **`result:              `** **`true`**<br>
 
+* ❌ The `Failure` sentinel has the job to both capture the failure of the type verification and to
+  preserve the original value; because we're using base `isa`, not `validate`, this information silently
+  vanishes, but `validate` or maybe some other yet-to-be-written facility could make use of that
+  data:<br><br>
+**`isa.integer all_of verify.list 1234`**<br>
+`value:               ` `x = 1234`<br>
+`mediary:             ` `verify.list x` (verification fails ➔ returns `Failure` sentinel)<br>
+*`intermediate:        `* *`x = New Failure { value: 1234, }`*<br>
+`mediary:             ` `all_of x` (sees `Failure` sentinel ➔ passes it on)<br>
+*`sentinel:            `* *`x = New Failure { value: 1234, }`*<br>
+`base:                ` `isa.integer x` (sees `Failure` sentinel ➔ fails)<br>
+**`result:              `** **`false`**<br>
+
 * ❌ **`isa.integer all_of verify.list [ 1, 2, 'c', 4, ]`**<br>
 `value:               ` `x = [ 1, 2, 'c', 4, ]`<br>
 `mediary:             ` `verify.list x`<br>
@@ -421,15 +434,6 @@ In the schematics,
 `mediary:             ` `all_of x`<br>
 *`sentinel:            `* *`x = new All_of { value: [ 1, 2, 'c', 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ fails)<br>
-**`result:              `** **`false`**<br>
-
-* ❌ **`isa.integer all_of verify.list 1234`**<br>
-`value:               ` `x = 1234`<br>
-`mediary:             ` `verify.list x` (verification fails ➔ returns `Failure` sentinel)<br>
-*`intermediate:        `* *`x = New Failure { value: 1234, }`*<br>
-`mediary:             ` `all_of x` (sees `Failure` sentinel ➔ passes it on)<br>
-*`sentinel:            `* *`x = New Failure { value: 1234, }`*<br>
-`base:                ` `isa.integer x` (sees `Failure` sentinel ➔ fails)<br>
 **`result:              `** **`false`**<br>
 
 

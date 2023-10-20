@@ -292,8 +292,11 @@ See [the InterType documentation](./README-types.md)
   * **`[–]`** `isa.$type all_of optional null`: `false`
   * **`[–]`** `isa.$type any_of optional null`: `false`
 
-* **`[–]`** in `types`, make all mediaries always return a sentinel
-
+* **`[–]`** in `types`, make all mediaries always return a sentinel (except for `Failure` issued by
+  `verify`)
+* **`[–]`** in `types`, implement a 'pre-isa' that preserves and returns all pertinent data about the test,
+  allowing consumers such as `validate` to produce precise information about which element of a struct or
+  list failed to satisfy a given condition
 
 ## Is Done
 
