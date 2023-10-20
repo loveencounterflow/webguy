@@ -447,7 +447,7 @@ In the schematics,
 `mediary:             ` `any_of x`<br>
 *`sentinel:            `* *`x = new Any_of { value: [ 1, 2, 'c', 4, ], is_iterable: true, }`*<br>
 `base:                ` `isa.integer x` (sees sentinel ➔ iterates over `x.value` ➔ sees `'c'` ➔ succeeds)<br>
-**`result:              `** **`false`**<br>
+**`result:              `** **`true`**<br>
 
 
 
