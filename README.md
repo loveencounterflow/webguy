@@ -297,6 +297,15 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** in `types`, implement a 'pre-isa' that preserves and returns all pertinent data about the test,
   allowing consumers such as `validate` to produce precise information about which element of a struct or
   list failed to satisfy a given condition
+* **`[–]`** in `types`, consider to change the API *yet another time* by implementing sentinels for ISA
+    methods; this would allow to write type checks and validations to be written as `isa optional integer
+    x`, `validate text all_of validate list x` and so on.
+    * won't work for `declare`, except maybe with named functions as in `declare foo = -> ...`
+    * necessitates to import all need type names
+    * could still create a namespace `tt` with type names, so e.g. `isa tt.optional tt.integer x`
+* **`[–]`** in `time`, consider to update using ideas presented in
+  * https://github.com/f4b6a3/tsid-creator
+  * https://www.foxhound.systems/blog/time-sorted-unique-identifiers/
 
 ## Is Done
 
