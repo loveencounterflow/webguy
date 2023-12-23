@@ -223,6 +223,17 @@ See [the InterType documentation](./README-types.md)
 
 ## To Do
 
+* **`[–]`** **Important Insight** JavaScript is so dynamic, it can become a problem. Almost anything can be
+  overwritten / shadowed, as in `undefined = 3`, `class Object` and so on. To safeguard against *some* of
+  the problems this may cause, syntax comes to the rescue: **`class Object` shadows the original meaning of
+  `Object`, but `_Object = ({}).constructor` is incontrovertibly the original meaning of `Object`**, because
+  the semantics of the literal `{}` are fixed. All of the below are incontrovertibly `true`:
+    * ( {}     ).constructor is Object
+    * ( 3      ).constructor is Number
+    * ( true   ).constructor is Boolean
+    * ( []     ).constructor is Array
+    * ( 3n     ).constructor is BigInt
+
 * **`[–]`** `types.isa.sized()`, `types.isa.iterable()` test for 'existence' of `x` (`x?`) but must test for
   non-objects as well or catch exception (better)
 * **`[–]`** define what `iterable` and `container` are to mean precisely, as in, provide the defining
@@ -236,7 +247,15 @@ See [the InterType documentation](./README-types.md)
       which are implicitly (but somehow different from explicitly?) derived from `Object`. One could throw
       the [Dominic Denicola Device](https://stackoverflow.com/users/3191/domenic) i.e. `d.constructor.name`
       into the mix which would then *exclude* instances of `class O;`.
-* **`[–]`** implement in `WEBGUY.errors` custom error classes with refs, use them in `WEBGUY.types`
+    * consider to use
+      * **`jsobject`** for `( Object::toString.call x ).startsWith '[object '` (or rather an equivalent that
+        is safe against a re-definition of Object, e.g. `class Object`?)
+      * **`plainobject`** for `{}`
+      * **`nullobject`** for `Object.create null`
+      * **`object`** to mean any of the above
+* **`[–]`** in `types` (and elsewhere), use proper error classes (from `GUY.errors`). Consider to adjust
+  exception re-use policy and maybe only allow a single `throw` statement per error class
+  * **`[–]`** implement in `WEBGUY.errors` custom error classes with refs, use them in `WEBGUY.types`
 * **`[–]`** disallow overrides by default when `extend`ing class `Isa` to avoid surprising behavior (might
   want to implement with set of type names; every repetition is an error unless licensed)
   * **`[–]`** might later want to allow overrides not for entire instance but per type by adding parameter
@@ -255,25 +274,11 @@ See [the InterType documentation](./README-types.md)
   `function`) can set a property (`callable: true`) or 'name a name' (`[ 'callable', ..., ]`) to signal that
   it belongs to a given type (`callable`). Call it 'tags', allow CSS-class-like string of space-separated
   terms; consider to declare tags to license their use
-* **`[–]`** in `types`, <del>implement `isa.list_of.integer`? same with `set_of`</del> implement `all_of()`,
-  `any_of()` as 'intermediate decorators' (as in `isa.integer all_of x`, `isa.integer any_of x`)
-* **`[–]`** in `types`, implement `optional()` as 'intermediate decorator' (as in `isa.integer optional x`,
-  `validate.integer optional x`)
 * **`[–]`** in `types`, make sure that nested use of `optional` does not mix up values (which it currently
   does?); use stack if in doubt
 * **`[–]`** in `types`, consider to change signature `_validate: ( key, type, x ) ->` to `_validate: ( key,
   type, x, isa ) ->`
-* **`[–]`** in `types`, implement `ENSURE` (name pending) as an 'ancestor' to `validate`. `ENSURE.$type x`
-  returns `x` if `isa.$type x` holds and a sentinel `Failure` value otherwise. Candidate names:
-
-  * 💚 `verify.$type x`
-  * ❌ `confirm.$type x`
-  * ❌ `only.$type x`
-  * ❌ `ensure.$type x`
-
 * **`[–]`** in `types`, change default for custom return values in `get()` methods to `misfit`
-* **`[–]`** in `types` (and elsewhere), use proper error classes (from `GUY.errors`). Consider to adjust
-  exception re-use policy and maybe only allow a single `throw` statement per error class
 * **`[–]`** in `types`, <del>what should be the outcome of `all_of 12`, should `isa.integer all_of 12`
   return `true` or `false`? It shouldn't throw an error because none of the type testing functions throw an
   error, ever, with the sole exception of `validate`.</del> <ins>ensure that the following invariants
@@ -293,7 +298,7 @@ See [the InterType documentation](./README-types.md)
   * **`[–]`** `isa.$type any_of optional null`: `false`
 
 * **`[–]`** in `types`, make all mediaries always return a sentinel (except for `Failure` issued by
-  `verify`)
+  `verify`?)
 * **`[–]`** in `types`, implement a 'pre-isa' that preserves and returns all pertinent data about the test,
   allowing consumers such as `validate` to produce precise information about which element of a struct or
   list failed to satisfy a given condition
@@ -333,3 +338,16 @@ See [the InterType documentation](./README-types.md)
 * **`[+]`** add maintenance scripts
   * **`[+]`** to list all declared but undocumented types (and vice versa) (prepublish)
   * **`[+]`** to update and publish InterType when a new version of WebGuy is published (postpublish)
+* **`[+]`** in `types`, <del>implement `isa.list_of.integer`? same with `set_of`</del> implement `all_of()`,
+  `any_of()` as 'intermediate decorators' / **mediaries** (as in `isa.integer all_of x`, `isa.integer any_of
+  x`)
+* **`[+]`** in `types`, implement `optional()` as 'intermediate decorator' / **mediary** (as in `isa.integer
+  optional x`, `validate.integer optional x`)
+* **`[+]`** in `types`, implement `ENSURE` (name pending) as an 'ancestor' to `validate`. `ENSURE.$type x`
+  returns `x` if `isa.$type x` holds and a sentinel `Failure` value otherwise. Candidate names:
+
+  * 💚 `verify.$type x`
+  * ❌ `confirm.$type x`
+  * ❌ `only.$type x`
+  * ❌ `ensure.$type x`
+
