@@ -12,8 +12,8 @@ XXX_nothing                   = Symbol 'XXX_nothing'
 class Sentinel
 
 #===========================================================================================================
-class Optional
-  constructor:                -> @get(); undefined
+class Optional extends Sentinel
+  constructor:                -> super(); @get(); undefined
   set:          ( x )         -> @value = x; @
   get: ( r = null ) ->
     R       = @value
@@ -22,13 +22,14 @@ class Optional
     return r ? R
 
 #===========================================================================================================
-class Failure
-  constructor:  ( x )         -> @value = x
+class Failure extends Sentinel
+  constructor:  ( x )         -> super(); @value = x
   get:          ( r = null )  -> r ? @value
 
 #===========================================================================================================
-class Iterator
+class Iterator extends Sentinel
   constructor: ( x ) ->
+    super()
     me        = @
     @value    = x
     if ( x instanceof Optional )
