@@ -277,8 +277,9 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
-    debug '^_Intertype::_validate@1^', { key, type, x, }
-    return x.get()      if ( x instanceof Optional )
+    # debug '^_Intertype::_validate@1^', { key, type, x, }
+    if ( x instanceof Optional )
+      return x unless ( x = x.get() )?
     unless ( x instanceof Failure )
       return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
