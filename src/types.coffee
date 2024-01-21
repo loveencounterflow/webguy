@@ -49,7 +49,8 @@ class All_of extends Iterator
 class Any_of extends Iterator
 
 #===========================================================================================================
-get_value = ( x, r = null ) -> if ( x instanceof Iterator ) or ( x instanceof Failure ) then x.get r else x
+### TAINT do we need this function? ###
+get_value = ( x ) -> if ( x instanceof Sentinel ) then x.get() else x
 
 
 #===========================================================================================================
