@@ -5,6 +5,7 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
+misfit                    = Symbol 'misfit'
 
 
 #===========================================================================================================
@@ -13,32 +14,37 @@ class Sentinel
     @value = x
     # Object.freeze @ ### TAINT really? ###
     return undefined
-  get: -> @value
+  ### TAINT do we need functionality of `r`? ###
+  get: ( r = misfit ) ->
+    return r if r isnt misfit
+    return R.get() if ( R = @value ) instanceof Sentinel
+    return R
+    # if ( @value instanceof Sentinel ) then @value.get() else @value
 
 #===========================================================================================================
 class Optional extends Sentinel
 
 #===========================================================================================================
 class Failure extends Sentinel
-  get: ( r = null )  -> r ? @value ### TAINT is this special case needed? ###
+  # get: ( r = null )  -> r ? @value ### TAINT is this special case needed? ###
 
 #===========================================================================================================
 class Iterator extends Sentinel
-  constructor: ( x ) ->
-    super x
-    me        = @
-    if ( x instanceof Optional )
-      @iterator = [].values()
-    else
-      @iterator = switch type = _types.type_of @value
-        when 'list' then @value.values()
-        when 'text' then ( -> yield from me.value )()
-        else
-          R if ( R = x?[Symbol.iterator] )?
-          throw new Error "^Iterator::constructor@1^ unable to iterate over a #{type}"
-    return undefined
-  # [Symbol.iterator]: -> @iterator
-  get:          ( r = null )  -> r ? @value
+  # constructor: ( x ) ->
+  #   super x
+  #   me        = @
+  #   if ( x instanceof Optional )
+  #     @iterator = [].values()
+  #   else
+  #     @iterator = switch type = _types.type_of @value
+  #       when 'list' then @value.values()
+  #       when 'text' then ( -> yield from me.value )()
+  #       else
+  #         R if ( R = x?[Symbol.iterator] )?
+  #         throw new Error "^Iterator::constructor@1^ unable to iterate over a #{type}"
+  #   return undefined
+  # # [Symbol.iterator]: -> @iterator
+  # # get:          ( r = null )  -> r ? @value
 class All_of extends Iterator
 class Any_of extends Iterator
 
@@ -241,22 +247,25 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _isa: ( key, type, x, isa ) ->
-    debug '^_Intertype::_isa@1^', { key, type, x, isa, }
+    # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
     # debug '^_Intertype::_isa@2^', x instanceof Optional
     # debug '^_Intertype::_isa@3^', x instanceof All_of
     # debug '^_Intertype::_isa@4^', x instanceof Failure
     # debug '^_Intertype::_isa@5^', key # { key, type, x, isa, }
     if ( x instanceof Optional )
       return true if ( not ( x = x.get() )? )
-    # debug '^_Intertype::_isa@5^', type, x, ( isa.call @, x )
     #.......................................................................................................
     if ( x instanceof All_of )
-      for element from x.get()
+      return true unless ( x = x.get() )?
+      return true unless ( x[ Symbol.iterator ] )?
+      for element from x
         return false unless isa.call @, element
       return true
     #.......................................................................................................
     else if ( x instanceof Any_of )
-      for element from x.get()
+      return false unless ( x = x.get() )?
+      return false unless ( x[ Symbol.iterator ] )?
+      for element from x
         return true if isa.call @, element
       return false
     #.......................................................................................................
