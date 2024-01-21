@@ -247,6 +247,7 @@ class _Intertype
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT why use key *and* type? ###
   _isa: ( key, type, x, isa ) ->
     # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
     # debug '^_Intertype::_isa@2^', x instanceof Optional
@@ -276,6 +277,7 @@ class _Intertype
     return isa.call @, x
 
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT why use key *and* type? ###
   _verify: ( key, type, x, isa ) ->
     # debug '^_Intertype::_verify@1^', { key, type, x, isa, }
     # debug '^_Intertype::_verify@2^', ( x instanceof Failure ), ( x instanceof Optional )
@@ -286,6 +288,8 @@ class _Intertype
     return new Failure x
 
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT why use key *and* type? ###
+  ### TAINT why does signature differ from that of `_verify()`? ###
   _validate: ( key, type, x ) ->
     # debug '^_Intertype::_validate@1^', { key, type, x, }
     if ( x instanceof Optional )
@@ -318,12 +322,14 @@ class _Intertype
         yield { target: me.isa, key, descriptor, }
         #...................................................................................................
         # verify_$type
+        ### TAINT why use key *and* type? ###
         yield do ( key = type, type ) ->
           value       = ( x ) => me._verify key, type, x, isa
           descriptor  = { descriptor..., value, }
           return { target: me.verify, key, descriptor, }
         #...................................................................................................
         # validate_$type
+        ### TAINT why use key *and* type? ###
         yield do ( key = type, type ) ->
           value       = ( x ) => me._validate key, type, x
           descriptor  = { descriptor..., value, }
@@ -331,6 +337,7 @@ class _Intertype
         #...................................................................................................
         return null
       #.....................................................................................................
+      ### TAINT why use key *and* type? ###
       decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
         switch target
           when me.isa
