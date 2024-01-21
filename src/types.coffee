@@ -241,22 +241,22 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _isa: ( key, type, x, isa ) ->
-    # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
+    debug '^_Intertype::_isa@1^', { key, type, x, isa, }
     # debug '^_Intertype::_isa@2^', x instanceof Optional
     # debug '^_Intertype::_isa@3^', x instanceof All_of
     # debug '^_Intertype::_isa@4^', x instanceof Failure
     # debug '^_Intertype::_isa@5^', key # { key, type, x, isa, }
     if ( x instanceof Optional )
-      return true if ( not ( x = x.value )? )
+      return true if ( not ( x = x.get() )? )
     # debug '^_Intertype::_isa@5^', type, x, ( isa.call @, x )
     #.......................................................................................................
     if ( x instanceof All_of )
-      for element from x.value
+      for element from x.get()
         return false unless isa.call @, element
       return true
     #.......................................................................................................
     else if ( x instanceof Any_of )
-      for element from x.value
+      for element from x.get()
         return true if isa.call @, element
       return false
     #.......................................................................................................
