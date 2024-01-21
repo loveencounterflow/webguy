@@ -5,33 +5,28 @@
 #===========================================================================================================
 props                     = null
 { debug }                 = console
-XXX_nothing                   = Symbol 'XXX_nothing'
 
 
 #===========================================================================================================
 class Sentinel
+  constructor:  ( x ) ->
+    @value = x
+    # Object.freeze @ ### TAINT really? ###
+    return undefined
+  get: -> @value
 
 #===========================================================================================================
 class Optional extends Sentinel
-  constructor:                -> super(); @get(); undefined
-  set:          ( x )         -> @value = x; @
-  get: ( r = null ) ->
-    R       = @value
-    @value  = XXX_nothing
-    throw new Error "^Optional::get@1^ `Optional` instance is empty" if R is XXX_nothing
-    return r ? R
 
 #===========================================================================================================
 class Failure extends Sentinel
-  constructor:  ( x )         -> super(); @value = x
-  get:          ( r = null )  -> r ? @value
+  get: ( r = null )  -> r ? @value ### TAINT is this special case needed? ###
 
 #===========================================================================================================
 class Iterator extends Sentinel
   constructor: ( x ) ->
-    super()
+    super x
     me        = @
-    @value    = x
     if ( x instanceof Optional )
       @iterator = [].values()
     else
@@ -240,7 +235,6 @@ class _Intertype
     props      ?= require './props'
     cfg         = { defaults.types_cfg..., cfg..., }
     @_collect_and_generate_declarations cfg.declarations
-    @_optional  = new Optional()
     props.hide @, 'optional', @optional.bind  @
     props.hide @, 'type_of',  @type_of.bind   @
     return undefined
@@ -248,8 +242,13 @@ class _Intertype
   #---------------------------------------------------------------------------------------------------------
   _isa: ( key, type, x, isa ) ->
     # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
-    # debug '^_Intertype::_isa@2^', x instanceof Failure
-    return x.get true if ( x is @_optional )
+    # debug '^_Intertype::_isa@2^', x instanceof Optional
+    # debug '^_Intertype::_isa@3^', x instanceof All_of
+    # debug '^_Intertype::_isa@4^', x instanceof Failure
+    # debug '^_Intertype::_isa@5^', key # { key, type, x, isa, }
+    if ( x instanceof Optional )
+      return true if ( not ( x = x.value )? )
+    # debug '^_Intertype::_isa@5^', type, x, ( isa.call @, x )
     #.......................................................................................................
     if ( x instanceof All_of )
       for element from x.value
@@ -269,16 +268,17 @@ class _Intertype
   #---------------------------------------------------------------------------------------------------------
   _verify: ( key, type, x, isa ) ->
     # debug '^_Intertype::_verify@1^', { key, type, x, isa, }
-    # debug '^_Intertype::_verify@2^', ( x instanceof Failure ), ( x is @_optional )
-    # debug '^_Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x is @_optional ), }
-    # return x.get()      if ( x is @_optional )
-    return x            if ( x is @_optional )
+    # debug '^_Intertype::_verify@2^', ( x instanceof Failure ), ( x instanceof Optional )
+    # debug '^_Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x instanceof Optional ), }
+    # return x.get()      if ( x instanceof Optional )
+    return x            if ( x instanceof Optional )
     return get_value x  if ( isa.call @, x ) is true
     return new Failure x
 
   #---------------------------------------------------------------------------------------------------------
   _validate: ( key, type, x ) ->
-    return x.get()      if ( x is @_optional )
+    debug '^_Intertype::_validate@1^', { key, type, x, }
+    return x.get()      if ( x instanceof Optional )
     unless ( x instanceof Failure )
       return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
@@ -337,7 +337,7 @@ class _Intertype
     return null
 
   #---------------------------------------------------------------------------------------------------------
-  optional: ( x ) -> if x? then x else @_optional.set x
+  optional: ( x ) -> new Optional x
   all_of:   ( x ) -> if x instanceof Failure then x else new All_of x
   any_of:   ( x ) -> if x instanceof Failure then x else new Any_of x
 
