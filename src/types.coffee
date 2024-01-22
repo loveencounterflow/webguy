@@ -14,7 +14,6 @@ class Sentinel
   #---------------------------------------------------------------------------------------------------------
   constructor:  ( x ) ->
     @value = x
-    # Object.freeze @ ### TAINT really? ###
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -251,13 +250,12 @@ class _Intertype
     return isa.call @, x
 
   #---------------------------------------------------------------------------------------------------------
-  _verify: ( type, x, isa ) ->
+  _verify: ( type, x ) ->
     return x            if ( x instanceof Optional )
-    return get_value x  if ( isa.call @, x ) is true
+    return get_value x  if ( @isa[ type ] x ) is true
     return new Failure x
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT why does signature differ from that of `_verify()`? ###
   _validate: ( type, x ) ->
     if ( x instanceof Optional )
       return x unless ( x = x.get() )?
@@ -281,14 +279,13 @@ class _Intertype
       # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
       generator:  ({ target, owner, key: type, descriptor, }) ->
-        isa         = descriptor.value
-        value       = ( x ) -> me._isa type, x, isa
+        value       = do => isa = descriptor.value; ( x ) -> me._isa type, x, isa
         descriptor  = { descriptor..., value, }
         yield { target: me.isa, key: type, descriptor, }
         #...................................................................................................
         ### code for `verify_$type()` ###
         yield do ( type ) ->
-          value       = ( x ) => me._verify type, x, isa
+          value       = ( x ) => me._verify type, x
           descriptor  = { descriptor..., value, }
           return { target: me.verify, key: type, descriptor, }
         #...................................................................................................
