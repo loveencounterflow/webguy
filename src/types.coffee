@@ -233,18 +233,14 @@ class _Intertype
     #.......................................................................................................
     if ( x instanceof All_of )
       return true unless ( x = x.get() )?
-      ### TAINT code duplication ###
-      ### TAINT use type ###
-      return true unless ( x[ Symbol.iterator ] )?
+      return true unless ( x[ Symbol.iterator ] )? ### TAINT use type ###
       for element from x
         return false unless isa.call @, element
       return true
     #.......................................................................................................
     else if ( x instanceof Any_of )
       return false unless ( x = x.get() )?
-      ### TAINT code duplication ###
-      ### TAINT use type ###
-      return false unless ( x[ Symbol.iterator ] )?
+      return false unless ( x[ Symbol.iterator ] )? ### TAINT use type ###
       for element from x
         return true if isa.call @, element
       return false
@@ -330,8 +326,7 @@ class _Intertype
     for [ type, isa_method, ] in @_isa_methods
       return type if isa_method x
     return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
-    ### TAINT return class name? ###
-    ### TAINT raise exception? ###
+    ### TAINT return class name? raise exception? ###
     return 'something'
 
   #---------------------------------------------------------------------------------------------------------
