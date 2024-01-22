@@ -30,6 +30,8 @@
 
 * `validate.t x, ...`—returns `true` on success, throws error otherwise
 * `isa.t      x, ...`—returns `true` on success, `false` otherwise
+* `type_of    x, ...`—TBW
+* `types_of   x, ...`—TBW
 
 ## Base Types, Refinements, Optional Types
 

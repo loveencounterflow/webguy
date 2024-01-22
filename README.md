@@ -317,7 +317,7 @@ See [the InterType documentation](./README-types.md)
   should always return the name of the most specialized kernel type. Without this separation, everyhing will
   be considered `truthy` or `false`, `nothing` or `something` or `anything`, an `object` and whatnot; this
   is fine for a `types_of()` method, but not for `type_of()`
-* **`[–]`** in `types`, implement `types_of()`
+* **`[–]`** in `types`, documentation for `type_of()`, `types_of()`
 
 ## Is Done
 
@@ -358,3 +358,4 @@ See [the InterType documentation](./README-types.md)
   * ❌ `only.$type x`
   * ❌ `ensure.$type x`
 
+* **`[+]`** in `types`, implement `types_of()`
