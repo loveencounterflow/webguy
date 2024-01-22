@@ -227,8 +227,7 @@ class _Intertype
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT why use key *and* type? ###
-  _isa: ( key, type, x, isa ) ->
+  _isa: ( type, x, isa ) ->
     if ( x instanceof Optional )
       return true if ( not ( x = x.get() )? )
     #.......................................................................................................
@@ -256,22 +255,20 @@ class _Intertype
     return isa.call @, x
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT why use key *and* type? ###
-  _verify: ( key, type, x, isa ) ->
+  _verify: ( type, x, isa ) ->
     return x            if ( x instanceof Optional )
     return get_value x  if ( isa.call @, x ) is true
     return new Failure x
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT why use key *and* type? ###
   ### TAINT why does signature differ from that of `_verify()`? ###
-  _validate: ( key, type, x ) ->
+  _validate: ( type, x ) ->
     if ( x instanceof Optional )
       return x unless ( x = x.get() )?
     unless ( x instanceof Failure )
       return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
-    throw new Error "^_Intertype::_validate@1^ expected a #{key}, got a #{@type_of x}"
+    throw new Error "^_Intertype::_validate@1^ expected a #{type}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
   _collect_and_generate_declarations: ( declarations ) ->
@@ -287,30 +284,26 @@ class _Intertype
       overwrite:  false
       # filter: ({ key, }) -> not key.startsWith '_'
       #.....................................................................................................
-      generator:  ({ target, owner, key, descriptor, }) ->
-        type        = key
+      generator:  ({ target, owner, key: type, descriptor, }) ->
         isa         = descriptor.value
-        value       = ( x ) -> me._isa key, type, x, isa
+        value       = ( x ) -> me._isa type, x, isa
         descriptor  = { descriptor..., value, }
-        yield { target: me.isa, key, descriptor, }
+        yield { target: me.isa, key: type, descriptor, }
         #...................................................................................................
         ### code for `verify_$type()` ###
-        ### TAINT why use key *and* type? ###
-        yield do ( key = type, type ) ->
-          value       = ( x ) => me._verify key, type, x, isa
+        yield do ( type ) ->
+          value       = ( x ) => me._verify type, x, isa
           descriptor  = { descriptor..., value, }
-          return { target: me.verify, key, descriptor, }
+          return { target: me.verify, key: type, descriptor, }
         #...................................................................................................
         ### code for `validate_$type()` ###
-        ### TAINT why use key *and* type? ###
-        yield do ( key = type, type ) ->
-          value       = ( x ) => me._validate key, type, x
+        yield do ( type ) ->
+          value       = ( x ) => me._validate type, x
           descriptor  = { descriptor..., value, }
-          return { target: me.validate, key, descriptor, }
+          return { target: me.validate, key: type, descriptor, }
         #...................................................................................................
         return null
       #.....................................................................................................
-      ### TAINT why use key *and* type? ###
       decorator:  ({ target, owner, key: type, descriptor: { value, }, }) ->
         switch target
           when me.isa
