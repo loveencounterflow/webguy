@@ -10,43 +10,27 @@ misfit                    = Symbol 'misfit'
 
 #===========================================================================================================
 class Sentinel
+
+  #---------------------------------------------------------------------------------------------------------
   constructor:  ( x ) ->
     @value = x
     # Object.freeze @ ### TAINT really? ###
     return undefined
+
+  #---------------------------------------------------------------------------------------------------------
   ### TAINT do we need functionality of `r`? ###
   get: ( r = misfit ) ->
     return r if r isnt misfit
     return R.get() if ( R = @value ) instanceof Sentinel
     return R
-    # if ( @value instanceof Sentinel ) then @value.get() else @value
 
 #===========================================================================================================
-class Optional extends Sentinel
+class Optional  extends Sentinel
+class Failure   extends Sentinel
+class Iterator  extends Sentinel
+class All_of    extends Iterator
+class Any_of    extends Iterator
 
-#===========================================================================================================
-class Failure extends Sentinel
-  # get: ( r = null )  -> r ? @value ### TAINT is this special case needed? ###
-
-#===========================================================================================================
-class Iterator extends Sentinel
-  # constructor: ( x ) ->
-  #   super x
-  #   me        = @
-  #   if ( x instanceof Optional )
-  #     @iterator = [].values()
-  #   else
-  #     @iterator = switch type = _types.type_of @value
-  #       when 'list' then @value.values()
-  #       when 'text' then ( -> yield from me.value )()
-  #       else
-  #         R if ( R = x?[Symbol.iterator] )?
-  #         throw new Error "^Iterator::constructor@1^ unable to iterate over a #{type}"
-  #   return undefined
-  # # [Symbol.iterator]: -> @iterator
-  # # get:          ( r = null )  -> r ? @value
-class All_of extends Iterator
-class Any_of extends Iterator
 
 #===========================================================================================================
 ### TAINT do we need this function? ###
@@ -249,16 +233,13 @@ class _Intertype
   #---------------------------------------------------------------------------------------------------------
   ### TAINT why use key *and* type? ###
   _isa: ( key, type, x, isa ) ->
-    # debug '^_Intertype::_isa@1^', { key, type, x, isa, }
-    # debug '^_Intertype::_isa@2^', x instanceof Optional
-    # debug '^_Intertype::_isa@3^', x instanceof All_of
-    # debug '^_Intertype::_isa@4^', x instanceof Failure
-    # debug '^_Intertype::_isa@5^', key # { key, type, x, isa, }
     if ( x instanceof Optional )
       return true if ( not ( x = x.get() )? )
     #.......................................................................................................
     if ( x instanceof All_of )
       return true unless ( x = x.get() )?
+      ### TAINT code duplication ###
+      ### TAINT use type ###
       return true unless ( x[ Symbol.iterator ] )?
       for element from x
         return false unless isa.call @, element
@@ -266,6 +247,8 @@ class _Intertype
     #.......................................................................................................
     else if ( x instanceof Any_of )
       return false unless ( x = x.get() )?
+      ### TAINT code duplication ###
+      ### TAINT use type ###
       return false unless ( x[ Symbol.iterator ] )?
       for element from x
         return true if isa.call @, element
@@ -279,10 +262,6 @@ class _Intertype
   #---------------------------------------------------------------------------------------------------------
   ### TAINT why use key *and* type? ###
   _verify: ( key, type, x, isa ) ->
-    # debug '^_Intertype::_verify@1^', { key, type, x, isa, }
-    # debug '^_Intertype::_verify@2^', ( x instanceof Failure ), ( x instanceof Optional )
-    # debug '^_Intertype::_verify@1^', { key, type, x, isa, isa_optional: ( x instanceof Optional ), }
-    # return x.get()      if ( x instanceof Optional )
     return x            if ( x instanceof Optional )
     return get_value x  if ( isa.call @, x ) is true
     return new Failure x
@@ -297,7 +276,6 @@ class _Intertype
     unless ( x instanceof Failure )
       return get_value x  if ( @isa[ type ] x ) is true
     ### TAINT put message into a resource object? ###
-    # x = get_value x
     throw new Error "^_Intertype::_validate@1^ expected a #{key}, got a #{@type_of x}"
 
   #---------------------------------------------------------------------------------------------------------
@@ -321,14 +299,14 @@ class _Intertype
         descriptor  = { descriptor..., value, }
         yield { target: me.isa, key, descriptor, }
         #...................................................................................................
-        # verify_$type
+        ### code for `verify_$type()` ###
         ### TAINT why use key *and* type? ###
         yield do ( key = type, type ) ->
           value       = ( x ) => me._verify key, type, x, isa
           descriptor  = { descriptor..., value, }
           return { target: me.verify, key, descriptor, }
         #...................................................................................................
-        # validate_$type
+        ### code for `validate_$type()` ###
         ### TAINT why use key *and* type? ###
         yield do ( key = type, type ) ->
           value       = ( x ) => me._validate key, type, x
@@ -407,16 +385,13 @@ class Intertype extends _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   _transform_and_validate_declarations: ->
-    # debug '^Intertype::_transform_and_validate_declarations@1^'
     for k, v of @isa
-      # debug '^Intertype::_transform_and_validate_declarations@1^', k, v
       unless ( @validate.jsidentifier k ) then null
       unless ( @validate.$type_declaration k ) then null
     return null
 
 
 #===========================================================================================================
-_types                    = new _Intertype()
 module.exports            = new Intertype()
 module.exports.Isa        = Isa
 module.exports.Intertype  = Intertype
