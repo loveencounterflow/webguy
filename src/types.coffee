@@ -18,11 +18,7 @@ class Sentinel
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
-  ### TAINT do we need functionality of `r`? ###
-  get: ( r = misfit ) ->
-    return r if r isnt misfit
-    return R.get() if ( R = @value ) instanceof Sentinel
-    return R
+  get: -> if ( R = @value ) instanceof Sentinel then R.get() else R
 
 #===========================================================================================================
 class Optional  extends Sentinel
