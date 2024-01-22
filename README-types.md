@@ -66,6 +66,13 @@
 
   * `isa.$type all_of []`, `isa.$type all_of optional null` will always return `true`;
   * `isa.$type any_of []`, `isa.$type any_of optional null` will always return `false`.
+  * `isa.$type all_of x` will return `true` if `x` is not iterable, and
+  * `isa.$type any_of x` will return `false` if `x` is not iterable. These two behaviors have been adopted
+    to obtain a less surprising behavior when compared to empty lists: an empty list can be understood as
+    'no value given where a value could be', and a non-iterable in an iteration context as 'no *suitable*
+    value given where a *suitable* value could be'.
+  * Because of the above, users are well advised to always prefer the form with `verify` (`validate.integer
+    all_of verify.list x`)
 
 ## Mediaries
 
