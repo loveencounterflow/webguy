@@ -311,6 +311,13 @@ See [the InterType documentation](./README-types.md)
 * **`[–]`** in `time`, consider to update using ideas presented in
   * https://github.com/f4b6a3/tsid-creator
   * https://www.foxhound.systems/blog/time-sorted-unique-identifiers/
+* **`[–]`** in `types`, should distinguish between 'primitive' or 'kernel types' and 'refinement types';
+  only then can we decide what `type_of x` should return when it is e.g. both a float (a kernel type), or an
+  integer or an even number (both refinement types). Since many things are an object in JS, `type_of()`
+  should always return the name of the most specialized kernel type. Without this separation, everyhing will
+  be considered `truthy` or `false`, `nothing` or `something` or `anything`, an `object` and whatnot; this
+  is fine for a `types_of()` method, but not for `type_of()`
+* **`[–]`** in `types`, implement `types_of()`
 
 ## Is Done
 
