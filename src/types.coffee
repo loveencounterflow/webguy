@@ -270,7 +270,6 @@ class _Intertype
   ### TAINT why use key *and* type? ###
   ### TAINT why does signature differ from that of `_verify()`? ###
   _validate: ( key, type, x ) ->
-    # debug '^_Intertype::_validate@1^', { key, type, x, }
     if ( x instanceof Optional )
       return x unless ( x = x.get() )?
     unless ( x instanceof Failure )
