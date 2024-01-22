@@ -324,6 +324,7 @@ class _Intertype
       return type if isa_method x
     return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
     ### TAINT return class name? raise exception? ###
+    return 'anything'
     return 'something'
 
   #---------------------------------------------------------------------------------------------------------
