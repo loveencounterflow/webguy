@@ -223,6 +223,7 @@ class _Intertype
     @_collect_and_generate_declarations cfg.declarations
     props.hide @, 'optional', @optional.bind  @
     props.hide @, 'type_of',  @type_of.bind   @
+    props.hide @, 'types_of', @types_of.bind  @
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
@@ -325,7 +326,14 @@ class _Intertype
     return type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
     ### TAINT return class name? raise exception? ###
     return 'anything'
-    return 'something'
+
+  #---------------------------------------------------------------------------------------------------------
+  types_of: ( x ) ->
+    R = new Set()
+    for [ type, isa_method, ] in @_isa_methods
+      R.add type if isa_method x
+    R.add type.toLowerCase() unless ( type = @get_denicola_device_name x ) is '0'
+    return [ R..., ]
 
   #---------------------------------------------------------------------------------------------------------
   get_miller_device_name:   ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
