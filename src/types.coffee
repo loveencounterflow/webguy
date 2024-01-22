@@ -329,7 +329,7 @@ class _Intertype
 
   #---------------------------------------------------------------------------------------------------------
   get_miller_device_name:   ( x ) -> R = Object::toString.call x; R[ 8 ... R.length - 1 ]
-  get_denicola_device_name: ( x ) -> x?.constructor.name ? '0'
+  get_denicola_device_name: ( x ) -> x?.constructor?.name ? '0'
 
   #---------------------------------------------------------------------------------------------------------
   get_carter_device_name: ( x, miller_device_name = null ) ->
