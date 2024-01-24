@@ -1,12 +1,12 @@
 
 
-# InterType
+# WebGuy Types
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [InterType](#intertype)
+- [WebGuy Types](#webguy-types)
   - [API](#api)
   - [Base Types, Refinements, Optional Types](#base-types-refinements-optional-types)
   - [Mediaries](#mediaries)
@@ -24,7 +24,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-# InterType
+# WebGuy Types
 
 ## API
 
