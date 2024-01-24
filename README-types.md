@@ -7,6 +7,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [WebGuy Types](#webguy-types)
+  - [Declaration Format](#declaration-format)
   - [API](#api)
   - [Base Types, Refinements, Optional Types](#base-types-refinements-optional-types)
   - [Mediaries](#mediaries)
@@ -25,6 +26,10 @@
 
 
 # WebGuy Types
+
+## Declaration Format
+
+See [the WebGuy Type Declaration documentation](./README-type-declarations.md)
 
 ## API
 
