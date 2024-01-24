@@ -219,7 +219,7 @@ and `name` is `null`.
 
 ## `types`
 
-See [the InterType documentation](./README-types.md)
+See [the WebGuy Types documentation](./README-types.md)
 
 ## To Do
 
