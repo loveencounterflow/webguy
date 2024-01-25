@@ -318,6 +318,9 @@ See [the WebGuy Types documentation](./README-types.md)
   be considered `truthy` or `false`, `nothing` or `something` or `anything`, an `object` and whatnot; this
   is fine for a `types_of()` method, but not for `type_of()`
 * **`[–]`** in `types`, documentation for `type_of()`, `types_of()`
+* **`[–]`** in `types`, when `optional` is `true` for a given type `t`, should the `create()` method be
+  called at all when its argument is missing, `null` or `undefined`? (Probably yes so the implementation can
+  decide how to deal with `create.t null`)
 
 ## Is Done
 

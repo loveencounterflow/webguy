@@ -8,6 +8,8 @@
 
 - [WebGuy Type Declarations](#webguy-type-declarations)
   - [Type Declaration Objects](#type-declaration-objects)
+  - [Obligatory Attributes](#obligatory-attributes)
+    - [Optional Attributes](#optional-attributes)
     - [Why `fields` and `template`, why not `default`?](#why-fields-and-template-why-not-default)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,22 +35,26 @@ Possible types for declarations (attribute values):
 
 ## Type Declaration Objects
 
-* obligatory attributes (in the below, `d` representes the declaration):
-  * `d.fields`: an object whose keys are field names and whose values are field declarations
-  * field declarations are type declarations
+## Obligatory Attributes
 
-* optional attributes:
-  * `d.optional`  (`optional boolean`; **`false`**, `true`): an optional type accepts `null` and `undefined` as values
-  * `d.freeze`    (`optional boolean`; **`false`**, `true` == `shallow`, `deep`):
-  * `d.template`  (`optional object`): an object whose keys are field names and whose values are the default value for
-    each field; missing fields (that are not overwritten by the type's `create()` method) will be missing
-    from the result (and may or may not lead to validation error, as the case may be)
-  * `d.copy`      (`optional function`; **`null`**): when given, should be a unary function that returns a
-    (deep) copy of the value it is given
-  * `d.tests`     (`optional ( function or list of functions )`; **`null`**): when given, should be a unary
-    function or list of unary functions; these functions will be called in the order given with the value
-    under consideration; should any one fail, the remaining function calls are forgone, and the value is
-    treated as not satisfying the type's requirements.
+(in the below, `d` representes the declaration):
+* `d.fields`: an object whose keys are field names and whose values are field declarations
+* field declarations are type declarations
+
+### Optional Attributes
+
+* `d.optional`  (`optional boolean`; **`false`**, `true`): an optional type accepts `null` and `undefined`
+  as values
+* `d.freeze`    (`optional boolean`; **`false`**, `true` == `shallow`, `deep`):
+* `d.template`  (`optional object`): an object whose keys are field names and whose values are the default
+  value for each field; missing fields (that are not overwritten by the type's `create()` method) will be
+  missing from the result (and may or may not lead to validation error, as the case may be)
+* `d.copy`      (`optional function`; **`null`**): when given, should be a unary function that returns a
+  (deep) copy of the value it is given
+* `d.tests`     (`optional ( function or list of functions )`; **`null`**): when given, should be a unary
+  function or list of unary functions; these functions will be called in the order given with the value
+  under consideration; should any one fail, the remaining function calls are forgone, and the value is
+  treated as not satisfying the type's requirements.
 
 Field declarations
 
