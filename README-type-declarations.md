@@ -8,8 +8,8 @@
 
 - [WebGuy Type Declarations](#webguy-type-declarations)
   - [Type Declaration Objects](#type-declaration-objects)
-  - [Obligatory Attributes](#obligatory-attributes)
-    - [Optional Attributes](#optional-attributes)
+  - [Samples](#samples)
+  - [Field declarations](#field-declarations)
     - [Why `fields` and `template`, why not `default`?](#why-fields-and-template-why-not-default)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,30 +33,145 @@ Possible types for declarations (attribute values):
 * in case `( type_of type_declaration ) is 'object'`, a **type declaration object** (whose attribute `field`
   contains nested type declarations) is expected
 
+* list that contains one or more of the above
+
+
+
 ## Type Declaration Objects
 
-## Obligatory Attributes
 
 (in the below, `d` representes the declaration):
-* `d.fields`: an object whose keys are field names and whose values are field declarations
-* field declarations are type declarations
 
-### Optional Attributes
+* `d.fields` (`optional object`; **`null`**): an object whose keys are field names and whose values are
+  field (i.e. object attribute) declarations
+  * field declarations are type declarations
+  * when `d.fields` is given, type `object` is assumed and tested for before fields are tested one by one;
+    it is possible to override this test by putting one or more appropriate string values (i.e. type names)
+    into `d.tests`; e.g. `d.fields: { foo: 'integer', }` with `d.tests: [ 'list', ..., ]` would declare a
+    type whose instances are `list`s that have an attribute `foo`, an `integer`.
 
 * `d.optional`  (`optional boolean`; **`false`**, `true`): an optional type accepts `null` and `undefined`
   as values
+
 * `d.freeze`    (`optional boolean`; **`false`**, `true` == `shallow`, `deep`):
-* `d.template`  (`optional object`): an object whose keys are field names and whose values are the default
-  value for each field; missing fields (that are not overwritten by the type's `create()` method) will be
-  missing from the result (and may or may not lead to validation error, as the case may be)
+
+* `d.template`  (`optional anything`):
+  * in case a refinement of `object` is declared, an object whose keys
+    are field names and whose values are the default value for each field; missing fields (that are not
+    overwritten by the type's `create()` method) will be missing from the result (and may or may not lead to
+    validation error, as the case may be)
+
 * `d.copy`      (`optional function`; **`null`**): when given, should be a unary function that returns a
   (deep) copy of the value it is given
-* `d.tests`     (`optional ( function or list of functions )`; **`null`**): when given, should be a unary
-  function or list of unary functions; these functions will be called in the order given with the value
-  under consideration; should any one fail, the remaining function calls are forgone, and the value is
-  treated as not satisfying the type's requirements.
 
-Field declarations
+* `d.tests`     (`optional ( function or list of functions )`; **`null`**): when given, should be
+
+  * a unary function, or
+  * the name of a known type, or
+  * a list or object of either of these.
+
+  Strings will be turned into type tests; functions will be called in the order given with the value under
+  consideration as sole arguments; should any one fail, the remaining function calls are forgone, and the
+  value is treated as not satisfying the type's requirements.
+
+## Samples
+
+```
+# Sample Declaration #1
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    template:
+      value:    0
+      unit:     'u'
+
+    # we use a single function to declare tests and check fields (possible but not recommended):
+    tests: ( x ) ->
+      return false unless @isa.object         x
+      return false unless @isa.float          x.value
+      return false unless @isa.nonempty_text  x.unit
+      return false unless                     x.value >= -1
+      return false unless                     x.value <= +1
+      return true
+```
+
+```
+# Sample Declaration #1
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value:    'float'
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+
+    # we use a single function to declare tests (possible but not recommended):
+    tests: ( x ) ->
+      return false unless @isa.object x
+      return false unless x.value >= -1
+      return false unless x.value <= +1
+      return true
+```
+
+```
+# Sample Declaration #1
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value:    'float'
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+
+    # using an object to declare tests leads to naming all tests (recommended):
+    tests:
+      isa_object:           'object' # redundant b/c there's `T::small_quantity.fields
+      not_below_minus_one:  ( x ) -> x.value >= -1
+      not_above_plus_one:   ( x ) -> x.value <= +1
+```
+
+Granularity should be chosen such that tests do not do 'too little' (and proliferate) or 'too much' (and
+hide rather than reveal causes of failure):
+
+```
+# Sample Declaration #1
+class T extends webguy.types.Isa
+    tests:
+      value_is_small: ( x ) -> -1 <= x.value <= +1
+```
+
+```
+# Sample Declaration #2
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value:    'float'
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+
+    # we can also use a list to declare tests:
+    tests: [
+      'object' # redundant b/c there's `T::small_quantity.fields
+      not_below_minus_one = ( x ) -> x.value >= -1
+      not_above_plus_one  = ( x ) -> x.value <= +1
+      ]
+```
+
+## Field declarations
 
 ```coffee
 class Mytypes extends webguy.types.Isa
@@ -104,13 +219,13 @@ foo:
 foo:
   fields:
     bar:
-      type:     'integer'
+      tests:    'integer'
       default:  123
     baz:
-      type:     'text'
+      tests:    'text'
       optional: true
     gnu:
-      type:     'boolean'
+      tests:    'boolean'
       default:  false
 ```
 
@@ -125,7 +240,7 @@ two-dimensional coordinates that uses a list with two floats. We could start out
 #------------------------------------------------------
 # #3
 xy_point:
-  type:       'list'
+  tests:      'list'
   fields:
     0:          'float'
     1:          'float'
@@ -144,8 +259,8 @@ To make the contrast between `field`s and `template`s even clearer, let's declar
 #------------------------------------------------------
 # #4
 quantity:
-  type:       'map'
   tests:
+    type:               'map'
     isa_float_x_value:  ( x ) -> @isa.float x.get 'value'
     isa_float_x_unit:   ( x ) -> @isa.text  x.get 'unit'
   template:   new Map [ [ 'value', 0, ], [ 'unit', 'u', ], ]
@@ -157,8 +272,8 @@ In `#4`, we didn't use `fields` at all; we *could* have used it if we had wanted
 As WebGuy Types doesn't have a built-in way to access `Map` entries we have to spoon-feed it; that's what
 the `tests` entry is there for.
 
-* only JS `object`s have `fields`; we still provide a `type` attribute so one can have `list` with `fields`
-  (i.e. attributes)
+<!-- * only JS `object`s have `fields`; we still provide a `type` attribute so one can have `list` with `fields`
+  (i.e. attributes) -->
 * any type can have a `template`
 * a `template` is something to be copied, filled out and completed
 * a `template` can be any type; `567` can be a `template` and so can be `new Map [ [ 'foo', 5, ], ]`

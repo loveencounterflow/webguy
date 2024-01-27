@@ -321,6 +321,9 @@ See [the WebGuy Types documentation](./README-types.md)
 * **`[–]`** in `types`, when `optional` is `true` for a given type `t`, should the `create()` method be
   called at all when its argument is missing, `null` or `undefined`? (Probably yes so the implementation can
   decide how to deal with `create.t null`)
+* **`[–]`** in `types`, allow functions for template fields that will be implicitly called when `create()`
+  is used; these must be wrapped or marked in some way as a plain function has to be interpreted as
+  representing that function
 
 ## Is Done
 
