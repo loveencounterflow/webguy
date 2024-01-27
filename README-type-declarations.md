@@ -97,7 +97,7 @@ class T extends webguy.types.Isa
 ```
 
 ```
-# Sample Declaration #1
+# Sample Declaration #2
 class T extends webguy.types.Isa
 
   small_quantity:
@@ -119,7 +119,7 @@ class T extends webguy.types.Isa
 ```
 
 ```
-# Sample Declaration #1
+# Sample Declaration #3
 class T extends webguy.types.Isa
 
   small_quantity:
@@ -143,14 +143,15 @@ Granularity should be chosen such that tests do not do 'too little' (and prolife
 hide rather than reveal causes of failure):
 
 ```
-# Sample Declaration #1
+# Sample Declaration #4
 class T extends webguy.types.Isa
+  small_quantity:
     tests:
       value_is_small: ( x ) -> -1 <= x.value <= +1
 ```
 
 ```
-# Sample Declaration #2
+# Sample Declaration #5
 class T extends webguy.types.Isa
 
   small_quantity:
@@ -170,6 +171,81 @@ class T extends webguy.types.Isa
       not_above_plus_one  = ( x ) -> x.value <= +1
       ]
 ```
+
+It is also possible to put tests into the `fields` element but observe that **tests defined in the `fields`
+declaration will be called with the field value; tests on the `tests` declaration will be called with the
+object**:
+
+```
+# Sample Declaration #3
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value:
+        isa_float:            'float'
+        not_below_minus_one:  ( x ) -> x >= -1
+        not_above_plus_one:   ( x ) -> x <= +1
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+```
+
+This is again possible in all the ways a declaration can be declared, e.g. as a list:
+
+```
+# Sample Declaration #3
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value: [
+        'float'
+        not_below_minus_one = ( x ) -> x >= -1
+        not_above_plus_one  = ( x ) -> x <= +1
+        ]
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+```
+
+... or using a single unary function for each field:
+
+```
+# Sample Declaration #3
+class T extends webguy.types.Isa
+
+  small_quantity:
+
+    fields:
+      value: ( x ) ->
+        return false unless @isa.float x
+        return false unless x >= -1
+        return false unless x <= +1
+        return true
+      unit:     'nonempty_text'
+
+    template:
+      value:    0
+      unit:     'u'
+```
+
+It is recommended to prefer the `tests` element over the `fields` element except for declaring the type
+names of fields for a number of reasons:
+
+* the `tests` element can always been used; the `fields` element is only specifically used for object
+  attributes
+* functions in `tests` will be called with the 'main' value being tested; therefore, functions in `tests`
+  can refer to other fields on the same object—functions in `fields` can't do that. A declaration of, say, a
+  `small_length` type whose `unit` can only be one of `'m'` or `'cm'` is doable inside the `fields` element,
+  but one that restricts `value` to `-1 .. +1` in the case of `unit: 'm'` and to `-100 .. +100` in the case
+  of `unit: 'cm'` is not—only a function declared under `tests` can do that
 
 ## Field declarations
 
