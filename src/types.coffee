@@ -178,16 +178,20 @@ class Isa
   #=========================================================================================================
   # Declaration Types
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT rewrite as object with `tests` ###
   $type_declaration: ( x ) ->
-    ( @isa.$known_type_name x ) or \
+    ( @isa.$known_type_name x           ) or \
     ( @isa.$type_declaration_function x ) or \
-    ( @isa.$type_declaration_object x )
+    ( @isa.$type_declaration_object x   )
 
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT rewrite as object with `tests` ###
   $type_declaration_function: ( x ) -> ( @isa.function x ) and ( x.length is 1 )
+  ### TAINT rewrite as object with `tests` ###
   $known_type_name: ( x ) -> ( @isa.jsidentifier x ) and ( @isa.$type_declaration_function @isa[ x ] )
 
   #---------------------------------------------------------------------------------------------------------
+  ### TAINT rewrite as object with `tests` ###
   $type_declaration_fields_object: ( x ) ->
     return false unless ( @isa.object x )
     for k, v of x
