@@ -42,7 +42,7 @@ Possible types for declarations (attribute values):
 ## Type Declaration Objects
 
 
-(in the below, `d` represents the declaration):
+(in the below, `d` represents the declaration; default values are in **`bold`**):
 
 * `d.fields` (`optional object`; **`null`**): an object whose keys are field names and whose values are
   field (i.e. object attribute) declarations
