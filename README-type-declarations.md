@@ -22,6 +22,8 @@
 * order matters
 * if derived from `webguy.types.Isa`, its declarations will be inherited
   * in case a re-declaration of a given type is wanted, must opt-in, else rejected with error
+  * note that at present, overriding a type declaration `T` of `webguy.types.Isa` is undefined in its
+    behavior w.r.t. to other types of `webguy.types.Isa` that may or may not use `T`
 
 Possible types for declarations (attribute values):
 
@@ -40,7 +42,7 @@ Possible types for declarations (attribute values):
 ## Type Declaration Objects
 
 
-(in the below, `d` representes the declaration):
+(in the below, `d` represents the declaration):
 
 * `d.fields` (`optional object`; **`null`**): an object whose keys are field names and whose values are
   field (i.e. object attribute) declarations
